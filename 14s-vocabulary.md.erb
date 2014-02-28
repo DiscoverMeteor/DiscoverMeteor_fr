@@ -56,35 +56,35 @@ La collection du coté client est stockée dans un data-store qui offre une API 
 
 #### Package
 
-////
+Un package Meteor peut être:
 
-  1. ////
-  2. ////
-  3. ////
-  4. ////
+  1. Du code JavaScript qui tourne sur le serveur.
+  2. Du code JavaScript qui tourne sur le client.
+  3. Des instructions sur la gestion des ressources (comme par exemple SASS vers CSS).
+  4. Ressources à traiter.
 
-////
+Un package est comme une bibliothèque surpuissante. Non seulement Meteor est-il livré avec une liste complète de packages de base, mais il y a aussi [Atmosphere](https://atmosphere.meteor.com/) qui est une collection de packages offerts par la communauté.
 
 #### Publication
 
-////
+Une publication est un jeu de données qui a un nom et qui est personnalisé pour chaque utilisateur qui s'y abonne. Vous créez une publication sur le serveur.
 
 #### Server
 
-////
+Le serveur Meteor est un serveur HTTP et DDP via node.js. Il est constitué de toutes les bibliothèques Meteor ainsi que le code JavaScript que vous avez créé du coté du serveur. Quand le serveur Meteor démarre, il se connecte à la base de donnée Mongo (qui démarre automatiquement).
 
 #### Session
 
-////
+La Session dans Meteor correspond a une source de donnée réactive du coté client, qui peut est utilisée par votre application pour garder de l'état dans lequel se trouve l'utilisateur.
 
-#### Subscription
+#### Abonnement (Subscription)
 
-////
+Un abonnement est une connection à une publication pour un client particulier. L'abonnement est du code qui s'execute dans le navigateur et qui garde les données synchronisées avec la publication du serveur.
 
 #### Template
 
-////
+Un template permet de générer de l'HTML en Javascript. Par défaut, Meteor utilise Handlebars, un système de template logic-less, qui pourrait être étendu dans le futur.
 
-#### Template Data Context
+#### Context des données du template (Template Data Context)
 
-////
+Lorsqu'un template est généré, il correspond à un objet JavaScript qui livre des données spécifiques à ses besoins. Généralement ce sont des objets JavaScript basics, souvent des documents appartenant à une collection, mais ils peuvent être beaucoup plus élaborés avec leur propres fonctions.
