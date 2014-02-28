@@ -4,55 +4,55 @@ slug: meteor-vocabulary
 date: 0014/01/02
 number: 14.5
 sidebar: true
-contents: Review a few common Meteor terms. 
+contents: Definitions de quelques mots. 
 paragraphs: 24
 ---
 
-////
+Dans ce livre vous allez surement rencontrer des mots nouveaux ou étant utilisés dans un context propre à Meteor.
 
 #### Client
 
-////
+Lorsque nous parlons de client, nous faisons référence au code qui tourne dans le navigateur web des utilisateurs, que ce soit un navigateur traditionel comme Firefox ou Safari, ou bien quelque chose aussi complexe que UIWebView dans une application native pour iPhone.
 
 #### Collection
 
-////
+Une Collection Meteor est le data store (données) qui est automatiquement synchronisé entre le client et le serveur. Les Collections ont un nom (ex. `posts`), et existent généralement sur le client et sur le serveur. Même se comportant différement, ils ont une API commune basée sur l'API de Mongo.
 
 #### Computation
 
-////
+La "computation" est un block de code qui tourne à chaque fois qu'il y a un changement dans les sources de donnée réactives. Si vous avez un source de donnée réactive (par exemple une variable de session) et vous voulez une réponse réactive de sa part, il vous faudra lui définir une computation.
 
-#### Cursor
+#### Curseur
 
-////
+Un curseur est le produit d'une requête sur une collection Mongo. Au niveau du client, un curseur n'est pas qu'un tableau de résultats, mais un object *réactif* qui peut être observé lorsque des objets dans la collection en question sont ajoutés, enlevés et modifiés.
  
 #### DDP
 
-////
+DDP, protocole de donnée distribué de Meteor (Distributed Data Protocol), est le protocole utilisé pour synchroniser les collections et faire les appels de Method. DDP est supposé être un protocole générique qui prend la place du HTTP pour les applications en temps réel lourdes en données.
 
 #### Deps
 
-////
+Deps est le système réactif de Meteor. Deps agit dans les coulisses pour garder le HTML automatiquement synchronisé avec le modèle de donnée choisi.
 
 #### Document
 
-////
+Mongo utilise les "documents" pour stocker les données et donc les objets appartenants aux collections sont appelés "documents". Ce sont des objets JavaScript de base (même s'ils ne peuvent pas contenir de fonctions) avec une propriété spéciale `_id` qui permet à Meteor de suivre les données sur DDP.
 
 #### Helpers
 
-////
+Quand un template a besoin de générer quelque chose de plus complexe qu'une propriété de document, il peut faire appel a un helper, une fonction qui aide avec le rendu.
 
 #### Latency Compensation
 
-////
+C'est une technique qui permet de simuler des appels de method du coté client pour éviter les délais en attentant la réponse du serveur.
 
 #### Method
 
-////
+Une method Meteor est un appel de procedure du client vers le serveur. Les methods ont une logique speciale pour détecter les changements dans les collections ainsi que des méchanismes de compensation de delais (Latency Compensation).
 
 #### MiniMongo
 
-////
+La collection du coté client est stockée dans un data-store qui offre une API comparable a Mongo. La librairie qui supporte cette API est appelée "MiniMongo" pour indiquer que c'est une version simplifiée de Mongo qui opère entierment dans la mémoire.
 
 #### Package
 
