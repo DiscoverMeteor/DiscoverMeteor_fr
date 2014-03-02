@@ -7,28 +7,28 @@ contents: Apprende le routage dans Meteor.|Créer des pages pour discuter des po
 paragraphs: 72
 ---
 
-Maintenat que nous avons une liste de posts (qui peuvent avoir été eventuellement envoyés par des utilisateurs), nous avons besoin d'une page pour chaque post où les utilisateurs auront la possibilité de laisser des commentaires.
+Maintenant que nous avons une liste de posts (qui peuvent avoir été éventuellement envoyés par des utilisateurs), nous avons besoin d'une page pour chaque post où les utilisateurs auront la possibilité de laisser des commentaires.
 
 Nous aimerions rendre ces pages accessible par un *permalien*, une URL de la forme `http://myapp.com/posts/xyz` (où `xyz` est in iddentifiant MongoDB `_id`) qui est unique pour chaque post.
 
 Cela signifie que nous allons avoir besoin d'un *routage* pour voir ce qu'il y a dans la barre URL du navigateur et afficher le contenu correspondant.
 
-### Adding the Iron Router Package
+### Ajout du package Iron Router
 
-////
+[Iron Router](https://github.com/EventedMind/iron-router) est un package de routage qui a été créé spécialement pour les applications Meteor.
 
-////
+Non seulement c'est une aide pour le routage (la mise en place des chemins), mais le package s'occupe aussi des filtres (l'assignation de ces chemins à des actions) et il s'occupe même des abonnements (savoir quel chemin permet d'accéder à quelle donnée). (Note: Iron Router a été développer par un des co-auteurs de *Discover Meteor*, Tom Coleman.)
 
-////
+Commençons par installer le package depuis Atmosphere:
 
 ~~~bash
 $ mrt add iron-router
 ~~~
 <%= caption "Terminal" %>
 
-////
+Cette commande va télécharger et installer le package iron-router dans votre application. Notez que vous devrez probablement redémarrer votre application Meteor (avec `ctrl+c` pour terminer le processus, puis `mrt` pour le redémarrer) avant que le package ne soit utilisable.
 
-////
+Notez que Iron Router est un package tier, ce qui signifie qu'il vous faudra Meteorite pour l'installer (`meteor add iron-router` ne marchera pas).
 
 <% note do %>
 
