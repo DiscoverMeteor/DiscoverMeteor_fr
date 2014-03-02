@@ -3,15 +3,15 @@ title: Le Routage
 slug: routing
 date: 0005/01/01
 number: 5
-contents: Learn about routing in Meteor.|Create post discussion pages, with unique URLs.|Learn how to link to those URLs properly.
+contents: Apprende le routage dans Meteor.|Créer des pages pour discuter des posts.|Apprendre à faire des liens vers ces URLs.
 paragraphs: 72
 ---
 
-////
+Maintenat que nous avons une liste de posts (qui peuvent avoir été eventuellement envoyés par des utilisateurs), nous avons besoin d'une page pour chaque post où les utilisateurs auront la possibilité de laisser des commentaires.
 
-////
+Nous aimerions rendre ces pages accessible par un *permalien*, une URL de la forme `http://myapp.com/posts/xyz` (où `xyz` est in iddentifiant MongoDB `_id`) qui est unique pour chaque post.
 
-////
+Cela signifie que nous allons avoir besoin d'un *routage* pour voir ce qu'il y a dans la barre URL du navigateur et afficher le contenu correspondant.
 
 ### Adding the Iron Router Package
 
