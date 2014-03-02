@@ -16,11 +16,11 @@ Lorsque nous parlons de client, nous faisons référence au code qui tourne dans
 
 #### Collection
 
-Une Collection Meteor est le data store (données) qui est automatiquement synchronisé entre le client et le serveur. Les Collections ont un nom (ex. `posts`), et existent généralement sur le client et sur le serveur. Même se comportant différement, ils ont une API commune basée sur l'API de Mongo.
+Une Collection Meteor est le data store (données) qui est automatiquement synchronisé entre le client et le serveur. Les Collections ont un nom (ex. `posts`), et existent généralement sur le client et sur le serveur. Même si ils se comportent différement, ils ont une API commune basée sur l'API de Mongo.
 
 #### Computation
 
-La "computation" est un block de code qui tourne à chaque fois qu'il y a un changement dans les sources de donnée réactives. Si vous avez un source de donnée réactive (par exemple une variable de session) et vous voulez une réponse réactive de sa part, il vous faudra lui définir une computation.
+La "computation" est un block de code qui tourne à chaque fois qu'il y a un changement dans les sources de donnée réactives. Si vous avez une source de donnée réactive (par exemple une variable de session) et que vous voulez une réponse réactive de sa part, il faudra lui définir une computation.
 
 #### Curseur
 
@@ -40,7 +40,7 @@ Mongo utilise les "documents" pour stocker les données et donc les objets appar
 
 #### Helpers
 
-Quand un template a besoin de générer quelque chose de plus complexe qu'une propriété de document, il peut faire appel a un helper, une fonction qui aide avec le rendu.
+Quand un template a besoin de générer quelque chose de plus complexe qu'une propriété de document, il peut faire appel à un helper, une fonction qui aide pour le rendu.
 
 #### Latency Compensation
 
@@ -48,7 +48,7 @@ C'est une technique qui permet de simuler des appels de method du coté client p
 
 #### Method
 
-Une method Meteor est un appel de procedure du client vers le serveur. Les methods ont une logique speciale pour détecter les changements dans les collections ainsi que des méchanismes de compensation de delais (Latency Compensation).
+Une method Meteor est un appel de procedure du client vers le serveur. Les methods ont une logique speciale pour détecter les changements dans les collections ainsi que des méchanismes de compensation de delai (Latency Compensation).
 
 #### MiniMongo
 
@@ -75,7 +75,7 @@ Le serveur Meteor est un serveur HTTP et DDP via node.js. Il est constitué de t
 
 #### Session
 
-La Session dans Meteor correspond a une source de donnée réactive du coté client, qui peut est utilisée par votre application pour garder de l'état dans lequel se trouve l'utilisateur.
+La Session dans Meteor correspond à une source de donnée réactive du coté client, qui peut être utilisée par votre application pour garder l'état dans lequel se trouve l'utilisateur.
 
 #### Abonnement (Subscription)
 
