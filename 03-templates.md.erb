@@ -3,17 +3,16 @@ title: Templates
 slug: templates
 date: 0003/01/01
 number: 3
+points: 10
 contents: Découvrir le langage de templating de Meteor, Handlebars.|Créer vos trois premiers templates.|Comment fonctionne les managers de Meteor.|Avoir un prototype de base fonctionnel avec des données statiques.
 paragraphs: 46
 ---
 
-### Notre premier template
-
 Pour faciliter le développement dans Meteor, nous allons adopter une approche de l'extérieur vers l'intérieur. En d'autres termes, nous allons créer une simple page html/javascript, puis nous la rattacherons à la mécanique interne de l'application plus tard.
 
-Ce qui veut dire que dans ce chapitre nous nous occuperons de ce qu'il se passe dans le répertoire /client.
+Ce qui veut dire que dans ce chapitre nous nous occuperons de ce qu'il se passe dans le répertoire `/client`.
 
-Créez un nouveau fichier appelé main.html dans le répertoire /client et insérez le code suivant:
+Créez un nouveau fichier appelé `main.html` dans votre répertoire `/client` et insérez le code suivant:
 
 ~~~html
 <head>
@@ -34,25 +33,25 @@ Créez un nouveau fichier appelé main.html dans le répertoire /client et insé
 ~~~
 <%= caption "client/main.html" %>
 
-Ce sera le template principal de notre application. Comme vous pouvez le voir c'est du langage HTML excepté pour la balise {{> postsList}}, qui est un point d'insertion pour le template postsList que nous verrons bientôt. Maintenant, créez deux templates supplémentaires.
+Ce sera le template principal de notre application. Comme vous pouvez le voir c'est du langage HTML excepté pour la balise `{{> postsList}}`, qui est un point d'insertion pour le template `postsList` que nous verrons bientôt. Maintenant, créez deux templates supplémentaires.
 
 ### Les templates Meteor
 
 En son coeur, un site d'actualités social est composé d'articles organisés en listes, et c'est exactement de cette façon que nous allons organiser nos templates.
 
-Créons un répertoire /views dans /client. C'est ici que nous mettrons tous nos templates, et pour garder les choses en ordre nous allons également créer /posts dans /views juste pour nos templates relatifs aux articles (posts).
+Créons un répertoire `/views` dans `/client`. C'est ici que nous mettrons tous nos templates, et pour garder les choses en ordre nous allons également créer `/posts` dans `/views` juste pour nos templates relatifs aux articles (posts).
 
 <% note do %>
 
 ### Recherche de fichiers
 
-Meteor est génial pour trouver les fichiers. Peu importe où vous mettez votre code dans le répertoire /client, Meteor le trouvera et le compilera proprement. Ce qui signifie que vous n'avez jamais besoin d'écrire manuellement des chemins d'inclusion (include) pour les fichiers javascript ou CSS.
+Meteor est génial pour trouver les fichiers. Peu importe où vous mettez votre code dans le répertoire `/client`, Meteor le trouvera et le compilera proprement. Ce qui signifie que vous n'avez jamais besoin d'écrire manuellement des chemins d'inclusion (include) pour les fichiers javascript ou CSS.
 
 Ca signifie également que vous pourriez aussi bien mettre tous vos fichiers dans le même répertoire, ou même tout votre code dans le même fichier. Mais sachant que Meteor compilera tout dans un seul fichier minifié de toute façon, nous garderons plutôt les choses bien organisées et utiliserons une structure de fichier la plus claire possible.
 
 <% end %>
 
-Nous sommes finalement prêt pour créer notre second template. Dans client/views/posts, créez posts_list.html:
+Nous sommes finalement prêt pour créer notre second template. Dans `client/views/posts`, créez `posts_list.html`:
 
 ~~~html
 <template name="postsList">
@@ -65,7 +64,7 @@ Nous sommes finalement prêt pour créer notre second template. Dans client/view
 ~~~
 <%= caption "client/views/posts/posts_list.html" %>
 
-Et post_item.html:
+Et `post_item.html`:
 
 ~~~html
 <template name="postItem">
@@ -78,15 +77,15 @@ Et post_item.html:
 ~~~
 <%= caption "client/views/posts/post_item.html" %>
 
-Notez l'attribut name="postsList" de la balise template. C'est le nom qui sera utilisé par Meteor pour garder la trace de quel template va où.
+Notez l'attribut `name="postsList"` de la balise template. C'est le nom qui sera utilisé par Meteor pour garder la trace de quel template va où.
 
 Il est temps de présenter le système de templating de Meteor, [Handlebars](handlebarsjs.com). Handlebars est du html simple, avec l'ajout de trois choses: *partials*, *expressions* et *block helpers*.
 
-*Partials* utilise la syntaxe {{> templateName}}, et dit simplement à Meteor de remplacer le partial avec le template du même nom (dans notre cas postItem).
+*Partials* utilise la syntaxe `{{> templateName}}`, et dit simplement à Meteor de remplacer le partial avec le template du même nom (dans notre cas `postItem`).
 
-Expressions telles que {{title}} appelle une propriété de l'objet courant, ou retourne la valeur du template helper comme défini dans le template manager courant (plus d'information sur ce sujet plus tard).
+Expressions telles que `{{title}}` appelle une propriété de l'objet courant, ou retourne la valeur du template helper comme défini dans le template manager courant (plus d'information sur ce sujet plus tard).
 
-Finalement, les *block helpers* sont des balises spéciales qui contrôlent le flux du template, tels que {{#each}}...{{/each}} ou {{#if}}...{{/if}}.
+Finalement, les *block helpers* sont des balises spéciales qui contrôlent le flux du template, tels que `{{#each}}...{{/each}}` ou `{{#if}}...{{/if}}`.
 
 <% note do %>
 
@@ -98,11 +97,11 @@ Vous pouvez consulter le [site officiel d'Handlebars](handlebarsjs.com) ou ce [t
 
 Armé avec cette connaissance, vous pouvez aisément comprendre ce qu'il se passe ici.
 
-Premièrement, dans le template postsList, nous faisons des itérations dans un objet posts avec le block helper {{#each}}...{{/each}}. Ensuite, pour chaque itération nous allons inclure le template postItem.
+Premièrement, dans le template `postsList`, nous faisons des itérations dans un objet posts avec le block helper {{#each}}...{{/each}}. Ensuite, pour chaque itération nous allons inclure le template `postItem`.
 
-D'où vient l'object posts ? Bonne question. C'est un template helper, et nous allons le définir quand nous regarderons les template managers.
+D'où vient l'object `posts` ? Bonne question. C'est un template helper, et nous allons le définir quand nous regarderons les template managers.
 
-Le template postItem lui-même est assez simple. Il utilise trois expression: {{url}} et {{title}} retourne des propriétés du document, et {{domain}} appelle un template helper.
+Le template `postItem` lui-même est assez simple. Il utilise trois expression: `{{url}}` et `{{title}}` retourne des propriétés du document, et `{{domain}}` appelle un template helper.
 
 Nous avons souvent mentionné "template helpers" au travers de ce chapitre sans vraiment expliquer ce qu'ils font. Mais afin de corriger ça, nous devons d'abord parler des managers.
 
@@ -110,7 +109,7 @@ Nous avons souvent mentionné "template helpers" au travers de ce chapitre sans 
 
 Jusqu'à maintenant, nous avons travailler avec Handlebars, qui est du HTML avec quelques balises parsemées dedans. Contrairement aux autres langages tel que PHP (ou même des pages HTML classiques, qui contiennent du javascript), Meteor garde les templates et leur logique séparés, et ces templates ne font rien par eux-même.
 
-Afin d'exister, un template a besoin d'un manager. Vous pouvez imaginer le manager comme un chef qui prend des ingrédients bruts (vos données) et les prépare, avant de dresser une assiette qu'il va donner à un serveur (le template) qui ensuite va les présenter pour vous.
+Afin d'exister, un template a besoin d'un **manager**. Vous pouvez imaginer le manager comme un chef qui prend des ingrédients bruts (vos données) et les prépare, avant de dresser une assiette qu'il va donner à un serveur (le template) qui ensuite va les présenter pour vous.
 
 En d'autres termes, pendant que le rôle du template est limité à l'affichage et aux itérations dans les variables, le manager est celui qui fait le gros travail en assignant une valeur à chaque variable.
 
@@ -122,12 +121,11 @@ Quand nous demandons pour voir ce que les autres développeurs Meteor appelle le
 
 Les managers ne sont pas vraiment des "controllers" (du moins, pas dans le sens de controllers MVC) et "CFOJMMCJS" n'est pas vraiment très parlant, donc nous rejetons les deux propositions.
 
-Etant donné que nous cherchons encore une façon d'indiquer de quoi nous parlons, nous reviendrons sur le terme "manager" comme un raccourci pratique qui n'a pas de signification déjà existante aussi loin que les frameworks web
-existent.
+Etant donné que nous cherchons encore une façon d'indiquer de quoi nous parlons, nous reviendrons sur le terme "manager" comme un raccourci pratique qui n'a pas de signification déjà existante aussi loin que les frameworks web existent.
 
 <% end %>
 
-Pour garder les choses simples, nous allons nommer le manager comme le template, à l'exception du .js. Donc créons directement posts_list.js dans /client/views/posts et commençons à construire notre premier manager:
+Pour garder les choses simples, nous allons nommer le manager comme le template, à l'exception du .js. Donc créons directement `posts_list.js` dans `/client/views/posts` et commençons à construire notre premier manager:
 
 ~~~js
 var postsData = [
@@ -157,13 +155,13 @@ Si vous l'avez fait correctement, vous devriez avoir quelque choses de similaire
 
 <%= screenshot "3-1", "Nos premiers templates avec données statiques" %>
 
-<%= commit "3-1", "Template d'une liste basique d'articles ajouté et données statiques." %>
+<%= commit "3-1", "Ajout d'un template d'une liste basique d'articles et de données statiques." %>
 
-Nous faisons deux choses ici. Premièrement, nous insérons des données prototype dans le tableau postsData. Ces données viendrait normalement de la base de données, mais comme nous n'avons pas encore vu comment faire (prochain chapitre) nous allons tricher en utilisant des données statiques.
+Nous faisons deux choses ici. Premièrement, nous insérons des données prototype dans le tableau `postsData`. Ces données viendrait normalement de la base de données, mais comme nous n'avons pas encore vu comment faire (prochain chapitre) nous allons tricher en utilisant des données statiques.
 
-Deuxièmement, nous utilisons la fonction Template.myTemplate.helpers() pour définir un template helper appelé posts qui retourne simplement un tableau postsData.
+Deuxièmement, nous utilisons la fonction `Template.myTemplate.helpers()` pour définir un template helper appelé `posts` qui retourne simplement un tableau `postsData`.
 
-Définir le helper posts signifie qu'il est désormais disponible à l'utilisation pour notre template:
+Définir le helper `posts` signifie qu'il est désormais disponible à l'utilisation pour notre template:
 
 ~~~html
 <template name="postsList">
@@ -176,11 +174,11 @@ Définir le helper posts signifie qu'il est désormais disponible à l'utilisati
 ~~~
 <%= caption "client/views/posts/posts_list.html" %>
 
-Maintenant notre template sera capable de faire des itérations sur le tableau postsData, et d'envoyer chaque objet vers le template postItem.
+Maintenant notre template sera capable de faire des itérations sur le tableau `postsData`, et d'envoyer chaque objet vers le template `postItem`.
 
 ### La valeur de "this"
 
-Nous allons créer le manager post_item.js:
+Nous allons créer le manager `post_item.js`:
 
 ~~~js
 Template.postItem.helpers({
@@ -193,35 +191,33 @@ Template.postItem.helpers({
 ~~~
 <%= caption "client/views/posts/post_item.js" %>
 
-<%= commit "3-2", "Configurer un helper domain à partir du `postItem`." %>
+<%= commit "3-2", "Configurer un helper `domain` à partir du `postItem`." %>
 
-Cette fois la valeur du helper domain n'est pas un tableau, mais une fonction anonyme. Ce modèle est bien plus commun (et plus utile) comparé à nos précédents exemples de données simples.
+Cette fois la valeur du helper `domain` n'est pas un tableau, mais une fonction anonyme. Ce modèle est bien plus commun (et plus utile) comparé à nos précédents exemples de données simples.
 
 <%= screenshot "3-2", "Afficher les domaines pour chaque lien." %>
 
-Le helper domaine prend une URL et retourne son domaine via un peu de magie JavaScript. Mais où prend-il l'url dans un premier temps ?
+Le helper `domain` prend une URL et retourne son domaine via un peu de magie JavaScript. Mais où prend-il l'url dans un premier temps ?
 
-Pour répondre à cette question nous avons besoin de revenir à notre template posts_list.html. Le block helper {{#each}} ne fais pas seulement des itérations sur notre tableau, il **insère également les valeurs dans** this **à l'intérieur du bloc de l'objet itéré**.
+Pour répondre à cette question nous avons besoin de revenir à notre template `posts_list.html`. Le block helper `{{#each}}` ne fais pas seulement des itérations sur notre tableau, il **insère également les valeurs dans `this` à l'intérieur du bloc de l'objet itéré**.
 
-Ca signifie qu'à l'intérieur des deux balises {{#each}}, chaque post (article) est assigné à this successivement, et ça s'étend dans le manager du template inclus (post_item.js).
+Ca signifie qu'à l'intérieur des deux balises `{{#each}}`, chaque article (post) est assigné à `this` successivement, et ça s'étend dans le manager du template inclus (`post_item.js`).
 
-Nous comprenons maintenant pourquoi this.url retourne l'URL de l'article courant. De plus, si nous utilisons {{title}} et {{url}} dans notre template post_item.html, Meteor sait ce que veut dire this.title et this.url et retourne les valeurs correctes.
-
-Si vous avez correctement suivi, vous devriez voir une list d'articles dans votre navigateur. Cette liste est juste de la donnée statique, donc ça ne tient pas compte des avantages des fonctionnalités temps réel de Meteor. Nous allons vous montrer comment changer ça dans le chapitre suivant !
+Nous comprenons maintenant pourquoi `this.url` retourne l'URL de l'article courant. De plus, si nous utilisons `{{title}}` et `{{url}}` dans notre template `post_item.html`, Meteor sait ce que veut dire `this.title` et `this.url` et retourne les valeurs correctes.
 
 <% note do %>
 
-### JavaScript Magic
+### Magie JavaScript
 
-////
+Bien que ce ne soit pas spécifique à Meteor, voici une petite explication de "Magie JavaScript". Premièrement, nous créons une balise ('a') avec ancre vide et la stockons en mémoire.
 
-////
+Nous modifions ensuite l'attribut `href` pour être égal à l'URL de l'article courant (comme nous venons de le voir, l'objet en cours de traitement se trouve dans un helper `this`).
 
-////
+Finalement, nous prenons avantage de la propriété spéciale `hostname` de l'élément `a` pour récupérer le nom de domaine du lien sans le reste de l'URL.
 
 <% end %>
 
-////
+Si vous avez suivi correctement, vous devriez voir une list d'articles dans votre navigateur. C'est juste une liste de données statiques, donc ça ne tient pas compte des avantages des fonctionnalités temps réel de Meteor. Nous verrons comment changer ça dans le chapitre suivant!
 
 <% note do %>
 
