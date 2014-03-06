@@ -50,7 +50,7 @@ $ npm install -g meteorite
 
 <% note do %>
 
-### Erreurs sur les permissions?
+### Erreurs de permission?
 
 Sur certaines machines, l'installation de Meteorite requiert le privilège _root_. Le cas échéant, utilisez la commande `sudo -H`:
 
@@ -62,7 +62,7 @@ Consultez la [documentation de Meteorite](https://github.com/oortcloud/meteorite
 
 <% end %>
 
-Nous y voici! Meteorite est maintenant à vos côtés. 
+Nous y voici! Meteorite est maintenant à nos côtés.
 
 Notez qu'à ce jour, Meteorite n'est pas disponible pour Windows; notre [tutoriel Windows](http://themeteorbook.com/2013/03/20/using-meteor-and-atmopshere-on-windows/) vous donnera néanmoins des indications sur la façon de procéder sous Windows.
 
@@ -106,7 +106,7 @@ Ouvrez une fenêtre de navigateur à l'adresse `http://localhost:3000/` (ou à l
 
 <%= commit "2-1", "Créé un projet Microscope élémentaire." %>
 
-Félicitations! Vous avez mis en service votre première application Meteor. Au passage, pour arrêter l'application, il vous suffit de rappeler la fenêtre de terminal dans laquelle tourne l'application, et de presser la combinaison de touches `ctrl+c`.
+Félicitations! Vous avez mis en service votre première application Meteor. Au passage, pour arrêter l'application, il vous suffit de ramener au premier plan la fenêtre de terminal dans laquelle tourne l'application, et de presser la combinaison de touches `ctrl+c`.
 
 ### Ajouter un paquet
 
@@ -116,7 +116,7 @@ Nous allons maintenant utiliser Meteorite pour ajouter un paquet intelligent (_s
 $ mrt add bootstrap
 ~~~
 
-<%= commit "2-2", "Ajouté le package bootstrap." %>
+<%= commit "2-2", "Ajouté le paquet bootstrap." %>
 
 <% note do %>
 
@@ -124,7 +124,7 @@ $ mrt add bootstrap
 
 Lorsque nous parlons de paquets (_packages_) dans le contexte de Meteor, il est bon d'être précis. Meteor distingue cinq types de paquets:
 
-- Le c&oelig;ur de Meteor comprend lui-même différents **paquets essentiels** (_core packages_). Ils sont partie de chaque application Meteor, et vous n'aurez pratiquement jamais besoin de vous en soucier.
+- Le c&oelig;ur de Meteor comprend lui-même différents **paquets essentiels** (_core packages_). Ils font partie de chaque application Meteor, et vous n'aurez pratiquement jamais besoin de vous en soucier.
 - Les **paquets intelligents** de Meteor (_smart packages_ tout court) sont un groupe de [37 paquets](http://docs.meteor.com/#packages) livrés avec Meteor (dont vous pouvez obtenir la liste complète avec `meteor list`) et que vous pouvez importer dans votre application en option. Vous pouvez tout aussi bien les importer sans Meteorite, avec la commande `meteor add nom-du-paquet`.
 - Les **paquets locaux** (_local packages_) sont des paquets spécifiques que vous pouvez créer et placer dans le sous-dossier `/packages`. Meteorite n'est pas davantage requis pour les utiliser.
 - Les **paquets intelligents Atmosphere** (_Atmosphere smart packages_) sont des paquets tiers de Meteor, qui figurent dans le répertoire d'[Atmosphere](http://atmosphere.meteor.com/). Meteorite est requis pour les importer et les utiliser.
@@ -140,14 +140,14 @@ Puis créez cinq sous-dossiers racine au sein de `/microscope`: `/client`, `/ser
 
 Certains de ces sous-dossiers sont particuliers. Meteor traite les fichiers des dossiers selon les conventions suivantes:
 
-- Le code dans le dossier `/server` n'est' exécuté que par le serveur.
+- Le code dans le dossier `/server` n'est exécuté que par le serveur.
 - Le code dans le dossier `/client` n'est exécuté que par le client.
 - Tout le reste peut être exécuté à la fois par le client et le serveur.
 - Les fichiers se trouvant dans `/lib` sont chargés en tout premier lieu.
 - Un quelconque fichier `main.*` est chargé en dernier lieu.
 - Les ressources statiques (polices de caractères, images, etc.) prennent place dans le dossier `/public`.
 
-Au surplus, Meteor ne vous contraint pas à utiliser de structure prédéfinie, si vous ne le souhaitez pas. La structure suggérée et décrite ci-dessus correspond à notre façon de procéder, elle n'est en aucun cas inamovible.
+Au reste, Meteor ne vous contraint pas à utiliser de structure prédéfinie, si vous ne le souhaitez pas. La structure suggérée et décrite ci-dessus correspond à notre façon de procéder, elle n'est en aucun cas inamovible.
 
 Nous vous encourageons à consulter la [documentation officielle de Meteor](http://docs.meteor.com/#structuringyourapp) si vous souhaitez davantage de détails à ce sujet.
 
@@ -155,7 +155,7 @@ Nous vous encourageons à consulter la [documentation officielle de Meteor](http
 
 ### Meteor est-il MVC?
 
-Si vous venez à Meteor et que vous avez pratiqué d'autres _frameworks_, tels que Ruby on Rails, vous pourriez vous demander si Meteor suit le _pattern_ MVC (_Model View Controller_).
+Si vous avez utilisé d'autres _frameworks_, tels que Ruby on Rails, vous pourriez vous demander si Meteor suit le _pattern_ MVC (_Model View Controller_).
 
 Pour faire court, non. À la différence de Rails, Meteor n'impose aucune structure de fichiers prédéfinie à votre application. Dans ce livre, nous disposerons notre code de la façon qui fait sens pour nous, sans trop nous soucier des acronymes.
 
@@ -181,7 +181,7 @@ Les noms de fichiers font exception à cette règle, qui utilisent des tirets ba
 
 ### CSS sans coquetterie
 
-Ce livre ne traite pas de CSS. Ainsi, pour ne pas vous ralentir avec des considérations de style, nous avons préféré vous mettre à disposition la feuille de style complète dès le départ. Vous n'aurez dès lors plus à vous en préoccuper.
+Ce livre ne traite pas de CSS. Ainsi, pour ne pas vous ralentir avec des considérations de style, nous avons préféré vous mettre à disposition la feuille de style complète dès le départ. Vous n'aurez, dès lors, plus à vous en préoccuper.
 
 Les feuilles de style CSS sont automatiquement chargées et comprimées à la volée par Meteor, de sorte qu'elles doivent être placées dans le dossier `/client`, plutôt que `/public` comme le seraient les autres ressources statiques. Allez-y, créez-y maintenant un sous-dossier `/client/stylesheets/`, puis placez-y un fichier `style.css` avec le contenu suivant:
 
