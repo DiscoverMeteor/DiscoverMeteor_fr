@@ -223,22 +223,22 @@ if (Posts.find().count() === 0) {
 
 <%= commit "4-2", "Ajout de données dans la collection posts." %>
 
-////
+Nous avons placé ce fichier dans le répertoire `server/`, il ne sera donc jamais chargé dans le navigateur d'un utilisateur. Le code sera exécuté immédiatement quand le serveur démarrera, et fera des appels d'insertion (`insert`) sur la base de données pour ajouter les trois articles dans notre collection `Posts`. Comme nous n'avons pas encore géré la sécurité des données, il n'y a pas de réelle différence entre faire ça dans un fichier executé sur le serveur ou dans le navigateur.
 
-////
+Maintenant relancez votre serveur avec `meteor`, et ces trois articles seront chargés dans la base de données.
 
-### Wiring the data to our HTML with helpers
+### Lier les données au HTML avec les helpers
 
-////
+Maintenant, si nous ouvrons une console navigateur, we verrons les trois articles chargés dans MiniMongo:
 
 ~~~js
 ❯ Posts.find().fetch();
 ~~~
-<%= caption "Browser console" %>
+<%= caption "Console navigateur" %>
 
-////
+Pour afficher ces trois articles dans le rendu HTML, nous pouvons utiliser un template helper. Dans le chapitre 3 nous avons vu comment Meteor nous permettait de joindre un *data context* (contexte de données) à nos templates Handlebars pour construire des vues HTML de simple structures de données.
 
-////
+En parlant de ça, vous êtes libres de supprimer le code `postsData` à partir d'ici. Voici à quoi devrait ressembler `posts_list.js` maintenant:
 
 ~~~js
 Template.postsList.helpers({
@@ -250,25 +250,25 @@ Template.postsList.helpers({
 <%= caption "client/views/posts/posts_list.js" %>
 <%= highlight "2~4" %>
 
-<%= commit "4-3", "Wired collection into `postsList` template." %>
+<%= commit "4-3", "Affichage de collection dans le template `postsList`." %>
 
 <% note do %>
 
-### Find & Fetch
+### Chercher & Récupérer
 
-////
+Dans Meteor, `find()` retourne un *cursor* (curseur), qui est une [source de données réactive](http://docs.meteor.com/#find). Quand nous voulons récupérer son contenu, nous pouvons utiliser `fetch()` sur ce curseur pour le transformer en tableau.
 
-////
+a l'intérieur d'une application, Meteor est assez intelligent pour savoir comment itérer sur un curseur sans avoir à sans avoir à les convertir d'abord explicitement en tableaux. C'est pourquoi vous ne verrez pas `fetch()` si souvent que ça dans le code Meteor actuel (et pourquoi nous ne l'utiliserons pas dans l'exemple ci-dessous).
 
 <% end %>
 
-////
+Maintenant, plutôt que prendre une liste d'articles sous forme de tableau statique depuis une variable, nous retournons un curseur de notre helper `posts`. Mais qu'est-ce que ça fait ?Si nous allons dans le navigateur, nous pouvons voir:
 
-<%= screenshot "4-3", "Using live data" %>
+<%= screenshot "4-3", "Utiliser des données dynamiques" %>
 
-////
+Donc, nous pouvons clairement voir que notre helper `{{#each}}` a itéré sur tous nos `Posts`, et les a affiché à l'écran. La collection côté serveur a récupéré les articles de Mongo, les a envoyés vers la collection côté client, et nos helpers Handlebars les ont affichés dans notre template.
 
-////
+Maintenant, nous pouvons aller un peu plus loin,; ajoutons un autre article via la console:
 
 ~~~js
 ❯ Posts.insert({
@@ -277,39 +277,39 @@ Template.postsList.helpers({
   url: 'http://docs.meteor.com'
 });
 ~~~
-<%= caption "Browser console" %>
+<%= caption "Console navigateur" %>
 
-////
+Regardez dans le navigateur -- vous devriez voir ça:
 
-<%= screenshot "4-4", "Adding posts via the console" %>
+<%= screenshot "4-4", "Ajout d'articles via la console" %>
 
-////
+Vous venez juste de voir la réactivité en action pour la première fois. Quand nous parlions d'Handlebars qui itérait sur le curseur `Posts.find()`, il savait comment observer les changements sur le curseur, et a corrigé le HTML de la plus simple façon pour afficher les données correctes à l'écran.
 
 <% note do %>
 
-### Inspecting DOM Changes
+### Inspecter les changements du DOM
 
-////
+Dans ce cas, le plus simple changement possible est d'ajouter un autre `<div class="post">...</div>`. Si vous voulez vous assurer du changement, ouvrez l'inspecteur du DOM et sélectionnez le `<div>` correspondant à un des articles existants.
 
-////
+Maintenant, dans la console JavaScript, insérez un autre article. Quand vous revenez sur l'inspecteur, vous allez voir un `<div>` supplémentaire, correspondant au nouvel article, mais vous aurez encore le même `<div>` existant sélectionné. C'est un moyen utile de voir quand les éléments ont été re-rendus et quand ils ont été laissés seuls.
 
 <% end %>
 
-### Connecting Collections: Publications and Subscriptions
+### Connecter les collections : Publications et Souscriptions
 
-////
+Depuis le début, nous avons le paquet `autopublish` activé, qui n'est pas conseillé pour les applications en production. Comme son nom l'indique, ce paquet dit simplement que chaque collection doit être partagé dans sa totalité à chaque client connecté. Ce n'est pas ce que nous voulons vraiment, donc désactivons le.
 
-////
+Ouvrez un nouveau terminal, et tapez:
 
 ~~~bash
 $ meteor remove autopublish
 ~~~
 
-////
+L'effet est instantané. Si vous regardez dans votre navigateur maintenant, vous verrez que tous vos posts ont disparus! C'est parce que nous nous reposions sur `autopublish` pour s'assurer que la collection posts côté client était un mirroir de tous les articles dans la base de donnée.
 
-////
+Eventuellement nous allons avoir besoin de nous assurer que nous transférons seulement les articles que l'utilisateur a besoin de voir (en prenant en compte les choses comme la pagination). Mais pour l'instant, nous allons juste configurer `Posts` pour qu'il soit publié dans sa totalité.
 
-////
+Pour faire ça, nous créons une simple fonction `publish()` qui retourne un curseur référençant tous les posts:
 
 ~~~js
 Meteor.publish('posts', function() {
@@ -318,17 +318,17 @@ Meteor.publish('posts', function() {
 ~~~
 <%= caption "server/publications.js" %>
 
-////
+Dans le client, nous avons besoin de *souscrire* à la publication. Nous allons ajouter la ligne suivante au fichier `main.js`:
 
 ~~~js
 Meteor.subscribe('posts');
 ~~~
 <%= caption "client/main.js" %>
 
-<%= commit "4-4", "Removed `autopublish` and set up a basic publication." %>
+<%= commit "4-4", "Suppression de `autopublish` et mise en place d'une publication basique." %>
 
-////
+Si nous vérifions le navigateur, nos articles sont de retour. Phew!
 
 ### Conclusion
 
-////
+Donc qu'est-ce qu'on a fait ? Bien que nous n'avons pas encore d'interface utilisateur, ce que nous avons maintenant est une application web fonctionnel. Nous pourrions déployer cette application sur Internet, et (en utilisant la console du navigateur) commencer à poster des nouvelles histoires et les voir apparaître dans les navigateurs d'utilisateurs partout à travers le monde.
