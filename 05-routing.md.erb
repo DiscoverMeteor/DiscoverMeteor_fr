@@ -36,16 +36,16 @@ Notez que Iron Router est un package tier, ce qui signifie qu'il vous faudra Met
 
 Nous allons aborder plusieurs fonctionnalités du routage dans ce chapitre. Si vous avez déjà utilisé un Framework comme Rails vous connaissez probablement la pluspart de ces concepts. Si ce n'est pas la cas, voici un glossaire pour vous aider :
 
-- **Routes**:
-- **Chemins**:
-- **Segments**:
-- **Hooks**:
-- **Filtres**:
-- **Template de routes**:
-- **Layouts**:
-- **Controlleurs**:
+- **Routes** : une route est le bloc de base du routage. C'est un jeu d'instruction qui dit à l'application ou aller et quoi faire pour chaque URL.
+- **Chemins** : un chemin (ou Path) est une URL de l'application. Elle peut être statique (`/information_legales`) ou dynamic (`/posts/xyz`), il peut même y avoir des paramètres (`/search?keyword=meteor`).
+- **Segments** : ce sont les différentes parties qui composent un chemin, séparées par un slash (`/`).
+- **Hooks** : Les Hooks sont les actions qui seront effectuées avant, après ou même pendant le processus de routage. Un exemple typique serait de vérifier si l'utilisateur a les droits nécessaire pour afficher une page.
+- **Filtres** : Les filtres sont des hooks qui sont définis globalement pour une ou plusieurs routes.
+- **Template de routes** : Chaque route doit pointer vers un template. Si vous n'en précisez par un, le router cherchera le template avec le même nom que la route.
+- **Layouts** : On peut voir les layouts comme des cadres photo numérique. Ils contiennent tout le code HTMl qui entoure les templates et qui ne bougera pas même si le template est modifié.
+- **Controlleurs** : Quelques fois, vous réaliserez que beaucoup de templates réutilisent les mêmes paramètres. Plutôt que de dupliquer votre code, vous pouvez faire hériter toutes ces routes d'un même *controlleur de routage* qui contient toute la logique de routage.
 
-////
+Pour plus d'information sur le Iron Router, consultez [la documentation complète sur GitHub](https://github.com/EventedMind/iron-router).
 
 <% end %>
 
