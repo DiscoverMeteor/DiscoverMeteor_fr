@@ -4,17 +4,17 @@ slug: deploying
 date: 0002/01/02
 number: 2.5
 sidebar: true
-contents: Learn how to deploy on Meteor.com.|Learn how to deploy on Modulus.|Learn how to deploy on your own server using Meteor Up.
+contents: Apprendre à déployer sur Meteor.com.|Apprendre à déployer sur Modulus.|Apprendre à déployer sur son propre serveur avec Meteor Up.
 paragraphs: 46
 ---
 
-[**NDT** Olivier a commencé la traduction de ce chapitre 2.5]
+[**NDT** Olivier réalise la traduction de ce chapitre 2.5]
 
-//// Some people like to work quietly on a project until it's perfect, while others can't wait to show the world as soon as possible.
+Certain·e·s aiment travailler posément à un projet jusqu'à sa perfection, alors que d'autres le dévoileraient aussitôt que possible.
 
-//// If you're the first kind of person and would rather develop locally for now, feel free to skip this chapter. On the other hand, if you'd rather take the time to learn how to deploy your Meteor app online, we've got you covered.
+Si vous vous reconnaissez dans la première attitude et préférez travailler localement pour l'heure, n'hésitez pas à sauter ce chapitre. En revanche, si vous êtes disposé·e à prendre le temps de découvrir comment mettre en ligne votre application Meteor, ce chapitre est pour vous.
 
-//// We will be learning how to deploy an Meteor app in few different ways. Feel free to use each of them at any stage of your development process, whether you're working on Microscope or any other Meteor app. Let's get started!
+Nous allons découvrir différentes façons de déployer Meteor. Vous pourrez utiliser l'une ou l'autre à chaque étape de votre processus de développement, que ce soit pour Microscope ou tout autre application Meteor. C'est parti!
 
 <% note do %>
 
@@ -26,77 +26,78 @@ Si vous préférez poursuivre la construction de l'application Microscope, vous 
 
 <% end %>
 
-### Deploying On Meteor
+### Déploiement sur Meteor
 
-//// Deploying on a Meteor subdomain (i.e. `http://myapp.meteor.com`) is the easiest option, and the first one we'll to try. This can be useful to showcase your app to others in its early days, or to quickly set up a staging server.
+La solution la plus simple est le déploiement sur un sous-domaine de Meteor (c-à-d. `http://myapp.meteor.com`) et nous allons l'essayer en premier lieu. Elle vous permet de présenter votre application à d'autres personnes dès la première heure, ou encore de monter rapidement un serveur de développement.
 
-//// Deploying on Meteor is pretty simple. Just open up your terminal, go to to your Meteor app's directory, and type:
+Le déploiement sur Meteor est plutôt simple. Ouvrez un terminal, placez-vous dans le dossier de votre application Meteor, puis saisissez:
 
 ~~~bash
 $ meteor deploy myapp.meteor.com
 ~~~
 
-//// Of course, you'll have to take care to replace "myapp" with a name of your choice, preferrably one that isn't already in use. If your chosen name is already in use, Meteor might prompt you for a password. If his happens, simply cancel the operation with `ctrl+c` and try again with a different name.
+Vous devez bien entendu remplacer "myapp" par un nom de votre choix, qui ne soit de préférence pas encore utilisé. Si le nom que vous avez choisi était déjà utilisé, Meteor vous demanderait probablement un mot de passe. Le cas échéant, annulez l'opération en pressant `ctrl+c` et essayez à nouveau avec un nom différent.
 
-//// If all goes well, after a few seconds you'll be able to access your app at `http://myapp.meteor.com`.
+Si tout se déroule correctement, vous serez en mesure d'accéder à votre application à l'adresse `http://myapp.meteor.com` après quelques secondes.
 
-### Password Protection
+### Protection par mot de passe
 
-//// By default, there is no restriction on Meteor subdomains. Anyone can use any domain name of their choice, and overwrite any existing app. So you'll probably want to password protect your domain name with the `-p` option, as shown below:
+Il n'y par défaut pas de restriction sur les noms de sous-domaine Meteor. Chacun·e peut utiliser un quelconque nom de domaine, et écraser toute application existante. En conséquence vous voudrez vraisemblablement protéger votre nom de domaine avec un mot de passe, ce que vous permet l'option `-p`, comme indiqué ci-après:
 
 ~~~~bash
 $ meteor deploy myapp.meteor.com -p
 ~~~~
 
-//// Meteor will then ask you to set a password, and from then on this password will be required every time you want to deploy to this particular app.
+Meteor vous demandera ensuite de définir un mot de passe, qui vous sera demandé chaque fois que vous voudrez déployer cette application spécifique à nouveau.
 
-//// You can refer to [the official documentation](http://docs.meteor.com/#deploying) for more information on things like accessing your hosted instance's database directly, or configuring a custom domain for your app.
+Vous pouvez consulter [la documentation officielle](http://docs.meteor.com/#deploying) pour en savoir davantage sur le déploiement, comme par exemple la façon d'accéder directement à la base de données de votre application hébergée, ou encore pour associer un nom de domaine spécifique à votre application.
 
-### Deploying On Modulus
+### Déploiement sur Modulus
 
-//// [Modulus](https://modulus.io/) is a great option for deploying NodeJS apps. It's one of the few PaaS (platform-as-a-service) provider that officially support Meteor, and there are already quite a few people running production Meteor apps on it.
+[Modulus](https://modulus.io/) est une excellente solution pour déployer des applications NodeJS. C'est l'un des rares prestataires PaaS (_platform-as-a-service_) offrant un support officiel de Meteor, et pas mal d'applications Meteor sont déjà en production sur cette plateforme.
 
 <% note do %>
 
 ### Demeteorizer
 
-//// Modulus open-sourced a tool called [demeteorizer](https://github.com/onmodulus/demeteorizer) which converts your Meteor app into a standard NodeJS app.
+Modulus a publié en open-source un outil nommé [demeteorizer](https://github.com/onmodulus/demeteorizer), qui vous permet de convertir votre application Meteor en une application NodeJS standard.
 
 <% end %>
 
-//// Start by [creating an account](https://modulus.io/register). To deploy our app on Modulus, we'll then need to install the Modulus command line tool:
+Commencez par [créer un compte](https://modulus.io/register). Pour déployer votre application sur Modulus, vous devez installer l'outil en ligne de commande de Modulus:
 
 ~~~bash
 $ npm install -g modulus
 ~~~
 
-//// And then authenticate with:
+Authentifiez-vous ensuite comme suit:
 
 ~~~bash
 $ modulus login
 ~~~
 
-//// We'll now create a Modulus project (note that you can also do this via Modulus' web dashboard):
+Nous allons maintenant créer un projet Modulus &mdash; notez que vous pouvez en faire autant depuis le tableau de bord (_dashboard_) de Modulus:
 
 ~~~bash
 $ modulus project create
 ~~~
 
-//// The next step will be creating a MongoDB database for our app. We can create a MongoDB database with [Modulus itself](https://modulus.io/codex/database/getting_started), [MongoHQ](https://www.mongohq.com/) or with any other cloud MongoDB provider.
+L'étape suivante sera de créer une base de données MongoDB pour notre application. [Modulus lui-même](https://modulus.io/codex/database/getting_started) permet de le faire, tout comme [MongoHQ](https://www.mongohq.com/) ou tout autre prestataire offrant un hébergement MongoDB en ligne.
 
-//// Once we've created our MongoDB database, we can get the `MONGO_URL for our database from Modulus' web UI (got to Dashboard > Databases > Select your database > Administration), then use it to configure our app like so:
+Une fois notre base de données créée, recherchez l'adresse `MONGO_URL` de celle-ci dans l'interface web de Modulus (consultez _Dashboard_ > _Databases_ > sélectionnez votre base > _Administration_), puis transcrivez-la dans la configuration de notre application comme suit:
 
 ~~~bash
 $ modulus env set MONGO_URL "mongodb://<user>:<pass>@mongo.onmodulus.net:27017/<database_name>"
 ~~~
 
-//// It's now time to deploy our app. It's as simple as typing:
+Ne reste plus qu'à déployer notre application. C'est aussi simple que ceci:
 
 ~~~bash
 $ modulus deploy
 ~~~
 
-//// We've now successfully deployed our app to Modulus. Refer to [the Modulus documentation](https://modulus.io/codex/projects) for more information about accessing logs, custom domain setup, and SSL.
+Nous avons ainsi déployé notre application sur Modulus avec succès. Référez-vous à [la documentation de Modulus](https://modulus.io/codex/projects) pour davantage de détails relatifs à la consultation des _logs_, à la définition d'un nom de domaine spécifique, et au chiffrage SSL.
+
 
 ### Meteor Up
 
