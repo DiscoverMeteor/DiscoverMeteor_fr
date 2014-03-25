@@ -4,88 +4,88 @@ slug: publications-and-subscriptions
 date: 0004/01/02
 number: 4.5
 sidebar: true
-contents: Understand how publications and subscriptions work.|Learn what the default Autopublish package does.|See a few more examples of publication patterns.
+contents: Comprendre comment les publications et les souscriptions fonctionnent.|Apprendre le comportement par défaut du paquet autopublish.|Voir quelques exemples de patrons de publications.
 paragraphs: 52
 ---
 
-////
+Publications et souscriptions sont un des concepts les plus importants et fondamentaux dans Meteor, mais peut être difficile à se représenter quand on débute.
 
-////
+Cela a conduit à beaucoup d'incompréhensions, telles que meteor n'est pas sécurisé, ou que les applications Meteor ne peuvent pas gérer une large quantité de données.
 
-////
+Une grande part de la raison pour laquelle les gens trouvent ces concepts un peu perturbants est la "magie" que Meteor fait pour nous. Bien que cette magie est d'une aide considérable, elle peut obscurcir ce qui se passe vraiment en arrière-plan (comme la magie a tendance à le faire). Détaillons un peu les couches de magie pour essayer de comprendre ce qu'il se passe.
 
-### The Olden Days
+### Les vieux jours
 
-////
+Mais dans un premier temps, regardons en arrière dans les vieux jours de 2011 quand Meteor n'étaient pas encore là. Disons que vous développez une simple applications rails. Quand un utilisateur atteint votre site, le client (i.e votre navigateur) envoit une requête à votre application, qui est en cours sur votre serveur.
 
-////
+Le premier travail de l'application est de trouver quelles données l'utilisateur a besoin de voir. Ça pourrait être à la page 12 de vos résultats, les informations de profil de Marie, les 20 derniers tweets de Bob, etc... Vous pouvez imaginer un marchand de livres recherchant dans des allées le livre que vous avez demandé.
 
-////
+Une fois que les bonnes données ont été sélectionnées, le second travail de l'application est de traduire ces données dans un joli, HTML lisible par un humain (ou en JSON dans le cas d'une API).
 
-////
+Dans la métaphore du marchand de livre, vous pouvez envelopper le livre que vous venez juste d'acheter et le mettre dans un joli sac. C'est la partie "vue" du fameux modèle MVC (Model-View-Controller).
 
-////
+Finalement, l'application prends du code HTML et l'envoie au navigateur. Le travail de l'application est terminé, et maintenant que toutes ces choses sont sorties de ses mains virtuelles, elle peut se détendre avec une bière et attendre la prochaine requête.
 
-### The Meteor Way
+### La vision Meteor
 
-////
+Regardons ce qui rend Meteor si spécial en comparaison. Comme nous l'avons vu, l'innovation clé de Meteor est que là ou l'application Rails vit seulement **sur le serveur**, une application Meteor inclut également un composant coté client qui va s'executer **sur le client** (le navigateur).
 
-<%= diagram "client-server", "Pushing a subset of the database to the client.", "pull-right" %>
+<%= diagram "client-serveur", "Envoyer un sous-ensemble de la base de données au client.", "pull-right" %>
 
-////
+C'est comme un marchand qui ne trouve pas seulement le livre pour vous, mais qui vous suit jusque chez vous pour vous lire le livre au moment de dormir (ce que peut paraître un peu bizarre à entendre).
 
-////
+Cette architecture laisse Meteor faire des choses sympathiques, parmi lesquelles la principale que Meteor appelle [database everywhere](http://docs.meteor.com/#sevenprinciples). Simplement, Meteor va prendre un sous-ensemble de votre base de données et la *copier sur le client*.
 
-////
+Cela implique deux grosses idées: premièrement, au lieu d'envoyer du code HTML au client, une application Meteor va envoyer **la donnée brute, actuelle** et laisser le client se débrouiller avec ça ([data on the wire](http://docs.meteor.com/#sevenprinciples)). Deuxièmement, vous allez pouvoir **accéder aux données instantanément** sans avoir à attendre un autre aller-retour vers le serveur ([latency compensation](http://docs.meteor.com/#sevenprinciples)).
 
-### Publishing
+### Publier
 
-////
+Une base de données d'application peut contenir des dizaines de milliers de documents, lesquels peuvent être privé ou sensible. Donc nous n'allons évidemment pas juste copier notre entière base de données sur le client, pour des raisons de sécurité et d'adaptabilité.
 
-////
+Par conséquent nous allons avoir besoin d'une méthode pour dire à Meteor quel **sous-ensemble** de données peut être envoyé au client, et nous l'effectuerons à l'aide d'une **publication**.
 
-////
+Revenons à Microscope. Nous avons ici tous les articles de l'application dans notre base de données:
 
-<%= diagram "collections-1", "All the posts contained in our database.", "pull-center" %>
+<%= diagram "collections-1", "Tous les articles contenus dans la base de données.", "pull-center" %>
 
-////
+Bien que cette fonctionnalité n'est pas encore présente dans MMicroscope, nous allons imaginer que certains articles ont été signalés pour langage abusif. Bien que nous voulons les garder dans notre base de données, il ne devront pas être rendu disponible aux utilisateurs (i.e. envoyé au client).
 
-////
+Notre première tâche sera de dire à Meteor quelles données nous voulons *réellement* envoyer au client. Nous allons dire à Meteor que nous voulons seulement **publier** les articles non signalés:
 
-<%= diagram "collections-2", "Excluding flagged posts.", "pull-center" %>
+<%= diagram "collections-2", "Exclure les articles signalés.", "pull-center" %>
 
-////
+Voici le code correspondant, qui résidera sur le serveur:
 
 ~~~js
 // on the server
 Meteor.publish('posts', function() {
-  return Posts.find({flagged: false}); 
+  return Posts.find({flagged: false});
 });
 ~~~
 
-////
+Cela assure qu'il n'y a **aucun moyen possible** qu'un client soit capable d'accéder à un article signalé. C'est exactement comme ça que vous allez sécuriser une application Meteor: juste vous assurez que vous publiez seulement les données que vous voulez fournir au client.
 
 <% note do %>
 
 ### DDP
 
-////
+Fondamentalement, vous pouvez imaginer le système de publication/souscription comme un tunnel où transitent les données de la collection coté-serveur (source) vers la collection coté-client (cible).
 
-////
+Le protocole qui est parlé dans ce tunnel est appelé **DDP** (Distributed Data Protocol). Pour en savoir plus sur DDP, vous pouvez visionner [cette présentation de la Real-time Conference](http://2012.realtimeconf.com/video/matt-debergalis) par Matt DeBergalis (one of the founders of Meteor), ou [ce screencast](http://www.eventedmind.com/posts/meteor-subscriptions-and-ddp) par Chris Mather qui parcourt ce concept dans le moindre détail.
 
 <% end %>
 
-### Subscribing
+### Souscrire
 
-////
+Quand bien même nous voulons rendre les articles non signalés disponibles pour les clients, nous ne pouvons pas juste envoyer des milliers d'articles en une fois. Nous avons besoin d'un moyen de spécifier aux clients quel sous-ensemble de données ils ont besoin à un moment donné, et c'est exactement là que les **souscriptions** interviennent.
 
-////
+Les données auquelles vous souscrivez sera **dupliqué** sur le client grace à Minimongo, l'implémentation Meteor de MongoDB coté-client.
 
-////
+Par exemple, disons que nous sommes en train de naviguer sur la page de profil de Bob, et nous voulons seulement afficher *ses* articles.
 
-<%= diagram "collections-3", "Subscribing to Bob's posts will mirror them on the client.", "pull-center" %>
+<%= diagram "collections-3", "Souscrire aux articles de Bob les copiera sur le client.", "pull-center" %>
 
-////
+Premièrement, nous modifierions notre publication pour prendre un paramètre:
 
 ~~~js
 // on the server
@@ -94,22 +94,22 @@ Meteor.publish('posts', function(author) {
 });
 ~~~
 
-////
+Et nous définierions ensuite ce paramètre au moment de la souscription à cette publication dans le code coté-client de notre application:
 
 ~~~js
 // on the client
 Meteor.subscribe('posts', 'bob-smith');
 ~~~
 
-////
+C'est de cette façon qu'on rend une application Meteor adaptable coté-client: au lieu de souscrire à *toutes* les données disponibles, on choisit les parties que nous avons actuellement besoin. De cette façon, vous allez éviter les surcharge mémoire du navigateur quelle que soit la taille de la base de données coté-serveur.
 
-### Finding
+### Trouver
 
-////
+Maintenant que les articles de Bob arrivent à être étiquetté dans plusieurs catégories (par exemple: "Javasript", "Ruby, et "Python"). Peut-être que nous voulons toujours charger tous les articles de Bob en mémoire, mais nous voulons seulement afficher ceux de la catégorie "Javascript". C'est ici que "trouver" intervient.
 
-<%= diagram "collections-4", "Selecting a subset of documents on the client.", "pull-center" %>
+<%= diagram "collections-4", "Sélectionner un sous-ensemble sur le client.", "pull-center" %>
 
-////
+Juste comme nous l'avons fait sur le serveur, nous utiliserons la fonction `Posts.find()` pour sélectionner un sous-ensemble de nos données.
 
 ~~~js
 // on the client
@@ -120,73 +120,73 @@ Template.posts.helpers({
 });
 ~~~
 
-////
+Maintenant que nous avons une bonne idée de quel rôle joue les publications et les souscriptions, creusons un peu plus profond et observons quelques patrons d'implémentations.
 
 ### Autopublish
 
-////
+Si vous créez un projet Meteor à partir de rien (i.e. en utilisant `meteor create`), il aura automatiquement le paquet `autopublish` activé. Comme point de départ, discutons de ce que ça fait exactement.
 
-////
+Le but de `autopublish` est de rendre très facile le début de développement de votre application Meteor, et ce en dupliquant automatiquement _toutes les données_ du serveur vers le client, ainsi en prenant soin des publications et des souscriptions pour vous.
 
 <%= diagram "autopublish", "Autopublish", "pull-center"%>
 
-////
+Comment ça fonctionne ? Supposez que vous avez une collection appelées `'posts'` sur le serveur. Alors `autopublish` enverra automatiquement chaque article qu'il trouvera dans la collection posts Mongo vers une collections appelées `'posts'` sur le client (en considérant qu'il y en a un).
 
-////
+Donc si vous utilisez `autopublish`, vous n'avez pas besoin de penser aux publications. Les données sont omniprésentes, et les choses sont simples. Bien sur, il y a des problèmes évidents d'avoir une copie complète de la base de données de l'application en cache sur chaque machine d'utilisateur.
 
-////
+Pour cette raison, autopublish est seulement approprié quand vous démarrez, et que vous n'avez pas encore réfléchi sur les publications.
 
-### Publishing Full Collections
+### Publier des collections complètes
 
-////
+Une fois que vous avez supprimé `autopublish`, vous allez rapidement réaliser que toutes vos données ont disparues du client. Une façon simple de revenir et simplement de copier ce que autopublish fait, et de publier une collection dans sa totalité. Par exemple:
 
-~~~js 
+~~~js
 Meteor.publish('allPosts', function(){
   return Posts.find();
 });
 ~~~
 
-<%= diagram "fullcollection", "Publishing a full collection", "pull-center" %>
+<%= diagram "fullcollection", "Publier une collection complète", "pull-center" %>
 
-////
+Nous publions encore des collections complètes, mais au moins nous avons maintenant le contrôle sur quelles collections nous publions ou pas. Dans ce casn nous publions la collection `Posts` mais pas `Comments`.
 
-### Publishing Partial Collections
+### Publier des collections partielles
 
-////
+Le niveau de contrôle suivant est de publier seulement une _partie_ d'une collection. Par exemple seuls les articles qui appartiennent à un certain auteur:
 
-~~~js 
+~~~js
 Meteor.publish('somePosts', function(){
   return Posts.find({'author':'Tom'});
 });
 ~~~
 
-<%= diagram "partialcollection", "Publishing a partial collection", "pull-center" %>
+<%= diagram "partialcollection", "Publier une collection partiellement", "pull-center" %>
 
 <% note do %>
 
-### Behind The Scenes
+### En coulisses
 
-////
+Si vous avez lu la [documentation de publication Meteor](http://docs.meteor.com/#publishandsubscribe), vous avez peut-être été dépassé par l'utilisation de `added()` et `ready()` pour appliquer les attributs des enregistrements sur le client, et pour recoller ça avec les applications Meteor que vous avez déjà vu et qui n'utilise pas ces méthodes.
 
-////
+La raison est que Meteor fournit une méthodes vraiment très pratique: `_publishCursor()`. Vous n'avez jamais vu ça utilisé? Peut-être pas directement, mais si vous retournez un [curseur](/chapter/meteor-vocabulary/)(i.e. `Posts.find({'author':'Tom'})`) dans une fonction de publication, c'est exactement ce qu'utilise Meteor.
 
-////
+Quand Meteor voit que la publication `somePosts` a retourné un curseur, il appelle `_publishCursor()` pour -- vous l'avez deviné -- publier ce curseur automatiquement.
 
-////
+Voici ce que `_publishCursor()` fait:
 
-- ////
-- ////
-- ////
+- Il vérifie le nom de la collection coté-serveur.
+- Il prend tous les documents correspondants du curseur et envoie celui-ci dans une collection coté-client *du même nom*. (Il utilise `.added()` pour faire ça).
+- A chaque moment qu'un document est ajouté, supprimé ou modifié, il envoie ces changements à la collection côté-client. (Il utilise `.observe()` sur le curseur et `.added()`, `.changed()` et `removed()` pour faire ça).
 
-////
+Dans l'exemple au-dessus, nous sommes pouvons nous assurer que l'utilisateur a seulement les articles qui l'interessent (ceux écrit par Tom) disponible dans leur cache côté client.
 
 <% end %>
 
-### Publishing Partial Properties
+### Publier des propriétés partielles
 
-////
+Nous avons vu comment publiquer seulement certains articles, mais vous pouvons continuer à affiner! Voyons comment publier seulement certaines *propriétés* spécifiques.
 
-////
+Juste comme avant, nous allons utiliser `find()` pour retourner un curseur, mais cette fois nous allons exclure certains champs:
 
 ~~~js
 Meteor.publish('allPosts', function(){
@@ -196,9 +196,9 @@ Meteor.publish('allPosts', function(){
 });
 ~~~
 
-<%= diagram "partialproperties", "Publishing partial properties", "pull-center" %>
+<%= diagram "partialproperties", "Publier des propriétés partiellement", "pull-center" %>
 
-////
+Bien sur, nous pouvons également combiner deux techniques. Par exemple, si nous voulions retourner tous les articles de Tom en laissant de côté leurs dates, nous écririons:
 
 ~~~js
 Meteor.publish('allPosts', function(){
@@ -208,10 +208,10 @@ Meteor.publish('allPosts', function(){
 });
 ~~~
 
-### Summing Up
+### Résumé
 
-////
+Donc nous avons vu comment publier chaque propriété de tous les documents de chaque collection (avec `autopublish`) jusqu'à publier seulement _certaines_ propriétés de _certains_ documents de _certaines_ collections.
 
-////
+Ceci couvre les bases de ce que vous pouvez faire avec les publications Meteor, et ces simples techniques s'occuperont de la vaste majorité des cas d'utilisation.
 
-////
+Parfois, vous aurez besoin d'aller plus loin en combinant, reliant, assemblant des publications. Nous allons en discuter dans un prochain chapitre!
