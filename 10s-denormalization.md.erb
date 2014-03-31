@@ -8,9 +8,9 @@ contents: Comprendre ce qu'est la dénormalisation.|Comparer Mongo avec les base
 paragraphs: 15
 ---
 
-////
+Dénormaliser des données veut dire ne pas stocker ces données sous une forme "normale". En d'autres termes, dénormalisation veut dire avoir de multiples copies du même morceau de donnée dans de multiples endroits. 
 
-////
+Dans le dernier chapitre, nous avons dénormalisé le total du nombre de commentaires dans l'objet 'post' pour éviter d'avoir à constamment charger tous les commentaires. D'un point de vue de la modélisation des données, ceci est redondant puisque nous pourrions plutôt compter les commentaires adéquats à tout moment pour calculer cette valeur (en omettant les considérations de performance).
 
 ////
 
