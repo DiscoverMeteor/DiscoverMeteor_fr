@@ -12,9 +12,9 @@ Dénormaliser des données veut dire ne pas stocker ces données sous une forme 
 
 Dans le dernier chapitre, nous avons dénormalisé le total du nombre de commentaires dans l'objet 'post' pour éviter d'avoir à constamment charger tous les commentaires. D'un point de vue de la modélisation des données, ceci est redondant puisque nous pourrions plutôt compter les commentaires adéquats à tout moment pour calculer cette valeur (en omettant les considérations de performance).
 
-////
+Dénormaliser est souvent synonyme de travail supplémentaire pour le développeur. Dans notre exemple, chaque fois que l'on ajoute ou enlève un commentaire, il faudra également se rappeller de mettre à jour l'article concerné pour s'assurer que le champs `commentsCount` (total des commentaires) reste juste. C'est exactement pour cela que les bases de données telles que MySQL voient cette approche d'un mauvais &oelig;il. 
 
-////
+Cependant, l'approche classique a également ses inconvénients: sans une propriété `commentsCount`, nous devrions envoyer tous les commentaires en permanence vers le serveur afin de pouvoir les compter, ce que nous faisions au départ. La dénormalisation permet de nous éviter tout cela.
 
 <% note do %>
 
