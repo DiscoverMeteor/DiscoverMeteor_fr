@@ -65,13 +65,13 @@ Nous ajouterons les boutons à notre en-tête. Et comme cet en-tête commence à
 ~~~
 <%= caption "client/views/includes/header.html" %>
 
-////
+Maintenant, quand nous naviguons dans notre application, nous voyons les boutons d'authentificationen haut à droite dans le coin du site.
 
-<%= screenshot "6-1", "Meteor's built-in accounts UI" %>
+<%= screenshot "6-1", "Interface intégrée des comptes utilisateur de Meteor" %>
 
-////
+On peut utiliser ça pour s'enregistrer, s'authentifier, changer son mot de passe, et tout ce qu'un simple site comportant des comptes utilisateur a besoin.
 
-////
+Pour indiquer au système de compte que nous voulons que les utilisateurs s'authentifient avec un nom d'utilisateur, nous ajoutons simplement un bloc de configuration `Accounts.ui` dans un nouveau fichier `config.js` à l'intérieur de `client/helpers/`:
 
 ~~~js
 Accounts.ui.config({
