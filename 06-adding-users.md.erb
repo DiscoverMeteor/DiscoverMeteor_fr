@@ -80,38 +80,38 @@ Accounts.ui.config({
 ~~~
 <%= caption "client/helpers/config.js" %>
 
-<%= commit "6-1", "Added accounts and added template to the header" %>
+<%= commit "6-1", "Comptes ajoutés et template intégré à l'en-tête" %>
 
-### Creating Our First User
+### Création de notre premier utilisateur
 
-////
+Enregistrez un compte: le bouton "Sign In" changera pour afficher votre nom d'utilisateur. Ça confire que le compte utilisateur a bien été créé pour vous. Mais d'où viennent les données de ce compte ?
 
-////
+En ajoutant le paquet `accounts`, Meteora créé une nouvelle collection spéciale, laquelle peut être accéder avec `Meteor.users()`. Pour la voir, ouvrez la console de votre navigateur et tapez:
 
 ~~~js
 ❯ Meteor.users.findOne();
 ~~~
-<%= caption "Browser console" %>
+<%= caption "Console du navigateur" %>
 
-////
+La console retournera un object correspondant à votre objet utilisateur; Si vous regardez de plus près, vous pouvez voir que votre nom d'utilisateur est dedans, avec un `_id` unique qui vous identifie. Notez que vous pouvez également récupérer l'utilisateur actuellement connecté avec `Meteor.user()`.
 
-////
+Maintenant déconnectez-vous et enregistrez-vous avec un compte utilisateur différent. `Meteor.user()` devrait retourner un second utilisateur. Mais attendez, exécutons:
 
 ~~~js
 ❯ Meteor.users.find().count();
 1
 ~~~
-<%= caption "Browser console" %>
+<%= caption "Console du navigateur" %>
 
-////
+La console retourne 1. Il devrait pas y en avoir 2? Le premier utilisateur a-t-il été supprimé ? SI vous essayez de vous authentifier avec le premier utilisateur, vous verrez que ce n'est pas le cas.
 
-////
+Assurons nous-en et vérifions dans la zone de stockage des données canonique, la base de données Mongo. On se connectera à Mongo (`meteor mongo` dans votre terminal) et on vérifiera:
 
 ~~~bash
 > db.users.count()
 2
 ~~~
-<%= caption "Mongo console" %>
+<%= caption "Console Mongo" %>
 
 ////
 
@@ -154,7 +154,7 @@ Accounts.ui.config({
   "username" : "tmeasday"
 }
 ~~~
-<%= caption "Mongo console" %>
+<%= caption "Console Mongo" %>
 
 ////
 
@@ -162,7 +162,7 @@ Accounts.ui.config({
 ❯ Meteor.users.findOne();
 Object {_id: "kYdBd9hr3fWPGPcii", username: "tmeasday"}
 ~~~
-<%= caption "Browser console" %>
+<%= caption "Console du navigateur" %>
 
 ////
 
