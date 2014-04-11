@@ -113,21 +113,21 @@ Assurons nous-en et vérifions dans la zone de stockage des données canonique, 
 ~~~
 <%= caption "Console Mongo" %>
 
-////
+Il y a bien deux utilisateurs. Donc pourquoi ne pouvons-nous en voir qu'un dans le navigateur ?
 
-### A Mystery Publication!
+### Une publication mystère!
 
-////
+Si vous repensez au chapitre 4, vous pouvez vous souvenir qu'on a supprimé `autopublish`, nous avons arrêté l'envoi des données des collections du serveur vers chaque version local de collection des clients connectés. Nous avions besoin de créer un couple publication / souscription afin de faire transiter les données.
 
-////
+Mais nous n'avons pas encore établi de publication utilisateur. Donc d'où vient que nous pouvons quand même voir une donnée utilisateur ?
 
-////
+La réponse est que le paquet comptes *auto-publie* les détails de base du compte de l'utilisateur actuellement authentifié. S'il ne le faisait pas, l'utilisateur ne pourrait pas s'authentifier sur le site !
 
-////
+Le paquet comptes publie seulement l'utilisateur courant. Ceci explique pourquoi un utilisateur ne peut voir les détails d'un autre compte.
 
-////
+La publication publie donc eulement un objet utilisateurpar utilisateur authentifié (et aucun si vous n'êtes pas authentifié).
 
-////
+De plus, les documents ne semblent pas avoir les mêmes champs sur le serveur et sur le client. Dans Mongo, un utilisateur a beaucoup de données. Pour les voir, retournez sur votre terminal Mongo et tapez:
 
 ~~~bash
 > db.users.findOne()
@@ -156,7 +156,7 @@ Assurons nous-en et vérifions dans la zone de stockage des données canonique, 
 ~~~
 <%= caption "Console Mongo" %>
 
-////
+Et de l'autre côté, dans le navigateur l'objet utilisateur est bien moins rempli, comme vous pouvez le voir en tapant la commande équivalente:
 
 ~~~js
 ❯ Meteor.users.findOne();
@@ -164,6 +164,6 @@ Object {_id: "kYdBd9hr3fWPGPcii", username: "tmeasday"}
 ~~~
 <%= caption "Console du navigateur" %>
 
-////
+Cet exemple nous montre comment une collection local peut être un *sous-ensemble sécurisée* de la vrai base de données. L'utilisateur authentifié voit seulement les informations nécessaires à son bon fonctionnement (dans ce cas, l'authentification). C'est un cas utile pour apprendre, vous vous en apercevrez plus tard.
 
-////
+Ça ne veut pas dire que vous ne pourrez rendre publique des données utilisateur si vous le souhaitez. Vous pouvez vous référer à la [Documentation Meteor](http://docs.meteor.com/#meteor_users) comment vous pouvez publier plus de champs dans la collection `Meteor.users`.
