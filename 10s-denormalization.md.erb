@@ -30,12 +30,12 @@ Bien sûr, de telles considérations sont propre à l'application: si you écriv
 
 ### Intégrer des Documents ou Utiliser des Collections Multiples
 
-////
+Si vous êtes familier avec Mongo, vous avez peut-être été surpris de voir que nous avons créé une seconde collection uniquement pour les commentaires: pourquoi ne pas juste intégrer les commentaires dans une liste dans le 'post'?
 
-////
+Il s'avère que de nombreux outils que Meteor nous fournis marchent bien mieux lorsqu'ils fonctionnent au niveau d'une collection. Par exemple:
 
-1. ////
-2. ////
+1. La fonction `{{#each}}` est très efficace lorsque l'on itère sur un curseur (le résultat de collection.find()). Il n'en est pas de même lorsque l'on itère sur un tableau d'objets dans un plus gros document.
+2. `allow` et `deny` fonctionnent au niveau du document, nous assurant ainsi que toute modification de commentaire individuel soit correcte, chose qui serait plus complexe si l'on opérait au niveau du 'post'.  
 3. ////
 4. ////
 
