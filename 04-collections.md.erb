@@ -79,7 +79,7 @@ Notez que dans chaque cas, vous n'êtes pas supposé écrire le caractère de l'
 
 ### Collections côté Serveur
 
-Sur le serveur, la collection agit comme une API dans votre base de donnée Mpngo. Dans votre code côté serveur, ça vous permet d'écrire des commandes Mongo telles que `Posts.insert()` ou `Posts.update()`, et et elles feront les changements dans la collection `posts` stockées dans Mongo.
+Sur le serveur, la collection agit comme une API dans votre base de donnée Mongo. Dans votre code côté serveur, ça vous permet d'écrire des commandes Mongo telles que `Posts.insert()` ou `Posts.update()`, et et elles feront les changements dans la collection `posts` stockées dans Mongo.
 
 Pour regarder dans la base de donnée Mongo, ouvrez un second terminal (`meteor` est toujours en cours d'exécution sur votre premier), et allez dans le répertoire de votre application. Ensuite, exécutez la commande `meteor mongo` pour initier un shell Mongo, dans lequel vous pouvez taper des commandes Mongo standards (et comme habituellement, vous pouvez quitter avec le raccourci clavier `ctrl+c`). Par exemple, insérons un nouvel article:
 
@@ -103,9 +103,9 @@ Et pendant que vous y êtes, vous pouvez également retrouver les journaux (logs
 
 La syntaxe de Mongo est familière, vu qu'elle utilise une interface JavaScript. Nous ne ferons pas plus de manipulation de données dans le shell Mongo, mais vous pourrez y jeter un oeil de temps en temps pour vous assurer de ce qui s'y trouve.
 
-### Collections côté client
+### Collections côté Client
 
-Les collections sont plus interessantes côté client. Quand vous déclarez `Posts = new Meteor.Collection('posts');` sur le client, ce que vous êtes en train de créer est un cache_ dans le navigateur, _local de la collection Mongo réelle. Quand nous parlons de collections côté client en tant que "cache", nous voulons dire qu'elle contient le *sous-ensemble* de vos données, et offre un accès *rapide* à ces données. 
+Les collections sont plus intéressantes côté client. Quand vous déclarez `Posts = new Meteor.Collection('posts');` sur le client, ce que vous êtes en train de créer est un cache_ dans le navigateur, _local de la collection Mongo réelle. Quand nous parlons de collections côté client en tant que "cache", nous voulons dire qu'elle contient le *sous-ensemble* de vos données, et offre un accès *rapide* à ces données. 
 
 Il est important de comprendre ce point qui est fondamental dans la façon dont Meteor fonctionne. En général, une collection côté client consiste en un sous-ensemble de tous vos documents stockés dans la collection Mongo (après tout, en général, nous ne voulons pas envoyer toute la base de données au client).
 
@@ -178,11 +178,11 @@ Récupérer les articles dans la console du navigateur n'est pas très utile. No
 
 ### Conserver le temps réel
 
-Regarder le contenu de nos collections sur le navigateur est une chose, mais ce que nous aimerions vriament faire c'est afficher les données, et les changements de ces données, sur l'écran. En faisant ça nous transformerons notre simple *page* web affichant du contenu statique, en *application* web temps réel avec des données changeantes, dynamiques.
+Regarder le contenu de nos collections sur le navigateur est une chose, mais ce que nous aimerions vraiment faire c'est afficher les données, et les changements de ces données, sur l'écran. En faisant ça nous transformerons notre simple *page* web affichant du contenu statique, en *application* web temps réel avec des données changeantes, dynamiques.
 
 Voyons comment faire.
 
-### Peuplmr la base de données
+### Remplir la base de données
 
 La première chose que nous allons faire est de mettre des données dans notre base de données. Nous allons faire ça avec un fichier d'installation (fixture) qui charge un ensemble de données structurées dans la collection `Posts` quand le serveur démarre pour la première fois.
 
@@ -229,7 +229,7 @@ Maintenant relancez votre serveur avec `meteor`, et ces trois articles seront ch
 
 ### Lier les données au HTML avec les helpers
 
-Maintenant, si nous ouvrons une console navigateur, we verrons les trois articles chargés dans MiniMongo:
+Maintenant, si nous ouvrons une console navigateur, nous verrons les trois articles chargés dans MiniMongo:
 
 ~~~js
 ❯ Posts.find().fetch();
@@ -258,17 +258,17 @@ Template.postsList.helpers({
 
 Dans Meteor, `find()` retourne un *cursor* (curseur), qui est une [source de données réactive](http://docs.meteor.com/#find). Quand nous voulons récupérer son contenu, nous pouvons utiliser `fetch()` sur ce curseur pour le transformer en tableau.
 
-a l'intérieur d'une application, Meteor est assez intelligent pour savoir comment itérer sur un curseur sans avoir à sans avoir à les convertir d'abord explicitement en tableaux. C'est pourquoi vous ne verrez pas `fetch()` si souvent que ça dans le code Meteor actuel (et pourquoi nous ne l'utiliserons pas dans l'exemple ci-dessous).
+A l'intérieur d'une application, Meteor est assez intelligent pour savoir comment itérer sur un curseur sans avoir à les convertir d'abord explicitement en tableaux. C'est pourquoi vous ne verrez pas `fetch()` si souvent que ça dans le code Meteor actuel (et pourquoi nous ne l'utiliserons pas dans l'exemple ci-dessous).
 
 <% end %>
 
-Maintenant, plutôt que prendre une liste d'articles sous forme de tableau statique depuis une variable, nous retournons un curseur de notre helper `posts`. Mais qu'est-ce que ça fait ?Si nous allons dans le navigateur, nous pouvons voir:
+Maintenant, plutôt que prendre une liste d'articles sous forme de tableau statique depuis une variable, nous retournons un curseur de notre helper `posts`. Mais qu'est-ce que ça fait? Si nous allons dans le navigateur, nous pouvons voir:
 
 <%= screenshot "4-3", "Utiliser des données dynamiques" %>
 
 Donc, nous pouvons clairement voir que notre helper `{{#each}}` a itéré sur tous nos `Posts`, et les a affiché à l'écran. La collection côté serveur a récupéré les articles de Mongo, les a envoyés vers la collection côté client, et nos helpers Handlebars les ont affichés dans notre template.
 
-Maintenant, nous pouvons aller un peu plus loin,; ajoutons un autre article via la console:
+Maintenant, nous pouvons aller un peu plus loin; ajoutons un autre article via la console:
 
 ~~~js
 ❯ Posts.insert({
