@@ -16,7 +16,7 @@ Une grande part de la raison pour laquelle les gens trouvent ces concepts un peu
 
 ### Les vieux jours
 
-Mais dans un premier temps, regardons en arrière dans les vieux jours de 2011 quand Meteor n'étaient pas encore là. Disons que vous développez une simple applications rails. Quand un utilisateur atteint votre site, le client (i.e votre navigateur) envoit une requête à votre application, qui est en cours sur votre serveur.
+Mais dans un premier temps, regardons en arrière dans les vieux jours de 2011 quand Meteor n'étaient pas encore là. Disons que vous développez une simple applications rails. Quand un utilisateur atteint votre site, le client (i.e. votre navigateur) envoit une requête à votre application, qui est en cours sur votre serveur.
 
 Le premier travail de l'application est de trouver quelles données l'utilisateur a besoin de voir. Ça pourrait être à la page 12 de vos résultats, les informations de profil de Marie, les 20 derniers tweets de Bob, etc... Vous pouvez imaginer un marchand de livres recherchant dans des allées le livre que vous avez demandé.
 
@@ -48,7 +48,7 @@ Revenons à Microscope. Nous avons ici tous les articles de l'application dans n
 
 <%= diagram "collections-1", "Tous les articles contenus dans la base de données.", "pull-center" %>
 
-Bien que cette fonctionnalité n'est pas encore présente dans MMicroscope, nous allons imaginer que certains articles ont été signalés pour langage abusif. Bien que nous voulons les garder dans notre base de données, il ne devront pas être rendu disponible aux utilisateurs (i.e. envoyé au client).
+Bien que cette fonctionnalité n'est pas encore présente dans Microscope, nous allons imaginer que certains articles ont été signalés pour langage abusif. Bien que nous voulons les garder dans notre base de données, ils ne devront pas être rendu disponible aux utilisateurs (i.e. envoyé au client).
 
 Notre première tâche sera de dire à Meteor quelles données nous voulons *réellement* envoyer au client. Nous allons dire à Meteor que nous voulons seulement **publier** les articles non signalés:
 
@@ -63,7 +63,7 @@ Meteor.publish('posts', function() {
 });
 ~~~
 
-Cela assure qu'il n'y a **aucun moyen possible** qu'un client soit capable d'accéder à un article signalé. C'est exactement comme ça que vous allez sécuriser une application Meteor: juste vous assurez que vous publiez seulement les données que vous voulez fournir au client.
+Cela assure qu'il n'y a **aucun moyen possible** qu'un client soit capable d'accéder à un article signalé. C'est exactement comme ça que vous allez sécuriser une application Meteor: assurez-vous juste que vous publiez seulement les données que vous voulez fournir au client.
 
 <% note do %>
 
@@ -94,7 +94,7 @@ Meteor.publish('posts', function(author) {
 });
 ~~~
 
-Et nous définierions ensuite ce paramètre au moment de la souscription à cette publication dans le code coté-client de notre application:
+Et nous définirons ensuite ce paramètre au moment de la souscription à cette publication dans le code coté-client de notre application:
 
 ~~~js
 // on the client
@@ -105,7 +105,7 @@ C'est de cette façon qu'on rend une application Meteor adaptable coté-client: 
 
 ### Trouver
 
-Maintenant que les articles de Bob arrivent à être étiquetté dans plusieurs catégories (par exemple: "Javasript", "Ruby, et "Python"). Peut-être que nous voulons toujours charger tous les articles de Bob en mémoire, mais nous voulons seulement afficher ceux de la catégorie "Javascript". C'est ici que "trouver" intervient.
+Maintenant que les articles de Bob arrivent à être étiqueté dans plusieurs catégories (par exemple: "Javascript", "Ruby, et "Python"). Peut-être que nous voulons toujours charger tous les articles de Bob en mémoire, mais nous voulons seulement afficher ceux de la catégorie "Javascript". C'est ici que "trouver" intervient.
 
 <%= diagram "collections-4", "Sélectionner un sous-ensemble sur le client.", "pull-center" %>
 
@@ -132,7 +132,7 @@ Le but de `autopublish` est de rendre très facile le début de développement d
 
 Comment ça fonctionne ? Supposez que vous avez une collection appelées `'posts'` sur le serveur. Alors `autopublish` enverra automatiquement chaque article qu'il trouvera dans la collection posts Mongo vers une collections appelées `'posts'` sur le client (en considérant qu'il y en a un).
 
-Donc si vous utilisez `autopublish`, vous n'avez pas besoin de penser aux publications. Les données sont omniprésentes, et les choses sont simples. Bien sur, il y a des problèmes évidents d'avoir une copie complète de la base de données de l'application en cache sur chaque machine d'utilisateur.
+Donc si vous utilisez `autopublish`, vous n'avez pas besoin de penser aux publications. Les données sont omniprésentes, et les choses sont simples. Bien sûr, il y a des problèmes évidents d'avoir une copie complète de la base de données de l'application en cache sur chaque machine d'utilisateur.
 
 Pour cette raison, autopublish est seulement approprié quand vous démarrez, et que vous n'avez pas encore réfléchi sur les publications.
 
@@ -148,7 +148,7 @@ Meteor.publish('allPosts', function(){
 
 <%= diagram "fullcollection", "Publier une collection complète", "pull-center" %>
 
-Nous publions encore des collections complètes, mais au moins nous avons maintenant le contrôle sur quelles collections nous publions ou pas. Dans ce casn nous publions la collection `Posts` mais pas `Comments`.
+Nous publions encore des collections complètes, mais au moins nous avons maintenant le contrôle sur quelles collections nous publions ou pas. Dans ce cas, nous publions la collection `Posts` mais pas `Comments`.
 
 ### Publier des collections partielles
 
@@ -198,7 +198,7 @@ Meteor.publish('allPosts', function(){
 
 <%= diagram "partialproperties", "Publier des propriétés partiellement", "pull-center" %>
 
-Bien sur, nous pouvons également combiner deux techniques. Par exemple, si nous voulions retourner tous les articles de Tom en laissant de côté leurs dates, nous écririons:
+Bien sûr, nous pouvons également combiner deux techniques. Par exemple, si nous voulions retourner tous les articles de Tom en laissant de côté leurs dates, nous écririons:
 
 ~~~js
 Meteor.publish('allPosts', function(){
