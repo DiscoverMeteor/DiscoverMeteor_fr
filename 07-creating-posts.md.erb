@@ -11,9 +11,9 @@ Nous avons vu qu’il était facile de créer des posts via la console en utilis
 
 En fin de compte, nous aurons besoin de construire une sorte d'interface utilisateur pour permettre à nos utilisateurs d’envoyer de nouvelles histoires à notre application.
 
-### Building The New Post Page
+### Construire la nouvelle page d'envoi
 
-////
+Nous commençons par définir une route pour notre nouvelle page :
 
 ~~~js
 Router.configure({
@@ -38,7 +38,7 @@ Router.map(function() {
 <%= caption "lib/router.js" %>
 <%= highlight "13~15" %>
 
-////
+Nous utilisons la fonction `data` du Router pour définir le contexte des données du template `postPage`. Rappelez-vous que tout ce que nous mettons dans le contexte de données sera disponible en tant que `this` dans les Helpers du template.
 
 ### Adding A Link To The Header
 
