@@ -40,9 +40,9 @@ Router.map(function() {
 
 Nous utilisons la fonction `data` du Router pour définir le contexte des données du template `postPage`. Rappelez-vous que tout ce que nous mettons dans le contexte de données sera disponible en tant que `this` dans les Helpers du template.
 
-### Adding A Link To The Header
+### Ajouter un lien dans l’entête
 
-////
+La route étant définie, nous pouvons désormais ajouter un lien vers notre page d’envoi dans l’entête :
 
 ~~~html
 <template name="header">
@@ -69,7 +69,7 @@ Nous utilisons la fonction `data` du Router pour définir le contexte des donné
 <%= caption "client/views/includes/header.html" %>
 <%= highlight "11~16" %>
 
-////
+Configurer notre route signifie que si un utilisateur accède à l’URL `/submit`, Meteor affichera le template `postSubmit`. Nous allons donc écrire ce template :
 
 ~~~html
 <template name="postSubmit">
@@ -106,11 +106,11 @@ Nous utilisons la fonction `data` du Router pour définir le contexte des donné
 ~~~
 <%= caption "client/views/posts/post_submit.html" %>
 
-////
+Remarque : ici nous avons beaucoup de balises, mais cela vient simplement de l’utilisation de Twitter Bootstrap. Bien que seuls les éléments de formulaire sont essentielles, les balises supplémentaires nous aiderons à rendre notre application plus agréable à regarder. Elle devrait désormais ressembler à cela :
 
-<%= screenshot "7-1", "The post submit form" %>
+<%= screenshot "7-1", "Le formulaire d'envoi de Post" %>
 
-////
+C’est un formulaire simple. Nous n’avons pas à nous soucier de définir une action pour celui-ci puisque que nous intercepterons l’événement `submit` et que nous mettrons à jour les données via JavaScript. (Il n’est pas logique de fournir une solution de secours non-JS si nous considérons que Meteor ne fonctionne pas lorsque JavaScript est désactivé).
 
 ### Creating Posts
 
