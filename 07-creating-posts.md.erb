@@ -112,9 +112,9 @@ Remarque : ici nous avons beaucoup de balises, mais cela vient simplement de l�
 
 C’est un formulaire simple. Nous n’avons pas à nous soucier de définir une action pour celui-ci puisque que nous intercepterons l’événement `submit` et que nous mettrons à jour les données via JavaScript. (Il n’est pas logique de fournir une solution de secours non-JS si nous considérons que Meteor ne fonctionne pas lorsque JavaScript est désactivé).
 
-### Creating Posts
+### Créer des Posts
 
-////
+Nous allons lier un gestionnaire d'événements à l'événement `submit` de notre formulaire. Il est préférable d'utiliser l'événement `submit` (plutôt qu'un événement `click` sur le bouton), ce qui englobera toutes les moyens de soumission du formulaire (comme par exemple appuyer sur la touche entrée tout en étant dans le champ de saisie de l'URL).
 
 ~~~js
 Template.postSubmit.events({
@@ -134,13 +134,13 @@ Template.postSubmit.events({
 ~~~
 <%= caption "client/views/posts/post_submit.js" %>
 
-<%= commit "7-1", "Added a submit post page and linked to it in the header." %>
+<%= commit "7-1", "Ajouter une page d'envoi du Post et le lien correspondant dans l'entête." %>
 
-////
+Cette fonction utilise [jQuery](http://jquery.com) pour récupérer les valeurs de nos différents champs de saisie, et remplir un nouvel objet Post avec celles-ci. Il nous est nécessaire d’utiliser `preventDefault` sur l’argument `e` qui est l’événement pour être sûr que le navigateur ne nous précède pas et n’essaie pas d’envoyer le formulaire.
 
-////
+Pour finir, nous pouvons rediriger vers la page du nouveau post. La fonction `insert()` de la collection nous retourne l’`id` généré pour l’objet qui a été inséré dans notre base de données, qui sera utilisé par la fonction `go()` du Router pour construire l’URL de redirection.
 
-////
+Le résultat est que l’utilisateur appuie sur `Submit`, un post est créé, et l’utilisateur est immédiatement redirigé vers la page de discussion de ce nouveau post.
 
 ### Adding Some Security
 
