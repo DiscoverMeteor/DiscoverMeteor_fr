@@ -59,7 +59,7 @@ La route étant définie, nous pouvons désormais ajouter un lien vers notre pag
           <li><a href="{{pathFor 'postSubmit'}}">New</a></li>
         </ul>
         <ul class="nav pull-right">
-          <li>{{loginButtons}}</li>
+          <li>{{> loginButtons}}</li>
         </ul>
       </div>
     </div>
@@ -67,7 +67,7 @@ La route étant définie, nous pouvons désormais ajouter un lien vers notre pag
 </template>
 ~~~
 <%= caption "client/views/includes/header.html" %>
-<%= highlight "11~16" %>
+<%= highlight "11~13" %>
 
 Configurer notre route signifie que si un utilisateur accède à l’URL `/submit`, Meteor affichera le template `postSubmit`. Nous allons donc écrire ce template :
 
