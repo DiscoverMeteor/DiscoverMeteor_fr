@@ -157,9 +157,9 @@ $ meteor remove insecure
 
 Après l'avoir fait, vous remarquerez que le formulaire d’envoi de post ne fonctionne plus. En effet, sans le package `insecure`, les insertions de post côté client _ne sont plus autorisées_. Désormais nous avons deux options, soit écrire des règles explicites pour dire à Meteor quels utilisateurs peuvent insérer des posts ou bien réaliser les insertions côté serveur.
 
-### Allowing Post Inserts
+### Permettre l'insertion des Posts
 
-////
+Pour commencer, nous allons vous montrer comment autoriser l’insertion des posts côté client afin d’obtenir à nouveau un formulaire fonctionnel. Il s’avère que nous utiliserons une technique différente à la fin, mais pour le moment, ce qui suit nous permettra de le refaire fonctionner assez facilement :
 
 ~~~js
 Posts = new Meteor.Collection('posts');
@@ -174,23 +174,23 @@ Posts.allow({
 <%= caption "collections/posts.js" %>
 <%= highlight "3~8" %>
 
-<%= commit "7-2", "Removed insecure, and allowed certain writes to posts." %>
+<%= commit "7-2", "Supprimer insecure, et permettre certains ajouts de posts." %>
 
-////
+Nous appelons `Posts.allow`, qui dit à Meteor « cela est un ensemble de circonstances dans lesquelles les clients sont autorisés à faire des choses sur la collection `Posts` ». Dans ce cas, nous disons « les clients sont autorisés à insérer des posts tant qu’ils ont un `userId` ».
 
-////
+L’`userId` de l’utilisateur faisant la modification est passé dans les appels de `allow` et `deny` (ou retourne `null` si l’utilisateur n’est pas connecté), ce qui est très souvent utile. Et comme les comptes utilisateurs sont liés au noyau de Meteor, nous pouvons être sûr que l’`userId` soit toujours correcte.
 
-////
+Nous avons réussi à faire en sorte que vous devez être connecté pour créer un post. Essayez de vous déconnecter et de créer un post; vous devriez voir ceci dans votre console :
 
-<%= screenshot "7-2", "Insert failed: Access denied " %>
+<%= screenshot "7-2", "Echec de l'insertion : accès refusé" %>
 
-////
+Toutefois, nous avons à faire face à quelques problèmes :
 
- - ////
- - ////
- - ////
+ - Les utilisateurs déconnectés peuvent encore accèder au formulaire de création de post.
+ - Le post n'est pas lié à l'utilisateur (et il n'y a pas de code sur le serveur qui impose cela).
+ - Des posts qui pointent vers la même URL peuvent être créés.
 
-////
+Réglons ces problèmes.
 
 ### Securing Access To The New Post Form
 
