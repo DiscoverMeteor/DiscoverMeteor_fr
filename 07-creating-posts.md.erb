@@ -192,17 +192,19 @@ Toutefois, nous avons à faire face à quelques problèmes :
 
 Réglons ces problèmes.
 
-### Securing Access To The New Post Form
+### Sécuriser l'accès au nouveau formulaire
 
-////
+Nous allons commencer par empêcher les utilisateurs non connectés de voir le formulaire d'envoi de post. Nous le ferons au niveau du router, en définissant une *action (hook) du router*.
 
-////
+Une action (hook) intercepte le processus de routage et modifie l'action que le router prend. Vous pouvez penser que c'est un agent de sécurité qui contrôle vos informations d'identification avant de vous laisser entrer (ou de vous renvoyer).
 
-////
+Il nous faut vérifier si l'utilisateur est connecté, et s'il ne l'est pas rendre le template `accessDenied` à la place du template `postSubmit` (puis nous indiquerons au router de rien faire de plus). Donc, nous allons modifier router.js comme ci-dessous :
 
 ~~~js
 Router.configure({
-  layoutTemplate: 'layout'
+  layoutTemplate: 'layout',
+  loadingTemplate: 'loading',
+  waitOn: function() { return Meteor.subscribe('posts'); }
 });
 
 Router.map(function() {
@@ -218,19 +220,21 @@ Router.map(function() {
   });
 });
 
-var requireLogin = function() {
+
+var requireLogin = function(pause) {
   if (! Meteor.user()) {
     this.render('accessDenied');
-    this.stop();
+    pause();
   }
 }
 
-Router.before(requireLogin, {only: 'postSubmit'});
+Router.onBeforeAction('loading');
+Router.onBeforeAction(requireLogin, {only: 'postSubmit'});
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "18~25" %>
+<%= highlight "19~26,29" %>
 
-////
+Nous créons aussi le template pour la page d'accès refusé :
 
 ~~~html
 <template name="accessDenied">
@@ -239,21 +243,21 @@ Router.before(requireLogin, {only: 'postSubmit'});
 ~~~
 <%= caption "client/views/includes/access_denied.html" %>
 
-<%= commit "7-3", "Denied access to new posts page when not logged in." %>
+<%= commit "7-3", "Accès refusé à l'envoi de posts aux utilisateurs non connectés." %>
 
-////
+Si vous allez maintenant sur http://localhost:3000/submit/ sans être connecté, vous devriez voir cela :
 
-<%= screenshot "7-3", "The access denied template" %>
+<%= screenshot "7-3", "Template d'accès refusé" %>
 
-////
+Ce qui est agréable au niveau des actions (hooks) de routage c'est qu'elles sont _réactives_. Cela signifie que nous pouvons être déclaratif et nous n'avons pas besoin de penser aux fonctions de rappels (callbacks), ou autre, quand l'utilisateur se connecte. Quand l'état de la connection de l'utilisateur change, le template de la page change immédiatement de `accessDenied` à `postSubmit` sans que nous ayons à écrire de code pour le gérer.
 
-////
+Connectez-vous, puis essayez de rafraîchir la page. Vous pouvez parfois voir le template d'accès refusé s'afficher un court instant avant que la page d'envoi de post apparaisse. La raison à cela est que Meteor commence à rendre les templates dès que possible, avant même qu'il ait interrogé le serveur et qu'il ait vérifié si l'utilisateur courant (stocké dans le local storage du navigateur) existe encore.
 
-////
+Pour éviter ce problème (qui est un des plus courants que vous pourrez rencontrer quand vous traiterez des subtilités de la latence entre le client et le serveur), nous allons juste afficher un écran de chargement pendant le bref moment où nous attendons de savoir si l'utilisateur a l'accès ou non.
 
-////
+Après tout, à cette étape nous ne savons pas si l'utilisateur possède des informations d'identification correctes, et ne nous pouvons pas afficher le template `accessDenied` ou le template `postSubmit` tant que nous ne le savons pas.
 
-////
+Donc, nous modifions notre action (hook) pour utiliser notre template de chargement tant que `Meteor.loggingIn()` est vrai :
 
 ~~~js
 Router.map(function() {
@@ -269,23 +273,25 @@ Router.map(function() {
   });
 });
 
-var requireLogin = function() {
+
+var requireLogin = function(pause) {
   if (! Meteor.user()) {
     if (Meteor.loggingIn())
       this.render(this.loadingTemplate);
     else
       this.render('accessDenied');
     
-    this.stop();
+    pause();
   }
 }
 
-Router.before(requireLogin, {only: 'postSubmit'});
+Router.onBeforeAction('loading');
+Router.onBeforeAction(requireLogin, {only: 'postSubmit'});
 ~~~
 <%= caption "lib/router.js" %>
 <%= highlight "16~19" %>
 
-<%= commit "7-4", "Show a loading screen while waiting to login." %>
+<%= commit "7-4", "Afficher un écran de chargement en attendant l'authentification." %>
 
 ### Hiding the Link
 
