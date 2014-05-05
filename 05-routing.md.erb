@@ -161,7 +161,7 @@ Router.map(function() {
 Router.onBeforeAction('loading');
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "3,4" %>
+<%= highlight "3,4, 11" %>
 
 Décomposons les choses. Premièrement, nous avons modifié le bloc `Router.configure()` pour fournir au routeur le nom du template de chargement (que nous allons créer plus tard) à rediriger pendant que notre application attend les données.
 
@@ -171,7 +171,9 @@ Notez que depuis que nous définissons notre fonction `waitOn` globalement au ni
 
 Et maintenant que nous laissons le routeur gérer notre souscription, vous pouvez  tranquillement la supprimer de `main.js` (lequel doit maintenant être vide).
 
-C'est habituellement une bonne idée d'attendre vos souscriptions, pas juste pour l'expérience utilisateur, mais également parce que vous supposer sans problème que les données seront toujours disponibles à l'intérieur du template. Cela élimine le besoin d'échanger avec des templates en train d'être rendu avant que leur données associées soit disponibles, ce qui requiert toujours des moyens de contournements hasardeux.
+C'est habituellement une bonne idée d'attendre vos souscriptions, pas juste pour l'expérience utilisateur, mais également parce que vous supposez sans problème que les données seront toujours disponibles à l'intérieur du template. Cela élimine le besoin d'échanger avec des templates en train d'être rendu avant que leur données associées soit disponibles, ce qui requiert toujours des moyens de contournements hasardeux.
+
+Nous allons également ajouter un filtre `onBeforeAction` pour déclencher le grappin `loading` natif d'Iron Router et nous assurer que nous affichons bien le template de chargement durant l'attente. 
 
 La pièce finale du puzzle est le template de chargement. Nous allons utiliser le paquet `spin` pour créer un joli indicateur de chargement animé. Ajoutez le avec `mrt add spin`, et créer le template de `chargement` comme suit:
 
