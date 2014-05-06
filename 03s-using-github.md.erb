@@ -18,29 +18,29 @@ Le bloc de travail de base d'un dépôt git est le *commit*. Vous pouvez imagine
 
 Au lieu de vous donner simplement le code fini pour Microscope, nous avons pris ces images à chaque étape du développement, et vous pouvez toutes les voir en ligne sur GitHub.
 
-Par exemple, c'est ce à quoi [le dernier commit du chapitre précédent](https://github.com/DiscoverMeteor/Microscope/commit/chapter3-2) ressemble:
+Par exemple, c'est ce à quoi [le dernier commit du chapitre précédent](https://github.com/DiscoverMeteor/Microscope/commit/chapter3-2) ressemble :
 
 <%= screenshot "s3-1", "Un commit Git vu sur GitHub." %>
 
 Ce que vous voyez ici est le "diff" (pour "difference") du fichier `post_item.js`, en d'autres termes les changements introduits par ce commit. Dans ce cas, nous avons créé le fichier `post_item.js` à partir de rien, et donc tout son contenu est surligné en vert.
 
-Comparons avec un exemple [plus loin dans le livre](https://github.com/DiscoverMeteor/Microscope/commit/chapter13-1):
+Comparons avec un exemple [plus loin dans le livre](https://github.com/DiscoverMeteor/Microscope/commit/chapter13-1) :
 
 <%= screenshot "s3-2", "Modifier du code." %>
 
 Cette fois, seuls les fichiers modifiés sont surlignés en vert.
 
-Et bien sur, parfois nous n'avons pas ajouté ou modifié de lignes de code, mais nous en [avons supprimées](https://github.com/DiscoverMeteor/Microscope/commit/chapter12-2):
+Et bien sur, parfois nous n'avons pas ajouté ou modifié de lignes de code, mais nous en [avons supprimées](https://github.com/DiscoverMeteor/Microscope/commit/chapter12-2) :
 
 <%= screenshot "s3-3", "Supprimer du code." %>
 
-Bien, nous venons de voir la première utilisation de GitHub: avoir une vue d'ensemble de ce qui a changé.
+Bien, nous venons de voir la première utilisation de GitHub : avoir une vue d'ensemble de ce qui a changé.
 
 ### Explorer le code d'un Commit
 
 La vue d'un commit de Git nous montre les changements inclus dans ce commit, mais parfois vous voudriez voir les fichiers qui *n'ont pas* changés, juste pour s'assurer de ce à quoi leur code doit ressembler à une étape du processus.
 
-Une fois encore, GitHub a quelque chose à nous proposer. Quand vous êtes sur une page de commit, cliquez sur le bouton **Browse code**:
+Une fois encore, GitHub a quelque chose à nous proposer. Quand vous êtes sur une page de commit, cliquez sur le bouton **Browse code** :
 
 <%= screenshot "s3-5", "Le bouton Browse code." %>
 
@@ -48,7 +48,7 @@ Vous allez maintenant avoir accès au dépôt *tel qu'il est à ce moment spéci
 
 <%= screenshot "s3-6", "Le dépôt au commit 3-2." %>
 
-GitHub ne nous donne pas d'indices visuels que vous êtes en train de regarder un commit, mais vous pouvez comparer avec la vue master "normale" et voir d'un coup d'oeil que la structure de fichiers est différente:
+GitHub ne nous donne pas d'indices visuels que vous êtes en train de regarder un commit, mais vous pouvez comparer avec la vue master "normale" et voir d'un coup d'oeil que la structure de fichiers est différente :
 
 <%= screenshot "s3-7", "Le dépôt au commit 14-2." %>
 
@@ -56,7 +56,7 @@ GitHub ne nous donne pas d'indices visuels que vous êtes en train de regarder u
 
 Nous venons de voir comment explorer le code entier d'un commit en ligne sur GitHub. Mais comment faire si vous voulez faire la même chose localement ? Par exemple, vous pourriez vouloir exécuter une application localement à un commit spécifique pour voir comment elle se comportait à ce moment du processus.
 
-Pour faire ça il y a plusieurs étapes (bien, dans ce livre du moins) avec l'utilitaire en ligne de commande `git`. Pour les débutants, [assurez vous d'avoir Git installé](http://git-scm.com/downloads). Ensuite **clone** (en d'autres termes, télécharger une copie localement) le dépôt de Microscope avec:
+Pour faire ça il y a plusieurs étapes (bien, dans ce livre du moins) avec l'utilitaire en ligne de commande `git`. Pour les débutants, [assurez vous d'avoir Git installé](http://git-scm.com/downloads). Ensuite **clone** (en d'autres termes, télécharger une copie localement) le dépôt de Microscope avec :
 
 ~~~bash
 $ git clone git@github.com:DiscoverMeteor/Microscope.git github_microscope
@@ -64,7 +64,7 @@ $ git clone git@github.com:DiscoverMeteor/Microscope.git github_microscope
 
 Ce `github_microscope` à la fin est simplement le nom du répertoire local dans lequel vous allez cloner l'application. Dans le cas où vous avez déjà un répertoire `microscope`, prenez juste un nom différent (il n'y a pas besoin d'avoir le même nom que le dépôt GitHub).
 
-Allez dans le répertoire avec la commande `cd` afin de pouvoir utiliser l'utilitaire en ligne de commande `git`:
+Allez dans le répertoire avec la commande `cd` afin de pouvoir utiliser l'utilitaire en ligne de commande `git` :
 
 ~~~bash
 $ cd github_microscope
@@ -96,11 +96,11 @@ Git vous informe que vous êtes dans un état “detached HEAD”, ce qui signif
 
 La raison pour laquelle vous avez pu simplement taper `chapter3-1` est que nous avons pre-taggé tous les commits de Microscope avec le marqueur de chapitre correcte. Si ça n'était pas le cas, vous auriez besoin de trouver le **hash** du commit, ou un identifiant unique.
 
-Une fois encore, GitHub nous simmplfie la vie. Vous pouvez trouver un hash de commit dans le coin en bas à droite du champ d'entête de commit bleu, comme ci-dessous: 
+Une fois encore, GitHub nous simmplfie la vie. Vous pouvez trouver un hash de commit dans le coin en bas à droite du champ d'entête de commit bleu, comme ci-dessous :
 
 <%= screenshot "s3-4", "Trouver un hash de commit." %>
 
-Testons avec un hash au lieu d'un tag:
+Testons avec un hash au lieu d'un tag :
 
 ~~~bash
 $ git checkout c7af59e425cd4e17c20cf99e51c8cd78f82c9932
@@ -108,7 +108,7 @@ Previous HEAD position was a004b56... Added basic posts list template and static
 HEAD is now at c7af59e... Augmented the postsList route to take a limit
 ~~~
 
-Et finalement, si nous voulons arrêter de regarder dans notre boule de cristal et que nous voulons revenir dans le présent ? Nous demandons à Git de consulter la branche **master**:
+Et finalement, si nous voulons arrêter de regarder dans notre boule de cristal et que nous voulons revenir dans le présent ? Nous demandons à Git de consulter la branche **master** :
 
 ~~~bash
 $ git checkout master
@@ -116,23 +116,23 @@ $ git checkout master
 
 ### Perspective historique
 
-Voici un autre scénario commun: vous regardez un fichier et remarquez des changements que vous n'aviez pas vu avant. Le fait est, que vous ne vous souvenez plus **quand** le fichier a été changé. Vous pourriez juste regarder les commits un par un jusqu'à que vous trouviez le bon, mais il y a un moyen plus facile grâce à la fonctionnalité d'**historique** de GitHub.
+Voici un autre scénario commun : vous regardez un fichier et remarquez des changements que vous n'aviez pas vu avant. Le fait est, que vous ne vous souvenez plus **quand** le fichier a été changé. Vous pourriez juste regarder les commits un par un jusqu'à que vous trouviez le bon, mais il y a un moyen plus facile grâce à la fonctionnalité d'**historique** de GitHub.
 
-Premièrement, accédez à l'un des fichiers de votre dépôt sur GitHub, puis localisez le bouton "History":
+Premièrement, accédez à l'un des fichiers de votre dépôt sur GitHub, puis localisez le bouton "History" :
 
 <%= screenshot "s3-8", "Bouton History de GitHub." %>
 
-Vous avez maintenant une liste claire de tous les commits qui ont affectés ce fichier en particulier:
+Vous avez maintenant une liste claire de tous les commits qui ont affectés ce fichier en particulier :
 
 <%= screenshot "s3-9", "Afficher l'historique d'un fichier." %>
 
 ### Le jeu du blâme
 
-Pour développer, regardons **Blame** de plus près:
+Pour développer, regardons **Blame** de plus près :
 
 <%= screenshot "s3-10", "Bouton Blame de GitHub." %>
 
-Cette vue claire nous montre lingne par ligne qui a modifié le fichier, et dans quel commit (en d'autres termes, qui est à blâmer quand les choses ne fonctionnent plus):
+Cette vue claire nous montre lingne par ligne qui a modifié le fichier, et dans quel commit (en d'autres termes, qui est à blâmer quand les choses ne fonctionnent plus) :
 
 <%= screenshot "s3-11", "Vue Blame de GitHub." %>
 
