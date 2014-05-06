@@ -12,7 +12,7 @@ Pour faciliter le développement dans Meteor, nous allons adopter une approche d
 
 Ce qui veut dire que dans ce chapitre nous nous occuperons de ce qu'il se passe dans le répertoire `/client`.
 
-Créez un nouveau fichier appelé `main.html` dans votre répertoire `/client` et insérez le code suivant:
+Créez un nouveau fichier appelé `main.html` dans votre répertoire `/client` et insérez le code suivant :
 
 ~~~html
 <head>
@@ -51,7 +51,7 @@ Ca signifie également que vous pourriez aussi bien mettre tous vos fichiers dan
 
 <% end %>
 
-Nous sommes finalement prêt pour créer notre second template. Dans `client/views/posts`, créez `posts_list.html`:
+Nous sommes finalement prêt pour créer notre second template. Dans `client/views/posts`, créez `posts_list.html` :
 
 ~~~html
 <template name="postsList">
@@ -64,7 +64,7 @@ Nous sommes finalement prêt pour créer notre second template. Dans `client/vie
 ~~~
 <%= caption "client/views/posts/posts_list.html" %>
 
-Et `post_item.html`:
+Et `post_item.html` :
 
 ~~~html
 <template name="postItem">
@@ -79,7 +79,7 @@ Et `post_item.html`:
 
 Notez l'attribut `name="postsList"` de la balise template. C'est le nom qui sera utilisé par Meteor pour garder la trace de quel template va où.
 
-Il est temps de présenter le système de templating de Meteor, [Handlebars](handlebarsjs.com). Handlebars est du html simple, avec l'ajout de trois choses: *partials*, *expressions* et *block helpers*.
+Il est temps de présenter le système de templating de Meteor, [Handlebars](handlebarsjs.com). Handlebars est du html simple, avec l'ajout de trois choses : *partials*, *expressions* et *block helpers*.
 
 *Partials* utilise la syntaxe `{{> templateName}}`, et dit simplement à Meteor de remplacer le partial avec le template du même nom (dans notre cas `postItem`).
 
@@ -101,7 +101,7 @@ Premièrement, dans le template `postsList`, nous faisons des itérations dans u
 
 D'où vient l'object `posts` ? Bonne question. C'est un template helper, et nous allons le définir quand nous regarderons les template managers.
 
-Le template `postItem` lui-même est assez simple. Il utilise trois expression: `{{url}}` et `{{title}}` retourne des propriétés du document, et `{{domain}}` appelle un template helper.
+Le template `postItem` lui-même est assez simple. Il utilise trois expression : `{{url}}` et `{{title}}` retourne des propriétés du document, et `{{domain}}` appelle un template helper.
 
 Nous avons souvent mentionné "template helpers" au travers de ce chapitre sans vraiment expliquer ce qu'ils font. Mais afin de corriger ça, nous devons d'abord parler des managers.
 
@@ -115,7 +115,7 @@ En d'autres termes, pendant que le rôle du template est limité à l'affichage 
 
 <% note do %>
 
-### Managers?
+### Managers ?
 
 Quand nous demandons pour voir ce que les autres développeurs Meteor appelle les templates managers, la moitié dit des "controllers", et l'autre dit "ces fichiers où je met mon code javascript".
 
@@ -125,7 +125,7 @@ Etant donné que nous cherchons encore une façon d'indiquer de quoi nous parlon
 
 <% end %>
 
-Pour garder les choses simples, nous allons nommer le manager comme le template, à l'exception du .js. Donc créons directement `posts_list.js` dans `/client/views/posts` et commençons à construire notre premier manager:
+Pour garder les choses simples, nous allons nommer le manager comme le template, à l'exception du .js. Donc créons directement `posts_list.js` dans `/client/views/posts` et commençons à construire notre premier manager :
 
 ~~~js
 var postsData = [
@@ -133,12 +133,12 @@ var postsData = [
     title: 'Introducing Telescope',
     author: 'Sacha Greif',
     url: 'http://sachagreif.com/introducing-telescope/'
-  }, 
+  },
   {
     title: 'Meteor',
     author: 'Tom Coleman',
     url: 'http://meteor.com'
-  }, 
+  },
   {
     title: 'The Meteor Book',
     author: 'Tom Coleman',
@@ -151,7 +151,7 @@ Template.postsList.helpers({
 ~~~
 <%= caption "client/views/posts/posts_list.js" %>
 
-Si vous l'avez fait correctement, vous devriez avoir quelque choses de similaire à ça dans votre navigateur:
+Si vous l'avez fait correctement, vous devriez avoir quelque choses de similaire à ça dans votre navigateur :
 
 <%= screenshot "3-1", "Nos premiers templates avec données statiques" %>
 
@@ -161,7 +161,7 @@ Nous faisons deux choses ici. Premièrement, nous insérons des données prototy
 
 Deuxièmement, nous utilisons la fonction `Template.myTemplate.helpers()` pour définir un template helper appelé `posts` qui retourne simplement un tableau `postsData`.
 
-Définir le helper `posts` signifie qu'il est désormais disponible à l'utilisation pour notre template:
+Définir le helper `posts` signifie qu'il est désormais disponible à l'utilisation pour notre template :
 
 ~~~html
 <template name="postsList">
@@ -178,7 +178,7 @@ Maintenant notre template sera capable de faire des itérations sur le tableau `
 
 ### La valeur de "this"
 
-Nous allons créer le manager `post_item.js`:
+Nous allons créer le manager `post_item.js` :
 
 ~~~js
 Template.postItem.helpers({
