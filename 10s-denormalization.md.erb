@@ -36,8 +36,8 @@ Il s'avère que de nombreux outils que Meteor nous fournis marchent bien mieux l
 
 1. La fonction `{{#each}}` est très efficace lorsque l'on itère sur un curseur (le résultat de collection.find()). Il n'en est pas de même lorsque l'on itère sur un tableau d'objets dans un plus gros document.
 2. `allow` et `deny` fonctionnent au niveau du document, nous assurant ainsi que toute modification de commentaire individuel soit correcte, chose qui serait plus complexe si l'on opérait au niveau du 'post'.  
-3. ////
-4. ////
+3. le Protocole de Données Distribuées (DDP) opère au niveau des attributs au plus au niveau du document-- cela voudrait dire que si `comments` était une propriété d'un article, le server enverrait la liste complète des commentaires mis à jour pour cet article vers chaque client connecté.
+4. Les publications et souscriptions sont beaucoup plus faciles à contrôler au niveau des documents. Par exemple, si l'on voulait paginer les commentaires d'un article, on trouverait cela difficile à réaliser à moins que les commentaires ne soient dans leur propre collection.
 
 ////
 
