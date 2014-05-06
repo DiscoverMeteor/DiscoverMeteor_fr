@@ -17,9 +17,9 @@ Cela signifie que nous allons avoir besoin d'un *routage* pour voir ce qu'il y a
 
 [Iron Router](https://github.com/EventedMind/iron-router) est un package de routage qui a été créé spécialement pour les applications Meteor.
 
-Non seulement c'est une aide pour le routage (la mise en place des chemins), mais le package s'occupe aussi des filtres (l'assignation de ces chemins à des actions) et il s'occupe même des abonnements (savoir quel chemin permet d'accéder à quelle donnée). (Note: Iron Router a été développer par un des co-auteurs de *Discover Meteor*, Tom Coleman.)
+Non seulement c'est une aide pour le routage (la mise en place des chemins), mais le package s'occupe aussi des filtres (l'assignation de ces chemins à des actions) et il s'occupe même des abonnements (savoir quel chemin permet d'accéder à quelle donnée). (Note : Iron Router a été développer par un des co-auteurs de *Discover Meteor*, Tom Coleman.)
 
-Commençons par installer le package depuis Atmosphere:
+Commençons par installer le package depuis Atmosphere :
 
 ~~~bash
 $ mrt add iron-router
@@ -34,7 +34,7 @@ Notez que Iron Router est un package tier, ce qui signifie qu'il vous faudra Met
 
 ### Vocabulaire sur le routage
 
-Nous allons aborder plusieurs fonctionnalitées du routage dans ce chapitre. Si vous avez déjà utilisé un Framework comme Rails vous connaissez probablement la pluspart de ces concepts. Si ce n'est pas la cas, voici un glossaire pour vous aider :
+Nous allons aborder plusieurs fonctionnalités du routage dans ce chapitre. Si vous avez déjà utilisé un Framework comme Rails vous connaissez probablement la pluspart de ces concepts. Si ce n'est pas la cas, voici un glossaire pour vous aider :
 
 - **Routes** : une route est le bloc de base du routage. C'est un jeu d'instruction qui dit à l'application où aller et quoi faire pour chaque URL.
 - **Chemins** : un chemin (ou Path) est une URL de l'application. Elle peut être statique (`/information_legales`) ou dynamique (`/posts/xyz`). Il peut même y avoir des paramètres (`/search?keyword=meteor`).
@@ -61,7 +61,7 @@ Ce helper `{{> yield}}` va définir une zone dynamique qui va automatiquement af
 
 Nous allons commencer par créer notre layout et ajouter le helper `{{> yield}}`. Premièrement, nous allons supprimer l'élément HTML `<body>` de `main.html`, et déplacer son contenu vers son propre template, `layout.html`.
 
-Notre `main.html` réduit ressemble maintenant à ça:
+Notre `main.html` réduit ressemble maintenant à ça :
 
 ~~~html
 <head>
@@ -70,7 +70,7 @@ Notre `main.html` réduit ressemble maintenant à ça:
 ~~~
 <%= caption "client/main.html" %>
 
-Le fichier `layout.html` nouvellement créé contiendra maintenant le layout extérieur de notre application:
+Le fichier `layout.html` nouvellement créé contiendra maintenant le layout extérieur de notre application :
 
 ~~~html
 <template name="layout">
@@ -111,7 +111,7 @@ Nous avons effectué deux choses importantes. Premièrement, nous avons dit au r
 
 Quel que soit ce que vous mettez dans le répertoire `/lib`, c'est garanti d'être chargé en premier avant tous les autres fichiers de votre application (avec comme exception possible les paquets intelligents). Ceci en fait une place de choix pour y mettre un helper qui a besoin d'être disponible en permanence.
 
-Une petite mise en garde: notez que le répertoire `/lib` n'est ni dans `/client` ni dans `/server`, cela signifie que le contenu sera disponible dans les deux environnements.
+Une petite mise en garde : notez que le répertoire `/lib` n'est ni dans `/client` ni dans `/server`, cela signifie que le contenu sera disponible dans les deux environnements.
 
 <% end %>
 
@@ -145,7 +145,7 @@ Si vous déployez la version courante de l'application (ou lancez l'instance en 
 
 Ce serait une bien meilleure experience de fournir un indicateur visuel que quelque chose est en train de se passer, et que l'utilisateur doit attendre un moment.
 
-Par chance, Iron Router nous donne un moyen facile de faire ça -- nous allons `waitOn` la souscription:
+Par chance, Iron Router nous donne un moyen facile de faire ça -- nous allons `waitOn` la souscription :
 
 ~~~js
 Router.configure({
@@ -173,9 +173,9 @@ Et maintenant que nous laissons le routeur gérer notre souscription, vous pouve
 
 C'est habituellement une bonne idée d'attendre vos souscriptions, pas juste pour l'expérience utilisateur, mais également parce que vous supposez sans problème que les données seront toujours disponibles à l'intérieur du template. Cela élimine le besoin d'échanger avec des templates en train d'être rendu avant que leur données associées soit disponibles, ce qui requiert toujours des moyens de contournements hasardeux.
 
-Nous allons également ajouter un filtre `onBeforeAction` pour déclencher le grappin `loading` natif d'Iron Router et nous assurer que nous affichons bien le template de chargement durant l'attente. 
+Nous allons également ajouter un filtre `onBeforeAction` pour déclencher le grappin `loading` natif d'Iron Router et nous assurer que nous affichons bien le template de chargement durant l'attente.
 
-La pièce finale du puzzle est le template de chargement. Nous allons utiliser le paquet `spin` pour créer un joli indicateur de chargement animé. Ajoutez le avec `mrt add spin`, et créer le template de `chargement` comme suit:
+La pièce finale du puzzle est le template de chargement. Nous allons utiliser le paquet `spin` pour créer un joli indicateur de chargement animé. Ajoutez le avec `mrt add spin`, et créer le template de `chargement` comme suit :
 
 ~~~html
 <template name="loading">
@@ -204,7 +204,7 @@ Pour l'instant, disons juste que c'est exactement où la réactivité intervient
 
 Maintenant que nous avons vu comment router vers le template `postsList`, ajoutons une route pour afficher le détail d'un seul article.
 
-Il n'y a pas qu'un seul article: nous ne pouvons continuer et définir une route par article, sinon il y en aurait des milliers. Donc nous allons avoir besoin de mettre une seule route *dynamique*, et permettre à la route d'afficher n'importe quel article que l'on souhaite.
+Il n'y a pas qu'un seul article : nous ne pouvons continuer et définir une route par article, sinon il y en aurait des milliers. Donc nous allons avoir besoin de mettre une seule route *dynamique*, et permettre à la route d'afficher n'importe quel article que l'on souhaite.
 
 Pour commencer, nous allons créer un template qui renvoie simplement le même template d'article que nous avons utilisé dans la liste d'articles.
 
@@ -217,7 +217,7 @@ Pour commencer, nous allons créer un template qui renvoie simplement le même t
 
 Nous allons ajouter plus d'éléments dans le template plus tard (tels que les commentaires), mais pour l'instant il va simplement servir de coquille pour notre inclusion `postItem`.
 
-Nous allons créer une autre route nommée, cette fois en associant les chemins d'URL de la forme `/posts/<ID>` au template `postPage`:
+Nous allons créer une autre route nommée, cette fois en associant les chemins d'URL de la forme `/posts/<ID>` au template `postPage` :
 
 ~~~js
 Router.map(function() {
@@ -232,17 +232,17 @@ Router.map(function() {
 <%= caption "lib/router.js" %>
 <%= highlight "4~6" %>
 
-La syntaxe spéciale `:_id` dit au routeur deux choses: premièrement, faire correspondre n'importe quelle route de la forme `/posts/xyz/`, où "xyz" peut être n'importe quoi. Deuxièmement, mettre ce qui trouve à la place de xyz dans une propriété `_id` dans le tableau des `params` du routeur.
+La syntaxe spéciale `:_id` dit au routeur deux choses : premièrement, faire correspondre n'importe quelle route de la forme `/posts/xyz/`, où "xyz" peut être n'importe quoi. Deuxièmement, mettre ce qui trouve à la place de xyz dans une propriété `_id` dans le tableau des `params` du routeur.
 
 Notez que nous utilisons seulement `_id` par convention ici. Le routeur n'a pas de moyen de connaitre si ce que vous lui passez est un `_id`, ou juste une chaîne aléatoire de caractères.
 
-Nous routons maintenant vers le template correct, mais il nous manque encore quelque chose: le routeur connaît l'`_id` de l'article que nous voulons afficher, mais le template n'a toujours pas d'indice. Donc comment peut-on combler ce fossé?
+Nous routons maintenant vers le template correct, mais il nous manque encore quelque chose : le routeur connaît l'`_id` de l'article que nous voulons afficher, mais le template n'a toujours pas d'indice. Donc comment peut-on combler ce fossé?
 
-Heureusement, le routeur a une solution intégrée intelligente: il vous laisse spécifier un **contexte de données** (data context) de template. Vous pouvez imaginer le contexte de données comme l'intérieur d'un délicieux gateau fait de templates et de layouts. Tout simplement, c'est ce avec quoi vous remplissez votre template:
+Heureusement, le routeur a une solution intégrée intelligente : il vous laisse spécifier un **contexte de données** (data context) de template. Vous pouvez imaginer le contexte de données comme l'intérieur d'un délicieux gateau fait de templates et de layouts. Tout simplement, c'est ce avec quoi vous remplissez votre template :
 
 <%= diagram "router-diagram-2", "Le contexte de données.", "pull-center" %>
 
-Dans notre cas, nous pouvons récupérer le bon contexte de données en regardant notre article basé sur l'`_id` récupéré dans l'URL:
+Dans notre cas, nous pouvons récupérer le bon contexte de données en regardant notre article basé sur l'`_id` récupéré dans l'URL :
 
 ~~~js
 Router.map(function() {
@@ -268,7 +268,7 @@ A l'intérieur de la fonction `data` d'une route, `this` correspond à la route 
 
 En initialisant un *contexte de données* de template, nous pouvons contrôler la valeur de `this` dans les helpers de template.
 
-C'est habituellement fait implicitement avec l'itérateur `{{#each}}`, qui renvoie automatiquement le contexte de données de chaque itération à l'item en cours d'itération:
+C'est habituellement fait implicitement avec l'itérateur `{{#each}}`, qui renvoie automatiquement le contexte de données de chaque itération à l'item en cours d'itération :
 
 ~~~html
 {{#each widgets}}
@@ -276,7 +276,7 @@ C'est habituellement fait implicitement avec l'itérateur `{{#each}}`, qui renvo
 {{/each}}
 ~~~
 
-Mais nous pouvons également le faire explicitement en utilisant `{{#with}}`, qui dit simplement "prends cet objet, et applique lui le template suivant". Par exemple, nous pouvons écrire:
+Mais nous pouvons également le faire explicitement en utilisant `{{#with}}`, qui dit simplement "prends cet objet, et applique lui le template suivant". Par exemple, nous pouvons écrire :
 
 ~~~html
 {{#with myWidget}}
@@ -284,7 +284,7 @@ Mais nous pouvons également le faire explicitement en utilisant `{{#with}}`, qu
 {{/with}}
 ~~~
 
-Il s'avère que vous pour obtenir le même résultat en passant le contexte comme *argument* dans l'appel de template. Et donc le code précédent peut être réécrit comme suit:
+Il s'avère que vous pour obtenir le même résultat en passant le contexte comme *argument* dans l'appel de template. Et donc le code précédent peut être réécrit comme suit :
 
 ~~~js
 {{> widgetPage myWidget}}
@@ -296,7 +296,7 @@ Il s'avère que vous pour obtenir le même résultat en passant le contexte comm
 
 Enfin, nous devons nous assurer que nous pointons vers le bon endroit chaque fois que nous voulons joindre un article précis. De plus, nous pourrions faire quelque chose comme `<a href="/posts/{{_id}}">`, mais c'est plus fiable en utilisant un route helper.
 
-Nous avons nommé la route article `postPage`, donc nous pouvons utiliser le helper `{{pathFor 'postPage'}}`:
+Nous avons nommé la route article `postPage`, donc nous pouvons utiliser le helper `{{pathFor 'postPage'}}` :
 
 ~~~html
 <template name="postItem">
@@ -316,11 +316,11 @@ Attendez, comment le routeur sait comment récupérer la partie `xyz` dans `/pos
 
 Il s'avère que Iron Router est assez intelligent pour le trouver par lui-même. Nous disons au routeur d'utiliser la route `postPage`, et le routeur sait que cette route requiert un `_id` de ce type (vu que c'est comment nous avons défini notre `path`).
 
-Donc le routeur cherchera cet `_id` dans l'endroit disponible le plus logique: le data context du helper `{{pathFor postPage}}`, en d'autre mots `this`. Et il se trouve que notre `this` va correspondre à l'article, lequel (surprise!) possède une propriété `_id`.
+Donc le routeur cherchera cet `_id` dans l'endroit disponible le plus logique : le data context du helper `{{pathFor postPage}}`, en d'autre mots `this`. Et il se trouve que notre `this` va correspondre à l'article, lequel (surprise!) possède une propriété `_id`.
 
 Alternativement, nous pouvez également explicitement dire au routeur où vous aimeriez qu'il cherche la propriété `_id`, en passant un second argument au helper (i.e. `{{pathFor 'postPage' someOtherPost}}`). un usage pratique de ce modèle serait de récupérer le lien des articles précédents et suivants dans une liste, par exemple.
 
-Pour voir si ça fonctionne correctement, naviguez dans la liste d'articles et cliquez sur un des liens 'Discuss'. Vous devriez voir quelque chose comme ça:
+Pour voir si ça fonctionne correctement, naviguez dans la liste d'articles et cliquez sur un des liens 'Discuss'. Vous devriez voir quelque chose comme ça :
 
 <%= screenshot "5-2", "Page d'un article." %>
 
