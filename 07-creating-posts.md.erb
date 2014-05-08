@@ -308,25 +308,25 @@ Le moyen le plus simple d'éviter que les utilisateurs essaient d'atteindre cett
 
 L'helper `currentUser` nous est fourni par le package `accounts` qui est l'équivalent de `Meteor.User()` dans les Spacebars. Puisque c'est réactif, le lien apparaîtra ou disparaîtra selon l'état de connexion de l'utilisateur.
 
-### Meteor Method: Better Abstraction and Security
+### Method Meteor : meilleures abstraction et sécurité
 
-////
+Nous avons réussi à sécuriser l'accès à la nouvelle page de post pour les utilisateurs déconnectés, et à interdire à ces utilisateurs de créer des posts même s'ils trichent et qu'ils utilisent la console. Pourtant, il y a encore des choses dont nous devons nous occuper :
 
-- ////
-- ////
-- ////
+- Horodatage des messages
+- S'assurer qu'une URL peut être envoyée une seule fois
+- Ajouter les détails sur l'auteur du post (ID, nom d'utilisateur, etc.).
 
-////
+Vous pouvez penser que nous pouvons faire tout cela dans le gestionnaire d'évènement `submit`. Cependant, en le faisant ainsi, nous rencontrerons de nombreux problèmes.
 
-- ////
-- ////
-- ////
+- Pour le timestamp, nous aurions à nous assurer que le temps de l'ordinateur de l'utilisateur soit correct, ce qui n'est pas toujours le cas.
+- Les clients ne connaîtrons pas _toutes_ les URL déjà mises sur le site. Ils ne connaîtrons que les messages qu'ils peuvent voir actuellement (nous verrons exactement comment cela fonctionnera plus tard), il n'y a donc aucun moyen de mettre en place l'unicité de l'URL côté client.
+- Enfin, bien que nous _pouvons_ ajouter les détails sur l'utilisateur côté client, nous ne pourrons pas certifier son exactitude, ce qui pourrait soumettre notre application à l'exploitation par des personnes utilisant la console de leur navigateur.
 
-////
+Pour toutes ces raisons, c'est préférable de garder notre gestionnaire d'événement simple et, si nous faisons plus que des simples insertions ou mises à jour dans nos collections, d'utiliser une **Method**.
 
-////
+Une Method Meteor est une fonction côté serveur qui est appelée côté client. Cela ne nous est pas complètement inconnu -- en fait, dans les coulisses, les fonctions `insert`, `update` et `remove` de `Collection` sont toutes des Methods. Nous allons voir comment créer nos propres Methods. 
 
-////
+Revenons à `post_submit.js`. Plutôt que d'insérer directement dans le collection `Posts`, nous allons appeler une Method nommée `post` :
 
 ~~~js
 Template.postSubmit.events({
@@ -350,9 +350,9 @@ Template.postSubmit.events({
 ~~~
 <%= caption "client/views/posts/post_submit.js" %>
 
-////
+La fonction `Meteor.call` appelle une Method nommée par son premier argument. Vous pouvez fournir des arguments à l'appel (dans ce cas, l'objet `post` que nous avons construit dans le formulaire), et enfin attacher une fonction de rappel, qui sera exécutée quand la Method côté server sera effectuée. Ici nous alertons simplement l'utilisateur s'il y a un problème, sinon nous redirigeons l'utilisateur vers la page de discussion nouvellement créée.
 
-////
+Ensuite, nous définissions la Method dans notre fichier `collections/posts.js`. Nous supprimerons le bloc `allow()` de `post.js` puisque les Methods Meteor les contournent de toute façon. Rappelez-vous que les Methods sont exécutées sur le serveur, donc Meteor suppose qu'il peut leurs faire confiance.
 
 ~~~js
 Posts = new Meteor.Collection('posts');
@@ -392,21 +392,21 @@ Meteor.methods({
 ~~~
 <%= caption "collections/posts.js" %>
 
-<%= commit "7-6", "Use a method to submit the post." %>
+<%= commit "7-6", "Utiliser une Method pour envoyer le post." %>
 
-////
+Cette Method est un peu compliquée, mais j'espère que vous pouvez suivre.
 
-////
+Premièrement, nous définissons notre variable `user` et contrôlons si un post avec la même URL existe déjà. Ensuite, nous contrôlons si l'utilisateur est connecté, en montrant une `alert` dans le cas contraire. De plus, nous faisons une validation de l'objet post pour être sûr que nos posts ont des titres.
 
-////
+Ensuite, s'il y a un autre post avec la même URL, nous lançons une erreur `302` (redirect) indiquant à l'utilisateur qu'il doit aller voir le post déjà créé.
 
-////
+La classe `Error` de Meteor prend trois arguments. Le premier (`error`) sera le code numérique `302`, le second (`reason`) est une brève explication de l'erreur, et le dernier (`details`) peut être des informations complémentaires.
 
-////
+Dans notre cas, nous allons utiliser le troisième argument pour passer l'ID du post que nous avons trouvé que nous utiliserons plus tard pour rediriger l'utilisateur vers le post existant.
 
-////
+Si tous ces contrôles sont passés, nous récupérons les champs que nous souhaitons insérer (garantissant qu'un utilisateur qui appelle cette Method depuis la console du navigateur ne puisse pas mettre de données erronées dans notre base de données), et incluons quelques informations sur l'utilisateur envoyant le post -- ainsi que l'heure actuelle -- dans le post. 
 
-////
+Pour finir, nous insérons le post, et retournons l'`id` du nouveau post à l'utilisateur.
 
 ### Sorting Posts
 
