@@ -293,9 +293,9 @@ Router.onBeforeAction(requireLogin, {only: 'postSubmit'});
 
 <%= commit "7-4", "Afficher un écran de chargement en attendant l'authentification." %>
 
-### Hiding the Link
+### Cacher le lien
 
-////
+Le moyen le plus simple d'éviter que les utilisateurs essaient d'atteindre cette page quand ils sont déconnectés est de cacher le lien. Nous pouvons réaliser cela très facilement :
 
 ~~~html
 <ul class="nav">
@@ -304,9 +304,9 @@ Router.onBeforeAction(requireLogin, {only: 'postSubmit'});
 ~~~
 <%= caption "client/views/includes/header.html" %>
 
-<%= commit "7-5", "Only show submit post link if logged in." %>
+<%= commit "7-5", "Affiche le lien de la page d'envoi de post seulement si l'utilisateur est authentifié." %>
 
-////
+L'helper `currentUser` nous est fourni par le package `accounts` qui est l'équivalent de `Meteor.User()` dans les Spacebars. Puisque c'est réactif, le lien apparaîtra ou disparaîtra selon l'état de connexion de l'utilisateur.
 
 ### Meteor Method: Better Abstraction and Security
 
