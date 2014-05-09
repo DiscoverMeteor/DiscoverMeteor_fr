@@ -410,7 +410,7 @@ Pour finir, nous insérons le post, et retournons l'`id` du nouveau post à l'ut
 
 ### Sorting Posts
 
-////
+Maintenant que nous avons une date d'envoi sur tous nos posts, il est judicieux de veiller à ce qu'ils soient triés à l'aide de cet attribut. Pour le faire, nous pouvons juste utiliser l'opérateur `sort` de Mongo, qui attend un objet constitué des clés de tri, et un signe indiquant si elles sont ascendantes ou descendantes.
 
 ~~~js
 Template.postsList.helpers({
@@ -422,8 +422,8 @@ Template.postsList.helpers({
 <%= caption "client/views/posts/posts_list.js" %>
 <%= highlight "3" %>
 
-<%= commit "7-7", "Sort posts by submitted timestamp." %>
+<%= commit "7-7", "Trier les posts par date d'envoi." %>
 
-////
+Il a fallu un peu de travail, mais au final nous avons une interface utilisateur qui permet aux utilisateurs de saisir en toute sécurité du contenu dans notre application !
 
-////
+Mais n'importe quelle application qui permet aux utilisateurs de créer du contenu doit également leur donner un moyen de le modifier ou le supprimer. C'est ce dont le chapitre Edition de Posts traitera.
