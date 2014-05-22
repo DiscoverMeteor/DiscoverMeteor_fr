@@ -11,9 +11,9 @@ contents: Apprendre comment créer des sources de données réactives dans Meteo
 paragraphs: 29
 ---
 
-Il est rare d'avoir à écrire soi-même le code de suivi des dépendances, mais il est sans aucun doute utile de le comprendre pour comprendre comment le flux de résolution des dépendances fonctionne.
+Il est rare d'avoir à écrire soi-même le code de suivi des dépendances, mais il est sans aucun doute utile d'en saisir le sens pour comprendre comment le flux de résolution des dépendances fonctionne.
 
-Imaginez que l'on veuille suivre combien des amis Facebook de l'utilisateur ont "aimé" chaque article dans Microscope. Supposons que l'on ai déjà mis en place l'authentification de l'utilisateur avec Facebook, fait les appels API appropriés, et analysé les données pertinentes. Nous avons donc une fonction asynchrone côté client qui retourne le nombre de "j'aime", `getFacebookLikeCount(user, url, callback)`.
+Imaginez que l'on veuille suivre combien des amis Facebook de l'utilisateur ont "aimé" chaque article dans Microscope. Supposons que l'on ai déjà mis en place l'authentification de l'utilisateur avec Facebook, fait les appels API appropriés et analysé les données pertinentes. Nous avons donc une fonction asynchrone côté client qui retourne le nombre de "j'aime" `getFacebookLikeCount(user, url, callback)`.
 
 The important thing to remember about such a function is that it is very much *non-reactive* and non-realtime. It will make an HTTP request to Facebook, retrieve some data, and make it available to the application in an asynchronous callback, but the function won't re-run by itself when that count changes over at Facebook, and our UI won't change when the underlying data does.
 
