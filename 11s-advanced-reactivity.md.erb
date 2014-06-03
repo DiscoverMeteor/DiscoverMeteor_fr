@@ -33,7 +33,7 @@ Meteor.setInterval(function() {
 }, 5 * 1000);
 ~~~
 
-Any time we check that `currentLikeCount` variable, we can expect to get the correct number with a five seconds margin of error. We can now use this variable in a helper like so: 
+Chaque fois que l'on contrôle la variable `currentLikeCount`, l'on peut s'attendre à avoir le nombre correct avec une marge d'erreur de cinq secondes. On peut désormais utiliser cette variable en tant qu'utilitaire comme ceci: 
 
 ~~~js
 Template.postItem.likeCount = function() {
@@ -41,7 +41,7 @@ Template.postItem.likeCount = function() {
 }
 ~~~
 
-However, nothing yet tells our template to re-draw when `currentLikeCount` changes. Although the variable is now pseudo-realtime in that it changes by itself, it's not *reactive* so it still can't quite communicate properly with the rest of the Meteor ecosystem.
+Néanmoins, rien n'indique pour l'instant à notre template d'être rafraîchit quand `currentLikeCount` change. Bien que la variable soit maintenant en pseudo temps-réel du fait qu'elle change toute seule, elle n'est pas *réactive* donc elle ne peut toujours pas communiquer correctement avec le reste de l'écosystème Meteor.
 
 ### Tracking Reactivity: Computations
 
