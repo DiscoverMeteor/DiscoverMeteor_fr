@@ -43,11 +43,11 @@ Template.postItem.likeCount = function() {
 
 Néanmoins, rien n'indique pour l'instant à notre template d'être rafraîchit quand `currentLikeCount` change. Bien que la variable soit maintenant en pseudo temps-réel du fait qu'elle change toute seule, elle n'est pas *réactive* donc elle ne peut toujours pas communiquer correctement avec le reste de l'écosystème Meteor.
 
-### Tracking Reactivity: Computations
+### Suivi de la Réactivité: Calculs
 
-Meteor's reactivity is mediated by *dependencies*, data structures that track a set of computations. 
+La réactivité de Meteor est gérée par des *dépendences*, des structures de donnée qui observent un ensemble de calculs. 
 
-As we saw in the earlier reactivity sidebar, a computation is a section of code that uses reactive data. In our case, there's a computation that's been implicitly created for the `postItem` template. Every helper on that template's manager is working within that computation. 
+Comme nous l'avons vu précédemment dans l'aparté sur la réactivité, un calcul est un morceau de code qui utilise des données réactives. Dans notre cas, un calcul a été créé implicitement pour le modèle `postItem`. Chaque utilitaire dans le gestionnaire de ce modèle fonctionne dans le cadre de ce calcul.
 
 You can think of the computation as the section of code that "cares" about the reactive data. When the data changes, it will be this computation that is informed (via `invalidate()`), and it's the computation that decides whether something needs to be done.
 
