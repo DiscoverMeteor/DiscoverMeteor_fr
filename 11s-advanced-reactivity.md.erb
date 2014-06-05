@@ -49,11 +49,11 @@ La réactivité de Meteor est gérée par des *dépendences*, des structures de 
 
 Comme nous l'avons vu précédemment dans l'aparté sur la réactivité, un calcul est un morceau de code qui utilise des données réactives. Dans notre cas, un calcul a été créé implicitement pour le modèle `postItem`. Chaque utilitaire dans le gestionnaire de ce modèle fonctionne dans le cadre de ce calcul.
 
-You can think of the computation as the section of code that "cares" about the reactive data. When the data changes, it will be this computation that is informed (via `invalidate()`), and it's the computation that decides whether something needs to be done.
+On peut voir ce calcul comme la partie du code qui est "en charge" des données réactives. Lorsque les données changent, ce sera ce calcul qui en sera informé (via `invalidate()`), et c'est ce calcul qui décide si quelque chose doit être fait.
 
-### Turning a Variable Into a Reactive Function
+### Transformer une Variable en une Fonction Réactive
 
-To turn our `currentLikeCount` variable into a reactive data source, we need to track all of the computations that use it in a dependency. This requires changing it from a variable into a function (which will return a value):
+Pour transformer notre variable `currentLikeCount` en une source de donnée réactive, nous devons suivre tous les calculs qui l'utilisent dans une dépendance. Cela requiert de la changer d'une variable en une fonction (qui retournera une valeur):
 
 ~~~js
 var _currentLikeCount = 0;
@@ -79,7 +79,7 @@ Meteor.setInterval(function() {
 ~~~
 <%= highlight "1~7,14~17" %>
 
-What we've done is setup a `_currentLikeCountListeners` dependency, which tracks all the computations within which `currentLikeCount()` has been used. When the value of `_currentLikeCount` changes, we call the `changed()` function on that dependency, which invalidates all the tracked computations.
+Nous avons ici mis en place une dépendance `_currentLikeCountListeners`, qui suit tous les calculs dans lesquels `currentLikeCount()` a été utilisé. Quand la valeur de `_currentLikeCount` change, nous appellons la fonction `changed()` sur cette dépendance, qui invalide tous les calculs que nous suivions.
 
 These computations can then go ahead and deal with the change on a case-by-case basis. 
 
