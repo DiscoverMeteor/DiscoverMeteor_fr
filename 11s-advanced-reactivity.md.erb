@@ -81,15 +81,15 @@ Meteor.setInterval(function() {
 
 Nous avons ici mis en place une dépendance `_currentLikeCountListeners`, qui suit tous les calculs dans lesquels `currentLikeCount()` a été utilisé. Quand la valeur de `_currentLikeCount` change, nous appellons la fonction `changed()` sur cette dépendance, qui invalide tous les calculs que nous suivions.
 
-These computations can then go ahead and deal with the change on a case-by-case basis. 
+Ces calculs peuvent ensuite se charger des changements au cas par cas.
 
-### Comparing Deps to Angular
+### Comparer Deps à Angular
 
-[Angular](http://angularjs.org/) is a client-side only reactive rendering library, developed by the good folks at Google. It's illustrative to compare Meteor's approach to dependency tracking to Angular's, as the approaches are quite different.
+Angular](http://angularjs.org/) est une librairie réactive de rendu côté client, développée par les braves gens de chez Google. Il est intéressant de comparer l'approche du suivi des dépendances de Meteor à celle d'Angular car celles-ci sont assez différentes.
 
-We've seen that Meteor's model uses blocks of code called computations. These computations are tracked by special "reactive" data sources (functions) that take care of invalidating them when appropriate. So the data source _explicitly_ informs all of it's dependencies when they need to call `invalidate()`. Note that although this is generally when data has changed, the data source could potentially also decide to trigger invalidation for other reasons.
+Nous avons vu que Meteor utilise des morceaux de code appellé calculs. Ces calculs sont suivi par des sources de données spéciales, dites "réactives" (des fonctions) qui s'occupent de les invalider le moment venu. La source de donnée informe explicitement toutes ses dépendances lorsqu'elles doivent appeller `invalidate()`. Notez que bien que cela soit généralement effectué lorsque les données changent, la source de donnée peut également décider de déclencher l'invalidation pour d'autres raisons.
 
-Additionally, although computations usually just re-run when invalidated, you can set them up to behave any way you want. All this gives us a high level of control over reactivity.
+De plus, bien que les calculs soient généralement rééxecuté lorsqu'ils sont invalidé, vous pouvez les paramétrer pour qu'ils se comportent comme vous le souhaitez. Tout cela nous donne un grand contrôle sur la réactivité. 
 
 In Angular, reactivity is mediated by the `scope` object. A scope can be thought of as plain JavaScript object with a couple of special methods. 
 
