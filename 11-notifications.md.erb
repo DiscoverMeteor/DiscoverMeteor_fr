@@ -68,7 +68,7 @@ Meteor.methods({
 <%= caption "collections/comments.js" %>
 <%= highlight "8~14" %>
 
-////
+Publions également les notifications, et souscrivons-y sur le client :
 
 ~~~js
 // [...]
@@ -91,11 +91,11 @@ Router.configure({
 <%= caption "lib/router.js" %>
 <%= highlight "5" %>
 
-<%= commit "11-1", "Added basic notifications collection." %>
+<%= commit "11-1", "Ajout collection notifications." %>
 
-### Displaying Notifications
+### Affichage des notifications
 
-////
+Maintenant nous pouvons continuer et ajouter une liste de notifications à l'en-tête.
 
 ~~~html
 <template name="header">
@@ -111,7 +111,7 @@ Router.configure({
         <ul class="nav">
           {{#if currentUser}}
             <li>
-              <a href="{{pathFor 'postSubmit'}}">Submit Post</a>
+              <a href="{{pathFor 'postSubmit'}}">Soumettre l'article</a>
             </li>
             <li class="dropdown">
               {{> notifications}}
@@ -129,7 +129,7 @@ Router.configure({
 <%= caption "client/views/includes/header.html" %>
 <%= highlight "12~19" %>
 
-////
+Et créer les modèles de `notifications` et `notification` (ils partageront un même fichier `notifications.html`) :
 
 ~~~html
 <template name="notifications">
@@ -154,16 +154,16 @@ Router.configure({
 <template name="notification">
   <li>
     <a href="{{notificationPostPath}}">
-      <strong>{{commenterName}}</strong> commented on your post
+      <strong>{{commenterName}}</strong> a commenté votre article
     </a>
   </li>
 </template>
 ~~~
 <%= caption "client/views/notifications/notifications.html" %>
 
-////
+Nous pouvons voir que l'idée est de fournir dans chaque notification un lien vers l'article qui a été commenté, et le nom de l'utilisateur qui l'a commenté.
 
-////
+Ensuite, nous avons besoin de nous assurer que nous sélectionnons la bonne liste de notifications dans notre manager, et mettre à jour les notifications comme "lu" quand l'utilisateur clique sur le lien vers lequel elles pointent.
 
 ~~~js
 Template.notifications.helpers({
@@ -189,15 +189,15 @@ Template.notification.events({
 ~~~
 <%= caption "client/views/notifications/notifications.js" %>
 
-<%= commit "11-2", "Display notifications in the header." %>
+<%= commit "11-2", "Afficher des notifications dans l'en-tête." %>
 
-////
+Vous pouvez penser que les notifications ne sont pas si différentes des erreurs, et c'est vrai que leur structure est très similaire? Il n'y a pas de différence clé bien que : nous avons créé une collection client) serveur synchronisé. Ça signifie que nos notifications sont *persistantes* et, tant que nous gardons le même compte utilisateur, survivront au rafraîchissement des navigateurs et des différents appareils.
 
-////
+Essayez-le : ouvrez un deuxième navigateur (disons Firefox), créez un nouveau compte utilisateur, et commentez sur un article que vous avez créé avec votre principal compte utilisateur (que vous avez laissé ouvert dans Chrome). Vous devriez voir apparaître quelque chose comme ça :
 
-<%= screenshot "11-1", "Displaying notifications." %>
+<%= screenshot "11-1", "Afficher des notifications." %>
 
-### Controlling access to notifications
+### Controller l'accès aux notifications
 
 ////
 
