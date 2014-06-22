@@ -3,15 +3,15 @@ title: Les Notifications
 slug: notifications
 date: 0011/01/01
 number: 11
-contents: Add a notifications collection to notify users of other user's actions.|Learn how to only share the relevant notifications with a given user.|Learn more about Meteor publications and subscriptions.
+contents: Ajouter une collection notifications pour notifier les utilisateurs des actions des autres utilisateurs.|Apprendre comment partager uniquement les notifications pertinantes pour un utilisateur donné.|En apprendre plus sur les publications et les souscriptions.
 paragraphs: 25
 ---
 
-////
+Maintenant que les utilisateurs peuvent commenter sur les articles de chacun, il serait bien de les avertir qu'une conversation a commencé.
 
-////
+Pour faire ça, nous notifierons au propriétaire de l'article qu'il y a eu un commentaire, et nous lui fournerons un lien pour voir le commentaire.
 
-////
+C'est sur ce type de fonctionnalité que Meteor resplendit : parce que Meteor est temps réel par défaut, nous afficherons ces notifications _instantanément_. Nous n'avons pas besoin d'attendre que l'utilisateur rafraîchisse la page ou vérifie par un quelconque moyen, nous pouvons simplement faire apparaître des nouvelles notifications sans même écrire de code spécial.
 
 ### Creating notifications
 
