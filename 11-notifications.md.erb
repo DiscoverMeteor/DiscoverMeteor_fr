@@ -199,25 +199,25 @@ Essayez-le : ouvrez un deuxième navigateur (disons Firefox), créez un nouveau 
 
 ### Controller l'accès aux notifications
 
-////
+Les notifications fonctionnent bien, Cependant il y a un petit problème : nos notifications sont publiques.
 
-////
+Si vous avez encore un deuxième navigateur ouvert, essayez d'éxecuter le code dans une console navigateur :
 
 ~~~js
 ❯ Notifications.find().count();
 1
 ~~~
-<%= caption "Browser console" %>
+<%= caption "Console du navigateur" %>
 
-////
+Ce nouvel utilisateur (celui qui a *commenté*) ne devrait pas avoir de notifications. La notification qu'il voit dans la collection `Notifications` appartient actuellement à notre utilisateur original.
 
-////
+A côté de ces potentiels problèmes de confidentialité, nous ne pouvons pas nous permettre d'avoir toutes les notifications des utilisateurs chargées dans tous les navigateur d'utilisateurs. Sur un assez gros site, ça pourrait surcharger la mémoire disponible du navigateur et faire apparaître des sérieux problèmes de performance.
 
-////
+Nous corrigeons ce problème avec les **publications**. Nous pouvons utiliser nos publications pour spécifier préciséement quelle part de notre collections nous voulons partager dans chaque navigateur.
 
-////
+Pour accomplir ça, nous avons besoin de retourner un curseur différent dans notre publication de `Notifications.find()`. Plus exactement, nous voulons retourner un curseur qui correspond aux notifications de l'utilisateur courant. 
 
-////
+Faire ça est assez direct, comme une fonctione `publish` a l'`id` de l'utilisateur courant disponible via `this.userdId` :
 
 ~~~js
 Meteor.publish('notifications', function() {
@@ -226,22 +226,22 @@ Meteor.publish('notifications', function() {
 ~~~
 <%= caption "server/publications.js" %>
 
-<%= commit "11-3", "Only sync notifications that are relevant to the user." %>
+<%= commit "11-3", "Synchroniser uniquement les notifications pertinantes pour l'utilisateur courant." %>
 
-////
+Maintenant si nous vérifions dans nos deux fenêtres de navigateur, nous devrions voirdeux collections notifications différentes :
 
 ~~~js
 ❯ Notifications.find().count();
 1
 ~~~
-<%= caption "Browser console (user 1)" %>
+<%= caption "Console du navigateur (utilisateur 1)" %>
 
 ~~~js
 ❯ Notifications.find().count();
 0
 ~~~
-<%= caption "Browser console (user 2)" %>
+<%= caption "Console du navigateur (utilisateur 2)" %>
 
-////
+En fait, la liste de Notifications devrait même changer selon que vous authentifiez et vous déconnectez de votre application. C'est parce que les publications sont re-publiées automatiquement quand le compte utilisateur change.
 
-////
+Notre application devient de plus en plus fonctionnelle, et à mesure que des utilisateurs s'inscrivent et ajoutent des liens nous courons le risque de finir avec une page d'accueil sans fin. Nous allons nous occuper de ça dans le prochain chapitre en implémentant une pagination.
