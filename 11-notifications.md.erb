@@ -13,11 +13,11 @@ Pour faire ça, nous notifierons au propriétaire de l'article qu'il y a eu un c
 
 C'est sur ce type de fonctionnalité que Meteor resplendit : parce que Meteor est temps réel par défaut, nous afficherons ces notifications _instantanément_. Nous n'avons pas besoin d'attendre que l'utilisateur rafraîchisse la page ou vérifie par un quelconque moyen, nous pouvons simplement faire apparaître des nouvelles notifications sans même écrire de code spécial.
 
-### Creating notifications
+### Créer des notifications
 
-////
+Nous allons créer une notification quand quelqu'un commente sur vos articles. dans le future, les notifications peuvent être étendues pour couvrir beaucoup d'autres scénarii, mais pour l'instant ce sera suffisant pour garder les utilisateurs informés de ce qu'il se passe.
 
-////
+Créons notre collection `Notifications`, ainsi qu'une fonction `createCommentNotification` qui insèrera une notification correspondante pour chaque nouveau commentaire sur un de vos articles :
 
 ~~~js
 Notifications = new Meteor.Collection('notifications');
