@@ -41,11 +41,11 @@ createCommentNotification = function(comment) {
 ~~~
 <%= caption "collections/notifications.js" %>
 
-////
+Comme les articles ou commentaires, cette collection `Notifications` sera partagée côté client et serveur. Comme nous avons besoin de mettre à jour les notifications une fois que l'utilisateur les a vues, nous autorisons également les mises à jours, en s'assurant comme d'habitude de bien limiter les permissions aux propres données de l'utilisateur.
 
-////
+Nous avons créé une simple fonction qui surveille que l'utilisateur commente, découvre qui devrait être notifié à ce moment, et insère une nouvelle notification.
 
-////
+Nous créons déjà des commentaires dans une méthode côté serveur, donc nous pouvons juste compléter cette méthode pour appeler notre fonction. Nous remplacerons `return Comments.insert(comment);` par `comment._id = Comments.insert(comment)` afin de sauvegarder l'`_id` du commentaire nouvellement créé dans une variable, puis appeler notre fonction `createCommentNotification` :
 
 ~~~js
 Comments = new Meteor.Collection('comments');
@@ -58,7 +58,7 @@ Meteor.methods({
     // create the comment, save the id
     comment._id = Comments.insert(comment);
     
-    // now create a notification, informing the user that there's been a comment
+    // maintenant créez une notification, en informant l'utilisateur qu'il y a eu un commentaire
     createCommentNotification(comment);
     
     return comment._id;
