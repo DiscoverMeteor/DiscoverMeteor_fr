@@ -91,11 +91,11 @@ Nous avons vu que Meteor utilise des morceaux de code appellé calculs. Ces calc
 
 De plus, bien que les calculs soient généralement rééxecuté lorsqu'ils sont invalidé, vous pouvez les paramétrer pour qu'ils se comportent comme vous le souhaitez. Tout cela nous donne un grand contrôle sur la réactivité. 
 
-In Angular, reactivity is mediated by the `scope` object. A scope can be thought of as plain JavaScript object with a couple of special methods. 
+Dans Angular, la réactivité dépend de l'objet `scope` (portée). Une portée peut être considérée comme un objet JavaScript simple avec quelques méthodes spéciales.
 
-When you want to reactively depend on a value in a scope, you call `scope.$watch`, providing the expression that you are interested in (i.e. which parts of the scope you care about) and a listener function that will run every time that expression changes. So you explicitly state exactly what you want to do every time the value of the expression changes.
+Lorsque vous voulez dépendre réactivement d'une valeur dans une portée, vous appellez `scope.$watch`, qui vous fourni l'expression qui vous intéresse (les parties de la portée qui vous concernent) et la fonction écouteur qui s'exécutera à chaque fois que cette expression change. Vous déclarez donc explicitement ce que vous voulez faire à chaque fois que la valeur de l'expression change.
 
-Going back to our Facebook example, we would write:
+En revenant à notre exemple sur Facebook, l'on pourrait écrire:
 
 ~~~js
 $rootScope.$watch('currentLikeCount', function(likeCount) {
