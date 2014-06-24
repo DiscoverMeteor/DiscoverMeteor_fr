@@ -103,9 +103,9 @@ $rootScope.$watch('currentLikeCount', function(likeCount) {
 });
 ~~~
 
-Of course, just like you rarely set up computations in Meteor, you don't often call `$watch` explicitly in Angular as `ng-model` directives and `{{expressions}}` automatically set up watches that then take care of re-rendering on change.
+Bien entendu, tout comme vous créez rarement des calculs dans Meteor, vous appellez rarement `$watch` explicitement dans Angular puisque les directives `ng-model` et les `{{expressions}}` créent automatiquement des observateurs qui prennent en charge le rafraichissement de l'interface lors de changements. 
 
-When such a reactive value has changed, `scope.$apply()` must then be called. This re-evaluates every watcher of the scope, but only calls the listener function of watchers whose expression's value has *changed*. 
+Lorsqu'une telle valeur réactive a changé, `scope.$apply()` doit alors être appellée. Celle-ci ré-évalue chaque observateur dans la portée, mais appelle uniquement l'écouteur des observateur dont la valeur de l'expression a *changé*.
 
 So `scope.$apply()` is similar to `dependency.changed()`, except that it acts at the level of the scope, rather than giving you the control to say precisely which listeners should be re-evaluated. That being said, this slight lack of control gives Angular the ability to be very smart and efficient in the way it determines precisely which listeners need to be re-evaluated.
 
