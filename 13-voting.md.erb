@@ -3,40 +3,40 @@ title: Le Vote
 slug: voting
 date: 0013/01/01
 number: 13
-contents: Build a system where users can vote on posts.|Rank our posts by vote on a "best" post page.|Learn how to write a general handlebars helper.|Learn a little more about data security in Meteor.|Cover some interesting performance considerations in MongoDB.
+contents: Construire un système de vote d'utilisateurs sur les articles.|Classer nos articles par vote sur une page des "meilleurs" articles.|Apprendre comment écrire un helper handlebars général.|En apprendre un peu plus sur la sécurité des données dans Meteor.|Couvrir quelques remarques de performance interessantes dans MongoDB.
 paragraphs: 49
 ---
 
-////
+Maintenant que notre site est en train de devnir populaire, trouver les meilleurs liens va rapidement devenir délicat. Ce que nous avons besoin est un système de classement pour ordonner nos articles.
 
-////
+Nous pourrions construire un système de classement complexe avec karma, basé sur une perte de points dans le temps, et plein d'autres choses (la plupart sont implémentés dans [Telescope](http://telesc.pe), le grand frère de Microscope). Mais pour notre application, nous garderons les choses simples et nous noterons juste les articles par le nombre de votes qu'ils ont reçus.
 
-////
+Commençons par donner aux utilisateurs un moyen de voter sur les articles.
 
-### Data Model
+### Modèle de données
 
-////
+Nous stockerons une liste de votants sur chaque article afin de savoir si on doit montrer le bouton de vote aux utilisateurs, et empêcher les personnes de voter deux fois. 
 
 <% note do %>
 
-### Data Privacy & Publications
+### Confidentialité des données et Publications
 
-////
+Nous publierons ces listes de votants à tous les utilisateurs, ce qui rendra automatiquement ces données accessibles publiquement via la console du navigateur.
 
-////
+C'est le type de problème sur la confidentialité des données qui peut subvenir de la façon dont les collections fonctionnent. Par exemple, voulons-nous que les personnes soient capables de trouver qui a voté pour leurs articles ? Dans notre cas, rendre cette information disponible publiquement n'aura pas réellement de conséquences, mais il est important de reconnaître au minimum le problème.
 
-////
+Notez également que si nous *voulions* limiter certaines de ces informations, nous devrions nous assurer que le client ne puisse pas trifouiller avec les options `fields` de notre publication, en supprimant cette propriété côté serveur, ou en ne passant pas toutes l'objet options entièrement du client vers le serveur.
 
 <% end %>
 
-////
+Nous allons également dénormaliser le nombre total de votants sur un article pour rendre plus facile la récupération de ce chiffre. Donc nous ajouterons deux attributs à nos articles, `upvoters` et `votes`. Commençons par les ajouter à notre fichier de préinstallation :
 
 ~~~js
-// Fixture data 
+// Données de préinstallation 
 if (Posts.find().count() === 0) {
   var now = new Date().getTime();
   
-  // create two users
+  // Créer deux utilisateurs
   var tomId = Meteor.users.insert({
     profile: { name: 'Tom Coleman' }
   });
@@ -108,12 +108,12 @@ if (Posts.find().count() === 0) {
 <%= caption "server/fixtures.js" %>
 <%= highlight "22, 48, 58, 69" %>
 
-////
+Comme d'habitude, arrêtez votre application, exécutez `meteor reset`, redémarrez votre application, et créez un nouvel utilisateur. Assurons-nous également ensuite que ces deux propriétés sont initialisées quand les articles sont créés :
 
 ~~~js
 //...
 
-// check that there are no previous posts with the same link
+// vérifier qu'il n'y a pas d'articles déjà existant avec le même lien
 if (postAttributes.url && postWithSameLink) {
   throw new Meteor.Error(302, 
     'This link has already been posted', 
@@ -139,9 +139,9 @@ return postId;
 <%= caption "collections/posts.js" %>
 <%= highlight "16~17" %>
 
-### Building our Voting Templates
+### Construire nos templates de vote
 
-////
+Premièrement, nous allons ajouter un bouton de vote à notre partial article :
 
 ~~~html
 <template name="postItem">
@@ -163,9 +163,9 @@ return postId;
 <%= caption "client/views/posts/post_item.html" %>
 <%= highlight "3,7" %>
 
-<%= screenshot "13-1", "The upvote button" %>
+<%= screenshot "13-1", "Le bouton de vote" %>
 
-////
+Ensuite, nous allons appeler une méthode serveur upvote quand l'utilisateur clique sur le bouton :
 
 ~~~js
 //...
@@ -180,7 +180,7 @@ Template.postItem.events({
 <%= caption "client/views/posts/post_item.js" %>
 <%= highlight "3~8" %>
 
-////
+Finalement, nous allons revenir à notre fichier `collections/posts.js` et ajouter une méthode Meteor côté serveur qui votera pour les articles :
 
 ~~~js
 Meteor.methods({
@@ -211,7 +211,7 @@ Meteor.methods({
 <%= caption "collections/posts.js" %>
 <%= highlight "6~23" %>
 
-<%= commit "13-1", "Added basic upvoting algorithm." %>
+<%= commit "13-1", "Algorithme basique de vote." %>
 
 ////
 
