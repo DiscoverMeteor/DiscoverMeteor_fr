@@ -107,9 +107,9 @@ Bien entendu, tout comme vous créez rarement des calculs dans Meteor, vous appe
 
 Lorsqu'une telle valeur réactive a changé, `scope.$apply()` doit alors être appellée. Celle-ci ré-évalue chaque observateur dans la portée, mais appelle uniquement l'écouteur des observateur dont la valeur de l'expression a *changé*.
 
-So `scope.$apply()` is similar to `dependency.changed()`, except that it acts at the level of the scope, rather than giving you the control to say precisely which listeners should be re-evaluated. That being said, this slight lack of control gives Angular the ability to be very smart and efficient in the way it determines precisely which listeners need to be re-evaluated.
+Donc `scope.$apply()` est semblable à `dependency.changed()`, mis à part qu'il agit au niveau de la portée plutôt qu'il ne vous permette de dire précisement quels écouteurs doivent être réévalués. Cela étant dit, ce léger manque de contrôle donne à Angular la possibilité d'être très intélligent et efficace dans la manière dont il détermine précisement quels écouteurs doivent être réévalués.
 
-With Angular, our `getFacebookLikeCount()` function code would've looked something like this:
+Avec Angular, notre code pour la fonction `getFacebookLikeCount()` aurait ressemblé à ceci:
 
 ~~~js
 Meteor.setInterval(function() {
@@ -124,4 +124,4 @@ Meteor.setInterval(function() {
 ~~~
 <%= highlight "5~6" %>
 
-Admittedly, Meteor takes care of most of the heavy lifting for us and lets us benefit from reactivity without much work on our part. But hopefully, learning about these patterns will prove helpful if you ever need to push things further. 
+Certes, Meteor s'occupe du gros du travail pour nous et nous permet de bénéficier de la réactivité sans trop d'effort de notre part. Avec un peu de chance, apprendre ces pratiques s'avèrera utile si vous avez un jour besoin de pousser les choses un peu plus loin.  
