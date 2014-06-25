@@ -213,13 +213,13 @@ Meteor.methods({
 
 <%= commit "13-1", "Algorithme basique de vote." %>
 
-////
+Cette méthode est assez directe. Nous faisons quelques vérifications de sécurité pour nous assurer que l'utilisateur est authentifié et que l'article existe réellement. Puis nous vérifions doublement que l'utilisateur n'a pas déjà voté pour cet article, et si c'est le cas nous incrémentons le score total de vote et ajoutons l'utilisateur à l'ensemble des votants.
 
-////
+L'étape finale est interessante, comme nous avons utilisé deux opérateurs Mongo spéciaux. Il y en a beaucoup plus à apprendre, mais ces deux sont extrêmement pratique : `$addToSet` ajoute un item à une propriété de tableau tant qu'elle n'existe pas déjà, et `$inc` incrémente simplement un entier.
 
-### User Interface Tweaks
+### Optimisations de l'interface utilisateur
 
-////
+Si l'utilisateur n'est pas authentifié, ou a déjà voté un article, il ne sera pas authorisé à voter. Pour refléter ça dans notre UI, nous utiliserons un helper pour ajouter de façon conditionnelle une class CSS `disabled` au bouton de vote.
 
 ~~~html
 <template name="postItem">
@@ -261,17 +261,17 @@ Template.postItem.events({
 <%= caption "client/views/posts/post_item.js" %>
 <%= highlight "8~15, 19" %>
 
-////
+Nous changeons notre class `.upvote` en `.upvotable`, donc n'oubliez pas de changer l'évènement click également.
 
-<%= screenshot "13-2", "Greying out upvote buttons." %>
+<%= screenshot "13-2", "Griser les boutons vote." %>
 
-<%= commit "13-2", "Grey out upvote link when not logged in / already voted." %>
+<%= commit "13-2", "Griser lien vote quand non authentifié / déjà voté." %>
 
-////
+Ensuite, vous pouvez noter que les articles avec un seul vote sont étiquetés "1 vote**s**", donc prenons le temps de pluraliser ces labels proprement. Pluralisation peut être un processus compliqué, mais pour l'instant nous ferons ça d'une façon assez simpliste. Nous allons créer un helper Spacebars général que nous pourrons utiliser n'importe où :
 
 ~~~js
-Handlebars.registerHelper('pluralize', function(n, thing) {
-  // fairly stupid pluralizer
+UI.registerHelper('pluralize', function(n, thing) {
+  // pluraliser assez simpliste
   if (n === 1) {
     return '1 ' + thing;
   } else {
@@ -279,9 +279,9 @@ Handlebars.registerHelper('pluralize', function(n, thing) {
   }
 });
 ~~~
-<%= caption "client/helpers/handlebars.js" %>
+<%= caption "client/helpers/Spacebars.js" %>
 
-////
+Les helpers que nous avons créés avant ont été relié au manager et template auxquels ils s'appliquent. Mais en utilisant `UI.registerHelper`, nous avons créé un helper *global* qui peut être utilisé à l'intérieur d'un template :
 
 ~~~html
 <template name="postItem">
@@ -298,23 +298,23 @@ Handlebars.registerHelper('pluralize', function(n, thing) {
 <%= caption "client/views/posts/post_item.html" %>
 <%= highlight "4, 6" %>
 
-<%= screenshot "13-3", "Perfecting Proper Pluralization (now say that 10 times)" %>
+<%= screenshot "13-3", "Perfectionner Pluralisation Propre (maintenant dites ça 10 fois)" %>
 
-<%= commit "13-3", "Added pluralize helper to format text better." %>
+<%= commit "13-3", "Helper pluraliser ajouté pour un meilleur format texte." %>
 
-////
+Maintenant vous devriez voir "1 vote".
 
-### Smarter Voting Algorithm
+### Algorithme de vote plus intelligent
 
-////
+Notre code de vote est bon, mais nous pouvons encore faire mieux. Dans la méthode upvote, nous créons deux appels vers Mongo : un pour trouver l'article, l'autre pour le mettre à jour.
 
-////
+Il y a deux problèmes avec ça. Premièrement, c'est un peu inefficace d'aller vers la base de données deux fois. Mais plus important, il introduit une concurrence. Nous suivons l'algorithme suivant :
 
-1. ////
-2. ////
-3. ////
+1. Récupérer l'article de la base de données.
+2. Vérifier si l'utilisateur a voté.
+3. Sinon, faire un vote par l'utilisateur.
 
-////
+Que se passe-t-il si le même utilisateur vote plusieurs fois pour l'article entre les étapes 1 et 3 ? Notre code actuel ouvre la porte au utilisateur capables de voter pour le même article deux fois. Heureusement, Mongo nous permet d'être plus intelligent et combine les étapes 1-3 dans une seule commande Mongo :
 
 ~~~js
 Meteor.methods({
@@ -341,44 +341,44 @@ Meteor.methods({
 <%= caption "collections/posts.js" %>
 <%= highlight "12~15" %>
 
-<%= commit "13-4", "Better upvoting algorithm." %>
+<%= commit "13-4", "Meilleur algorithme de vote." %>
 
-////
+Ce que nous sommes en train de dire c'est "trouve tous les articles avec cet `id` pour lesquels cet utilisateur n'a pas déjà voté, et mets les à jour dans ce sens". Si l'utilisateur *n'a pas* déjà voté, il trouvera bien entendu l'article avec cet `id`. D'un autre côté si l'utilisateur *a* voté, alors la requête correspondra à aucun documents, et par conséquent rien ne se passera.
 
-////
+Le seul inconvénient est que maintenant nous ne pouvons pas dire à l'utilisateur qu'il a déjà voté pour cet article (à partir du moment où nous nous débarassons de l'appel de la base de données pour vérifier ça). Mais ils devraient le comprendre en voyant le bouton "vote" grisé dans l'interface utilisateur.
 
 <% note do %>
 
-### Latency Compensation
+### Compensation de la Latence
 
-////
+Disons que vous avez essayé de tricher et envoyé un de vos articles en haut de la lise en bidouillant son nombre de votes :
 
 ~~~js
 > Posts.update(postId, {$set: {votes: 10000}});
 ~~~
-<%= caption "Browser console" %>
+<%= caption "Console du navigateur" %>
 
-////
+(Où `postId` est l'id d'un de vos articles)
 
-////
+Cette tentative impudente de jouer avec le système serait gérée par notre callback `deny()` (dans `collections/posts.js`, vous vous souvenez ?) et immédiatement rejetée.
 
-////
+Mais si vous regardez attentivement, vous pourriez voir la compensation de latence en action. Ça peut être rapide, mais l'article bondira brièvement en tête de la liste avant de revenir à sa position.
 
-////
+Que s'est-il passé ? Dans votre collection `Posts` en local, le `update` a été appliquée sans incident. Ça arrive instantanément, donc l'article a atteint le haut de la liste. Pendant ce temps, sur le serveur, le `update` a été rejeté. Puis un peu plus tard (mesuré en millisecondes si vous exécutez Meteor sur votre propre machine), le serveur a retourné une erreur, en disant à la collection en local de revenir en arrière.
 
-////
+Le résultat final : en attendant que le serveur réponde, l'interface utilisateur ne peut pas aider mais fait confiance à la collection en local. Aussitôt que le serveur revient et refuse la modification, les interfaces utilisateur s'adaptent pour refléter ça.
 
 <% end %>
 
-### Ranking the Front Page Posts
+### Classer les articles de la première page
 
-////
+Maintenant que nous avons un score pour chaque article basé sur le nombre de votes, affichons la liste des meilleurs articles. Pour faire ça, nous allons voir comment gérer deux souscriptions séparées sur la collection article, et rendre notre template `postList` un peu plus général.
 
-////
+Pour commencer, nous voulons avoir *deux* souscriptions, une pour chaque ordre de tri. L'astuce ici est que les deux souscriptions souscriront à la *même* publication `posts`, seulement avec des arguments différents.
 
-////
+Nous allons également créer deux nouvelles routes appelées `newPosts` et `bestPosts`, accessibles respectivement aux URLs `/new` et `/best` (avec `/new/5` et `/best/5` pour notre pagination bien sur).
 
-////
+Pour faire cela, nous *étendrons* notre `PostsListController` dans deux controlleurs `NewPostListController` et `BestPostsListController` distincts. Ça nous laissera réutiliser exactement les mêmes options de routes pour les deux routes `home` et `newPosts`, en nous donnant un seul `NewPostsListController` d'où hériter. De plus, c'est juste une belle illustration de la flexibilité de Iron Router.
 
 ~~~js
 PostsListController = RouteController.extend({
@@ -440,11 +440,21 @@ Router.map(function() {
 <%= caption "lib/router.js" %>
 <%= highlight "8,16,21~34,36~49" %>
 
-////
+Notez que maintenant que nous avons plus d'une route, nous prenons la logique `nextPath` hors de `PostListController` et la plaçons dans `NewPostsListController` et `BestPostsListController`, à partir du moment où le chemin sera différent dans les deux cas.
 
-////
+De plus, quand nous trions par `votes`, nous avons un tri secondaire par la date (submitted) pour nous assurer que l'ordre est correct.
 
-////
+Avec nos nouveaux controlleurs en place, nous pouvons maintenantsans problème nous débarasser de la route `postList` précédente. Supprimez juste le code suivant :
+
+```
+ this.route('postsList', {
+  path: '/:postsLimit?',
+  controller: PostsListController
+ })
+```
+<%= caption "lib/router.js" %>
+
+Nous ajouterons également des liens dans l'en-tête :
 
 ~~~html
 <template name="header">
@@ -484,17 +494,34 @@ Router.map(function() {
 <%= caption "client/views/include/header.html" %>
 <%= highlight "9, 15~21" %>
 
-////
+Nous avons également besoin de mettre à jour notre gestionnaire de suppression d'article.
 
-<%= screenshot "13-4", "Ranking by points" %>
+~~~html
+  'click .delete': function(e) {
+    e.preventDefault();
+    
+    if (confirm("Delete this post?")) {
+      var currentPostId = this._id;
+      Posts.remove(currentPostId);
+      Router.go('home');
+    }
+  }
+~~~
+<%= caption "client/views/posts_edit.js" %>
+<%= highlight "7" %>
 
-<%= commit "13-5", "Added routes for post lists, and pages to display them." %>
 
-### A Better Header
+With all this done, we now gain a best posts list:
 
-////
+<%= screenshot "13-4", "Classer par points" %>
 
-////
+<%= commit "13-5", "Routes ajoutées pour les listes d'articles, et pages pour les afficher." %>
+
+### Une meilleur en-tête
+
+Maintenant que nous avons deux pages de liste d'articles, il peut être difficile de savoir laquelle vous êtes en train de regarder. Donc revisitons notre en-tête pour rendre ça plus évident. Nous allons créer un gestionnaire `header.js` et créer un helper qui utilise le chemin courant et une ou plusieurs routes nommées pour ajouter une class active dans nos items de navigation :
+
+La raison pour laquelle nous voulons supporter de multiples routes nommées est que les deux routes `home` et `newPosts` (qui correspondent respectivement aux URLs `/` et `/new`) invoque le même template. Ça signifie que notre `activeRouteClass` devrait être assez intelligente pour rendre actif le tag `<li>` dans les deux cas.
 
 ~~~html
 <template name="header">
@@ -541,7 +568,7 @@ Template.header.helpers({
     args.pop();
     
     var active = _.any(args, function(name) {
-      return Router.current().route.name === name
+      return Router.current() && Router.current().route.name === name
     });
     
     return active && 'active';
@@ -550,24 +577,24 @@ Template.header.helpers({
 ~~~
 <%= caption "client/views/includes/header.js" %>
 
-<%= screenshot "13-5", "Showing the active page" %>
+<%= screenshot "13-5", "Montrer la page active" %>
 
 <% note do %>
 
-### Helper Arguments
+### Arguments des helpers
 
-////
+Nous n'avons pas utilisé ce patron spécifique jusqu'à maintenant, mais just comme d'autres tags Spacebars, les tags de template helper peuvent prendre des arguments.
 
-////
+Et pendant que vous pouvez bien entendu passer des arguments nommés spécifiques dans votre fonction, vous pouvez également passer un nombre non spécifié de paramètres anonymes et les récupérer en appelant l'objet `arguments` dans la fonction.
 
-////
+Dans ce dernier cas, vous voudrez probablement convertir l'objet `arguments` en tableau Javascript classique et ensuite appeler `pop()` dessus pour vous débarasser du hash ajouté à la fin par Spacebars.
 
 <% end %>
 
-////
+Pour chaque item de navigation, le helper `activeRouteClass` prendre une liste de noms de routes, et ensuite utilise le helper `Any()` de Underscore pour voir si certaines des routes passent le test (i.e. leur url correspondante est égale au chemin courant).
 
-////
+Si une de ces routes correspond avec le chemin courant, `any()` retournera `true`. Finalement, nous prenons avantage du patron Javascript `boolean && string` où `false && myString` retourne `false`, mais `true && myString` retourne `myString`.
 
-<%= commit "13-6", "Added active classes to the header." %>
+<%= commit "13-6", "Classes active ajoutées à l'en-tête." %>
 
-////
+Maintenant que les utilisateurs peuvent voter sur les artices en temps réel, vous verrez les items monter et descendre la page d'accueil en fonction de leur classement. Mais ne serait-il pas joli s'il y avait un moyen d'affiner tout ça avec quelques animations bien temporisées ?
