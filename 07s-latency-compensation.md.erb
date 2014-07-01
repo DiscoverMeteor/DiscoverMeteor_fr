@@ -4,53 +4,53 @@ slug: latency-compensation
 date: 0007/01/02
 number: 7.5
 sidebar: true
-contents: Understand latency compensation.|Slow your app down and see what's going on.|Learn how Meteor Methods call each other.
+contents: Comprendre la compensation de latence.|Ralentissez votre application et voyez ce qu'il se passe.|Apprendre comment les méthodes Meteor interagissent entre elles.
 paragraphs: 28
 ---
 
-////
+Dans le dernier chapitre, nous avons présenté un nouveau concept du monde Meteor : les **Méthodes**.
 
-<%= diagram "latency1", "Without latency compensation", "pull-right" %>
+<%= diagram "latency1", "Sans compensation de latence", "pull-right" %>
 
-////
+Une Méthode Meteor est un moyen d'exécuter une série de commandes sur le serveur d'une façon structurée. Dans notre exemple, nous avons utilisé une Méthode car nous voulions nous assurer que les nouveaux articles seraient tagués avec le nom et l'id de leur auteur ainsi que l'heure du serveur.
 
-////
+Cependant, si Meteor exécute des Methodes dans sa plus simple façon, nous aurions un problème. Considérez la séquence suivante d'évènements (note : les horodatages sont des valeurs aléatoires choisies seulement pour l'exemple) :
 
-- *+0ms:* ////
-- *+200ms:* ////
-- *+500ms:* ////
+- *+0ms:* L'utilisateur clique sur un bouton et le navigateur renvoie un appel de Méthode.
+- *+200ms:* Le serveur fait des changements dans la base de données
+- *+500ms:* Le client reçoit ces changements, met à jour l'UI.
 
-If this were the way Meteor operated, then there'd be a short lag between performing such actions and seeing the results (that lag being more or less noticeable depending on how close you were to the server). We can't have that in a modern web application!
+Si ceci est la façon dont Meteor opère, alors il va y avoir un petit décalage entre effectuer de telles actions et voir les résultats (ce décalage plus ou moins notable dépend de votre proximité avec le serveur). Nous ne pouvons nous permettre ça dans une application web moderne !
 
-### Latency Compensation
+### Conpensation de latence
 
-<%= diagram "latency2", "With latency compensation", "pull-right" %>
+<%= diagram "latency2", "Avec compensation de latence", "pull-right" %>
 
-////
+Pour éviter ce problème, Meteor introduit un concept appelé **Compensation de latence**. Quand nous définissons notre Méthode `post`, nous la plaçons à l'intérieur d'un fichier dans le répertoire `collections/`. Ceci signifie qu'elle est disponible pour le serveur *et le client* -- et elle s'exécutera sur les deux en même temps !
 
-////
+Quand nous faisons un appel de Méthode, le client envoie l'appel au serveur, mais *simule* également simultanément l'action de la Méthode sur ses collections côté client. Notre workflow devient :
 
-- *+0ms:* ////
-- *+0ms:* ////
-- *+200ms:* ////
-- *+500ms:* ////
+- *+0ms:* L'utilisateur clique sur un bouton et le navigateur renvoie un appel de Méthode.
+- *+0ms:* Le client simule l'action de l'appel de Méthode sur les collections côté client et met à jour l'UI pour refléter ceci.
+- *+200ms:* Le serveur fait les changements dans la base de données Mongo.
+- *+500ms:* Le client reçoit ces changements et annule ses changements simulés, en les remplaçant par les changements du serveur (qui sont généralement les mêmes). L'UI change pour refléter ceci.
 
-////
+Le résultat pour l'utilisateur est de voir les changements instantanément. Quand la réponse du serveur retourne un peu plus tard, elle peut être ou pas des changements notables à mesure que les documents canoniques du serveur arrivent. Une chose à retenir est que nous devons nous assurer que nous simulons les documents aussi proches de la réalité que possible.
 
-### Observing Latency Compensation
+### Observer une compensation de latence
 
-////
+Nous pouvons faire un petit changement à l'appel de Méthode `post` pour voir ça en action. Pour faire ça, nous développerons du code avancé avec le paquet npm `futures` pour délayer l'insertion d'objets dans notre méthode.
 
-////
+Nous utiliserons `isSimulation` pour demander à Meteor si la Méthode est en cours d'invocation comme un stub. Un [stub](http://docs.meteor.com/#methods_header) est la simulation d'une Méthode que Meteor exécute sur le client en parallèle, pendant que la "vraie" Méthode est en cours d'exécution sur le serveur.
 
-////
+Donc nous allons demander à Meteor si le code est en cours d'exécution sur le client. Si c'est le cas, nous allons ajouter la chaîne de caractère `(client)` à la fin du titre de notre article. Sinon, nous ajouterons la chaîne de caractère `(server)` :
 
 ~~~js
 Meteor.methods({
   post: function(postAttributes) {
     // […]
     
-    // pick out the whitelisted keys
+    // récupérer les clés de la liste blanche
     var post = _.extend(_.pick(postAttributes, 'url', 'message'), {
       title: postAttributes.title + (this.isSimulation ? '(client)' : '(server)'),
       userId: user._id, 
@@ -58,7 +58,7 @@ Meteor.methods({
       submitted: new Date().getTime()
     });
     
-    // wait for 5 seconds
+    // Attendre 5 secondes
     if (! this.isSimulation) {
       var Future = Npm.require('fibers/future');
       var future = new Future();
@@ -77,11 +77,11 @@ Meteor.methods({
 <%= caption "collections/posts.js" %>
 <%= highlight "6, 7, 13~22" %>
 
-////
+Note : Au cas ou vous vous demandez, le `this` dans `this.isSimulation` est un [objet d'invocation de Méthode](http://docs.meteor.com/#meteor_methods) qui fournit un accès aux diverses variables utiles.
 
-////
+Exactement comment les [Futures](https://npmjs.org/package/future) travaillent est hors du cadre de ce livre, mais nous avons simplement dit à Meteor d'attendre 5 secondes avant de faire l'insertion dans la collection côté serveur.
 
-////
+Nous allons faire une redirection d'envoi directement à la liste d'articles :
 
 ~~~js
 Template.postSubmit.events({
@@ -105,29 +105,29 @@ Template.postSubmit.events({
 <%= caption "client/views/posts/post_submit.js" %>
 <%= highlight "15" %>
 
-<%= scommit "7-5-1", "Demonstrate the order that posts appear using a sleep." %>
+<%= scommit "7-5-1", "Démontrer l'ordre d'apparition des articles en utilisant un sleep." %>
 
-////
+Si nous créons un article maintenant, nous voyons clairement la compensation de latence en action. Premièrement, un article est inséré avec `(client)` dans le titre (le premier article dans la liste, relié à Github) :
 
-<%= screenshot "s5-1", "Our post as first stored in the client collection" %>
+<%= screenshot "s5-1", "Notre article comme premier stocké dans la collection côté client" %>
 
-////
+Ensuite, cinq secondes plus tard, c'est proprement remplacé avec le vrai document qui a été inséré par le serveur :
 
-<%= screenshot "s5-2", "Our post once the client receives the update from the server collection" %>
+<%= screenshot "s5-2", "Notre article une fois que le client reçoit la mise à jour de la collection côté serveur" %>
 
-### Client Collection Methods
+### Méthodes des collections sur le client
 
-////
+Vous pourriez penser que les Méthodes sont compliquées après ça, mais en fait elles peuvent être plutôt simples. Actuellement, nous avons déjà vu trois méthodes très simples : les Méthodes de mutation de collection, `insert`, `update` et `remove`.
 
-////
+Quand vous définissez une collection serveur appelée `'posts'`, vous êtes implicitement en train de définir trois Méthodes : `posts/insert`, `posts/update` et `posts/delete`. En d'autres mots, quand vous appelez `Posts.insert()` sur votre collection cliente, vous appelez une Méthode de compensation de latence qui fait deux choses :
 
-1. ////
-2. ////
+1. Des vérifications pour voir si vous faites la mutation en appelant des callbacks `allow` et `deny` (cependant il n'est pas nécessaire que ça arrive dans la simulation).
+2. Faire la modification vers le stockage de données sous-jacent.
   
-### Methods Calling Methods
+### Des méthodes qui appellent des Méthodes
 
-////
+Si vous prenez du recul, vous venez peut-être juste de réaliser que notre Méthode `post` appelle une autre Méthode (`posts/insert`) quand nous insérons notre article. Comment ça fonctionne ?
  
-////
+Quand la simulation (version côté client de la Méthode) est en cours d'exécution, nous effectuons la simulation d'un `insert` (nous insérons donc dans notre collection cliente), mais nous *ne* faisons *pas* le vrai, `insert` côté serveur, nous attendons que la version *côté serveur* de `post` le fasse.
 
-////
+Par conséquent, quand la Méthode `post` côté serveur appelle `insert` il n'y a pas besoin de s'inquiéter à propos de la simulation, et l'insertion continue sans encombre.
