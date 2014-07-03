@@ -4,47 +4,47 @@ slug: allow-and-deny
 date: 0008/01/02
 number: 8.5
 sidebar: true
-contents: Learn about Allow and Deny callbacks.|Understand in which order callbacks are called.
+contents: En savoir plus à propos des callbacks Allow et Deny.|Comprendre dans quel ordre les callbacks sont appelés.
 paragraphs: 16
 ---
 
-////
+Le système de sécurité de Meteor nous permet de contrôler les modifications de la base de données sans avoir à définir des Méthodes à chaque fois qu'on fait des changements.
 
-////
+Parce que nous avons eu besoin de faire des tâches auxiliaires comme décorer l'article avec des propriétés supplémentaires et décider d'une action spéciale quand l'URL de l'article a déjà été postée, utiliser une Méthode `post` spécifique a beaucoup de sens quand un article est créé.
 
-////
+D'un autre côté, nous n'avons pas vraiment besoin de créer des nouvelles Méthodes pour mettre à jour ou supprimer des articles. Nous avons juste besoin de vérifier si l'utilisateur a la permission de faire ces actions, et c'est rendu très facile par les callbacks `allow` et `deny`.
 
-////
+Utiliser ces callbacks nous laisse être plus déclaratif à propos des modifications de la base de données, et dire quels types de mises à jour peuvent être utilisés. Le fait qu'ils intègrent le système de comptes est un bonus.
 
-### Multiple callbacks
+### Multiples callbacks
 
-////
+Nous pouvons définir autant de callbacks `allow` que nécessaires. Nous avons juste besoin d'_au moins un_ d'entre eux pour retourner `true` durant le changement qui est en train de s'opérer. Donc quand `Posts.insert` est appelé dans un navigateur (peu importe si c'est depuis le code côté client de votre application ou depuis la console), le serveur va faire à son tour toutes les vérifications allowed-`insert` qu'il peut jusqu'à ce qu'il en trouve une qui retourne true. S'il n'en trouve aucune, il n'autorisera pas le insert, et retournera une erreur `403` au client.
 
-////
+De la même façon, nous pouvons définir un ou plusieurs callbacks `deny`. Si _un_ de ces callbacks return `true`, le changement sera annulé et un `403` sera retourné. La logique de tout ça signifie que pour un `insert` avec succès, un ou plusieurs callback `allow` `insert` aussi bien que _chaque_ callback `deny` `insert` seront exécutés.
 
-<%= diagram "allow_deny", "Note: n/e stands for Not Executed" %>
+<%= diagram "allow_deny", "Note: n/e est l'abbréviation de Not Executed" %>
 
-////
+En d'autres mots, Meteor descend la liste de callback en partant du premier avec `deny`, puis avec `allow`, et exécute chaque callback jusqu'à ce qu'un d'entre eux retourne `true`.
 
-////
+Un exemple pratique de ce pattern serait d'avoir deux callbacks `allow()`, un qui vérifie si un article appartient à l'utilisateur courant, et un second qui vérifie si l'utilisateur courant a les droits d'administration. Si l'utilisateur courant est un administrateur, cela assure qu'il sera capable de mettre à jour l'article, car au moins un de ces callback retournera true.
 
-### Latency Compensation
+### Compensation de latence
 
-////
+Souvenez-vous que ces Méthodes de mutation de base de données (telles que `.update()`) sont compensé en latence, juste comme les autres méthodes. Donc par exemple, si vous supprimez un article qui ne vous appartient pas via la console du navigateur, nous verrons l'article brièvement disparaître comme votre collection locale perd le document, mais ensuite réapparaître comme le serveur l'informe que, non, en fait le document n'a pas été supprimé.
 
-////
+Bien sûr ce comportement n'est pas un problème quand il est déclenché dans la console (après tout, si les utilisateurs essaient de bidouiller avec les données dans la console, ce n'est pas vraiment votre problème ce qui se passe dans _leur_ navigateur). Cependant, vous devez vous assurer que ça n'arrive pas dans l'interface utilisateur. Par exemple, vous devez vous donner de la peine pour vous assurer que vous ne montrez pas les boutons pour supprimer les données qu'ils ne sont pas autorisés à supprimer.
 
-////
+Heureusement, vous pouvez partager le code de permissions entre client et serveur (par exemple, vous pourriez écrire une fonction bibliothèque `canDeletePost(user, post)` et la mettre dans le répertoire `lib` partagé), faire ça ne requiert habituellement pas beaucoup de code supplémentaire.
 
-### Server-side permissions
+### Permissions côté serveur
 
-////
+Souvenez-vous que le système de permissions s'applique seulement sur les mutations de base de données initiées par le client. Sur le serveur, Meteor assume que _toutes_ les opérations sont permises.
 
-////
+Ceci signifie que dans le cas où vous écrivez une Méthode Meteor côté serveur `deletePost` qui pourrait être appelé par le client, n'importe qui serait capable de supprimer un article. Donc vous ne voulez probablement pas faire ça à moins que vous ayez vérifié les permissions à l'intérieur de cette Méthode.
 
-### Using deny as a callback
+### Utiliser un deny comme callback
 
-////
+Finalement, une astuce que vous pouvez faire avec `deny` est de l'utiliser comme un callback "onX". Par exemple, vous pouvez achever un horodate `lastModified` avec le code suivant :
 
 ~~~js
 Posts.deny({
@@ -56,6 +56,6 @@ Posts.deny({
 });
 ~~~
 
-////
+Comme les callbacks `deny` sont exécutés pour *chaque* `update` avec succès, nous savons que ce callback sera exécuté et peut faire des changements du document d'une manière structurée.
 
-////
+Certes, cette technique est un peu de hack, donc vous pourriez vouloir effectuer des mises à jour en préférant l'utilisation d'une Méthode. Cependant, c'est encore utile à savoir, et dans le future nous pouvons espérer que ce type de callback `beforeUpdate` deviendra disponible.
