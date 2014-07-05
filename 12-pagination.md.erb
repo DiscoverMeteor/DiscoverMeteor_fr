@@ -225,31 +225,31 @@ Essayons notre tout nouveau système de pagination. Nous avons maintenant la pos
 
 ### Pourquoi pas des pages ?
 
-////
+Pourquoi utilisons-nous une approche de "pagination infinie" au lieu de montrer des pages successives avec 10 articles sur chaque, comme ce que Google fait pour ses résultats de recherche ? C'est actuellement dû au paradigme temps-réel embrassé par Meteor.
 
-////
+Imaginons que nous paginons notre collection `Posts` en utilisant le pattern de pagination de Google, et que nous sommes à la page 2, qui affiche les articles 10 à 20. Que se passe-t-il si un utilisateur supprime un des 10 précédents articles ?
 
-////
+Étant donné que notre application est temps-réel, notre ensemble de données pourrait changer. L'article 10 deviendrait l'article 9, et disparaîtrait de notre vue, pendant que l'article 11 serait maintenant dans le créneau. Le résultat final serait que l'utilisateur verrait soudainement ses articles changer sans raisons apparentes.
 
-////
+Même si nous tolérions cette bizarrerie dans l'expérience utilisateur, la pagination traditionnelle est également difficile à implémenter pour des raisons techniques.
 
-////
+Revenons à notre exemple précédent. Nous publions les articles 10 à 20 de la collection `Posts`, mais comment trouver ces articles sur le client ? Vous ne pouvez pas prendre les articles de 10 à 20, comme il y a seulement dix articles en tout dans l'ensemble de données côté client.
 
-////
+Une solution serait simplement de publier ces 10 articles sur le serveur, et ensuite faire un `Posts.find()` côté client pour récupérer *tous* les articles publiés.
 
-////
+Ceci fonctionne si vous avez seulement un abonnement. Mais que va-t-il se passer si vous avez plus d'un abonnement aux articles, comme nous le ferons bientôt ?
 
-////
+Disons qu'un abonnement demande les articles 10 à 20, et un autre les articles 30 à 40. Vous avez maintenant 20 articles chargés côté client au total, avec aucun moyen de savoir lesquels appartiennent à quel abonnement.
 
-////
+Pour toutes ces raisons, la pagination traditionnelle n'a pas beaucoup de sens lorsqu'on travaille avec Meteor.
 
 <% end %>
 
-### Creating a Route Controller
+### Créer un controlleur de route
 
-////
+Vous avez noté que nous répétons la ligne `var limit = parseInt(this.params.postsLimit) || 5;` deux fois. De plus, coder en dur le nombre "5" n'est pas vraiment idéal. Ce n'est pas la fin du monde, mais comme c'est toujours mieux de suivre le principe DRY (Don't Repeat Yourself) si vous le pouvez, voyons comment nous pouvons remanier un petit peu les choses.
 
-////
+Nous allons présenter un nouvel aspect de Iron Router, les *Controlleurs de Route*. Un controlleur de route est simplement un moyen de grouper les fonctionnalités de routage ensemble dans un paquet réutilisable dont toutes les routes peuvent hériter. Maintenant nous allons l'utiliser uniquement pour une seule route, mais vous verrez dans le prochain chapitre comment cette fonctionnalité deviendra pratique.
 
 ~~~js
 PostsListController = RouteController.extend({
