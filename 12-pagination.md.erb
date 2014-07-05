@@ -280,23 +280,23 @@ Router.map(function() {
 ~~~
 <%= caption "lib/router.js" %>
 
-////
+Voyons les étapes. Premièrement, nous créons notre controlleur en étendant `RouteController`. Puis Nous mettons la propriété `template` juste comme nous l'avons fait avant, et ensuite une nouvelle propriété `increment`.
 
-////
+Puis nous définissions une nouvelle fonction `limit` qui retournera la limite courante, et une fonction `findOptions` qui retournera un objet options. Cela pourrait ressembler à une étape supplémentaire, mais nous en ferons usage plus tard.
 
-////
+Après, nous définissions des fonctions `waitOn` et `data` juste comme avant, excepté que maintenant elles vont utiliser notre nouvelle fonction `findOptions`.
 
-////
+La dernière chose à faire est d'indiquer la route `postsList` pour router vers notre tout nouveau controlleur, avec la propriété `controller`.
 
-<%= commit "12-3", "Refactored postsLists route into a RouteController." %>
+<%= commit "12-3", "Route postsList remaniées dans un controlleur de route." %>
 
-### Adding A Load More Link
+### Ajouter un lien Charger plus
 
-////
+Nous avons une pagination qui fonctionne, et notre code est bien fait. Il y a juste un problème : il n'y a aucun moyen d'utiliser actuellement cette pagination excepté en changeant l'URL manuellement. Ceci ne fait définitivement pas une bonne expérience utilisateur, donc retournons au travail pour corriger ça.
 
-////
+Ce que nous voulons faire est assez simple. Nous allons ajouter un bouton "Charger plus" en bas de notre liste d'articles, qui incrémentera le nombre d'articles affichés par 5 chaque fois qu'on clique dessus. Donc si je suis actuellement sur l'URL `http://localhost:3000/5`, cliquer sur "Charger plus" nous amène à `http://localhost:3000/10`. Si vous êtes arrivé aussi loin dans le livre, nous pensons que vous pouvez supporter un peu d'arithmétique.
 
-////
+Comme précédemment, nous ajouterons notre logique de pagination dans notre route. Vous vous souvenez quand nous avons explicitement nommé notre contexte de données plutôt que juste utiliser un curseur anonyme ? Bien, il n'y a pas de règle qui dit que la fonction `data` peut seulement passer des curseurs, donc nous utiliserons la même technique pour générer l'URL de notre bouton "charger plus".
 
 ~~~js
 PostsListController = RouteController.extend({
@@ -327,25 +327,25 @@ PostsListController = RouteController.extend({
 <%= caption "lib/router.js" %>
 <%= highlight "16~23" %>
 
-////
+Regardons plus en détail la magie du routeur. Vous vous souvenez que la route `postsList` (qui hérite du controlleur `PostsListController` sur lequel nous travaillons) prend un paramètre `postsLimit`.
 
-////
+Donc quand nous alimentons `this.route.path()` avec `{postsLimit: this.limit() + this.increment}`, nous disons à la route `postsList` de construire son propre chemin en utilisant cet objet JavaScript comme contexte de données.
 
-////
+En d'autres mots, c'est exactement la même chose qu'utiliser le helper Spacebars `{{pathFor 'postsList'}}`, excepté que nous remplaçons le `this` implicite par notre contexte de données personnalisé.
 
-////
+Nous prenons ce chemin et l'ajoutons au contexte de données pour notre template, mais *seulement* s'il y a plus d'articles à afficher. La manière dont on fait ça est un peu rusée.
 
-////
+Nous savons que `this.limit()` retourne le nombre courant d'articles que nous aimerions montrer, qui peut être la valeur dans l'URL courante, ou notre valeur par défaut (5) si l'URL ne contient pas de paramètre.
 
-////
+D'un autre côté, `this.posts` réfère au curseur courant, donc `this.posts.count()` réfère au nombre d'articles qui sont actuellement dans le curseur.
 
-////
+Donc ce que nous disons ici est que si nous demandons `n` articles et nous récupérons `n`, nous continuerons d'afficher le bouton "charger plus". Mais si nous demandons `n` et que nous récupérons moins de `n`, ça voudra dire que nous avons atteint la limite et que nous voulons arrêter d'afficher ce bouton.
 
-////
+Ceci étant dit, notre système échoue dans un cas ; quand le nombre d'items dans notre base de données est *exactement* `n`. Si cela arrive, le client demandera `n` articles et récupérera `n` articles et continuera à afficher le bouton "charger plus", inconscient qu'il n'y a plus d'items restants.
 
-////
+C'est triste, il n'y a pas de contournements simples à ce problème, donc pour l'instant nous devrons nous contenter de cette implémentation moins-que-parfaite.
 
-////
+Tout ce qu'il reste à faire est d'ajouter le lien "charger plus" en bas de notre liste d'articles, en nous assurant de l'afficher seulement si nous avons encore des articles à charger :
 
 ~~~html
 <template name="postsList">
@@ -363,27 +363,19 @@ PostsListController = RouteController.extend({
 <%= caption "client/views/posts/posts_list.html" %>
 <%= highlight "7~10" %>
 
-////
+Voici à quoi votre liste d'articles devrait ressembler :
 
-<%= screenshot "12-3", "The “load more” button. " %>
+<%= screenshot "12-3", "Le bouton “Charger plus“. " %>
 
-<%= commit "12-4", "Added nextPath() to the controller and use it to step through posts." %>
+<%= commit "12-4", "nextPath() ajouté au controlleur et utilisé pour franchir les articles." %>
 
-<% note do %>
+### Une meilleure barre de chargement
 
-### Count vs Length
+Notre pagination fonctionne maintenant correctement, mais elle souffre d'une ennuyante bizarrerie : à chaque fois que nous cliquons sur “charger plus” et que le routeur demande plus d'articles, nous sommes envoyés vers le template `loading` pendant que nous attendons l'arrivée des nouvelles données. Le résultat est que nous sommes envoyés en haut de la page à chaque fois et nous avons besoin de faire défiler la page vers le bas pour continuer notre navigation.
 
-////
+Ça serait bien, bien mieux si on pouvait rester sur la même page tout au long de l'opération, tout en fournissant l'information que des nouvelles données sont en cours de chargement. Heureusement, c'est précisément ce que le paquet `iron-router-progress` fait.
 
-<% end %>
-
-### A Better Progress Bar
-
-////
-
-////
-
-////
+Similaire à Safari d'IOS ou des sites comme Medium et Youtube, `iron-router-progress` ajout une petite barre de chargement en haut de l'écran. L'implémenter est aussi facile que d'ajouter le paquet dans votre application :
 
 ~~~bash
 mrt add iron-router-progress
