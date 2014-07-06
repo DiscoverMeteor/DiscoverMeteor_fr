@@ -380,11 +380,11 @@ Similaire à Safari d'IOS ou des sites comme Medium et Youtube, `iron-router-pro
 ~~~bash
 mrt add iron-router-progress
 ~~~
-<%= caption "bash console" %>
+<%= caption "Console bash" %>
 
-////
+A travers la magie des paquets intelligents, notre nouvel indicateur de chargement fonctionnera parfaitement dès son installation ! La barre de chargement s'activera pour chaque route, et se complètera automatiquement une fois que les données requises pour la route seront finies de charger.
 
-////
+Nous ferons juste une petite optimisation. Désactivons `iron-router-progress` pour la route `postSubmit` vu que nous n'avons pas besoin d'attendre des données d'abonnement (après tout, c'est juste un formulaire vide) :
 
 ~~~js
 Router.map(function() {
@@ -400,19 +400,19 @@ Router.map(function() {
 <%= caption "lib/router.js" %>
 <%= highlight "7" %>
 
-<%= commit "12-5", "Use the iron-router-progress package to make pagination nicer." %>
+<%= commit "12-5", "Utiliser le paquet iron-router-progress pour rendre la pagination plus sympathique." %>
 
-### Accessing Any Post
+### Accéder à des articles
 
-////
+Nous sommes en train de charger les cinq articles les plus récents par défaut, mais que se passe-t-il quand quelqu'un explore une page d'article individuelle ?
 
-<%= screenshot "12-4", "An empty template." %>
+<%= screenshot "12-4", "Un template vide." %>
 
-////
+Si vous essayez, vous allez faire face à un template d'article vide. Cela semble normal : nous avons dit au routeur de s'abonner à la publication `posts` quand il charge la route `postsList`, mais nous ne lui avons pas dit quoi faire au sujet de la route `postPage`.
 
-////
+Mais, tout ce que nous savons faire c'est nous abonner à une liste des `n` derniers articles. Comment demande-t-on au serveur pour un seul article spécifique ? Nous allons vous donner un petit secret ici : vous pouvez avoir plus d'une publication pour chaque collection !
 
-////
+Donc pour retrouver nos articles manquants, nous allons seulement créer une nouvelle, publication `singlePost` séparée qui publie seulement un article, identifié par son `_id`.
 
 ~~~js
 Meteor.publish('posts', function(options) {
@@ -426,7 +426,7 @@ Meteor.publish('singlePost', function(id) {
 <%= caption "server/publications.js" %>
 <%= highlight "5~7" %>
 
-////
+Maintenant, abonnons-nous aux bon articles côté client. Nous nous sommes déjà abonnés à la publication `comments` sur la fonction `waitOn` de la route `postPage`, donc nous pouvons simplement ajouter l'abonnement à `singlePost` ici. Et n'oublions pas d'ajouter également notre abonnement à la route `postEdit`, vu qu'elle nécessite aussi les mêmes données :
 
 ~~~js
 Router.map(function() {
@@ -459,6 +459,6 @@ Router.map(function() {
 <%= caption "lib/router.js" %>
 <%= highlight "7~12,18~20" %>
 
-<%= commit "12-6","Use a single post subscription to ensure that we can always see the right post." %>
+<%= commit "12-6","Utiliser un abonnement à un unique article pour nous assurer que nous pouvons toujours voir le bon article." %>
 
-////
+Avec la pagination activée, notre application ne souffre plus de problèmes de montée en charge, et les utilisateurs sont sûres de contribuer avec même plus de liens qu'avant. Donc ne serait-il pas super de pouvoir d'une manière ou d'une autre classer ces liens ? C'est précisément l'objet du chapitre suivant, *Voter*.
