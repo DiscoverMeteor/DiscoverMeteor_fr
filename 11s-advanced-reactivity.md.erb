@@ -11,11 +11,11 @@ contents: Apprendre comment créer des sources de données réactives dans Meteo
 paragraphs: 29
 ---
 
-Il est rare d'avoir besoin d'écrire du code de traçage vous-même, mais il est assurément utile de le comprendre pour traquer la façon dont le processus de résolution de dépendance fonctionne.
+Il est rare d'avoir besoin d'écrire du code de traçage vous-même, mais il est assurément utile de le comprendre pour comprendre la façon dont le processus de résolution de dépendance fonctionne.
 
-Imaginez que nous voulions tracer combien d'amis Facebook de l'utilisateur courant ont "aimé" chaque article sur Microscope. Partons du principe que nous avons déjà travaillé sur les détails de l'authentification de l'utilisateur avec Facebook, fait les appels appropriés vers l'API, et fait l'analyse des données pertinantes. Nous avons maintenant une fonction asynchrone côté client qui retourne le nombre de likes, `getFacebookLikeCount(user, url, callback)`.
+Imaginez que nous voulions tracer combien d'amis Facebook de l'utilisateur courant ont "aimé" chaque article sur Microscope. Partons du principe que nous avons déjà travaillé sur les détails de l'authentification de l'utilisateur avec Facebook, fait les appels appropriés vers l'API, et fait l'analyse des données pertinentes. Nous avons maintenant une fonction asynchrone côté client qui retourne le nombre de "j'aime", `getFacebookLikeCount(user, url, callback)`.
 
-La chose importante à se souvenir au sujet d'une telle fonction est que c'est vraiment *non réactif* et *non temps réel*. Elle fera une requête HTTP vers Facebook, récupérera des données, et les rendra disponible à l'application via un callback asynchrone, mais la fonction ne s'exécutera pas une nouvelle fois par elle-même quand le compte changera chez Facebook, et notre UI ne changera pas quand les données sous-jacentes le feront.
+La chose importante à retenir au sujet d'une telle fonction est qu'elle est vraiment *non réactive* et *non temps réel*. Elle fera une requête HTTP vers Facebook, récupérera des données, et les rendra disponible à l'application via un rappel asynchrone, mais la fonction ne s'exécutera pas une nouvelle fois par elle-même quand le compte changera chez Facebook, et notre UI ne changera pas quand les données sous-jacentes le feront.
 
 Pour corriger cela, nous pouvons démarrer en utilisant `setInterval` pour appeler notre fonction toutes les quelques secondes :
 
@@ -45,15 +45,15 @@ Cependant, rien ne dit à notre template de se recharger quand `currentLikeCount
 
 ### Réactivité de la surveillance : Computations (Calculs)
 
-La réactivité de Meteor est contrôlée par des *dépendances*, les structures de données qui surveille un ensemble de calculs.
+La réactivité de Meteor est contrôlée par des *dépendances*, des structures de données qui surveillent un ensemble de calculs.
 
-Comme nous l'avons vu dans une précédente sidebar sur la réactivité, un calcul est une section de code qui utilise des données réactives. Dans notre cas, il n'y a pas de calcul qui a été implicitement créé pour le template `postItem`. Chaque helper de ce gestionnaire de template travaille avec la partie calcul.
+Comme nous l'avons vu dans une précédente sidebar sur la réactivité, un calcul est une section de code qui utilise des données réactives. Dans notre cas, un calcul a été implicitement créé pour le template `postItem`. Chaque helper de ce gestionnaire de template travaille avec la partie calcul.
 
-Vous pouvez penser au calcul comme à la section de code qui "s'occupe" de la source de données réactives. Quand la donnée change, ce sera ce calcul qui sera informé (via `invalidate()`), et c'est le calcul qui décide si quelque chose doit être fait.
+Vous pouvez penser au calcul comme à la section de code qui "s'occupe" de la source de données réactives. Quand la donnée change, ce sera ce calcul qui en sera informé (via `invalidate()`), et c'est le calcul qui décide si quelque chose doit être fait.
 
-### Agir sur une variable dans une fonction réactive
+### Transformer une Variable en une Fonction Réactive
 
-Pour transformer notre variable `currentLikeCount` en source de données réactives, nous avons besoin de surveiller tous les calculs qui l'utilise dans une dépendance. Cela requiert de la transformer de variable en fonction (qui retourne une valeur) :
+Pour transformer notre variable `currentLikeCount` en source de données réactives, nous avons besoin de surveiller tous les calculs qui l'utilisent dans une dépendance. Cela requiert de la transformer de variable à fonction (qui retourne une valeur) :
 
 ~~~js
 var _currentLikeCount = 0;
@@ -79,7 +79,7 @@ Meteor.setInterval(function() {
 ~~~
 <%= highlight "1~7,14~17" %>
 
-Ce que nous avons fait est de configurer une dépendance `_currentLikeCountListeners`, qui surveille tous les calculs dans lequel `currentLikeCount()` a été utilisé. Quand la valeur de `_currentLikeCount` change, nous appelons la fonction `changed()` sur cette dépendance, qui invalide tous les calculs surveillés.
+Nous avons mis en place une dépendance `_currentLikeCountListeners`, qui surveille tous les calculs dans lesquels `currentLikeCount()` a été utilisé. Quand la valeur de `_currentLikeCount` change, nous appelons la fonction `changed()` sur cette dépendance, qui invalide tous les calculs surveillés.
 
 Ces calculs peuvent ensuite continuer et traiter le changement au cas par cas.
 
