@@ -85,15 +85,15 @@ Ces calculs peuvent ensuite continuer et traiter le changement au cas par cas.
 
 ### Comparer Deps à Angular
 
-[Angular](http://angularjs.org/) est une bibliothèque de rendu réactif côté client seulement, développé par les bonnes gens de Google. C'est à but explicatif de comparer l'approche de surveillance de dépendance de Meteor à celle d'Angular, comme les approches sont assez différentes.
+[Angular](http://angularjs.org/) est une bibliothèque de rendu réactif côté client seulement, développé par les bonnes gens de Google. Il est intéressant de comparer l'approche de surveillance de dépendance de Meteor à celle d'Angular, car celles-ci sont assez différentes.
 
-Nous avons vu que le modèle de Meteor utilise des blocs de code appelés computations (calculs). Ces calculs sont traqués par des sources de données "réactives" (fonctions) qui prennent soin de les invalider quand c'est approprié. Donc les sources de données informe _explicitement_ toutes ses dépendances quand elles ont besoin d'appeler `invalidate()`. Notez que bien que c'est généralement quand les données ont changé, la source de données pourrait potentiellement décider de déclencher une invalidation pour d'autres raisons.
+Nous avons vu que le modèle de Meteor utilise des blocs de code appelés computations (calculs). Ces calculs sont traqués par des sources de données "réactives" (fonctions) qui prennent soin de les invalider quand c'est approprié. Donc les sources de données informent _explicitement_ toutes ses dépendances quand elles ont besoin d'appeler `invalidate()`. Notez que bien que cela se passe généralement quand les données ont changé, la source de données pourrait potentiellement décider de déclencher une invalidation pour d'autres raisons.
 
-De plus, bien que les calculs se re-exécutent habituellement quand ils sont invalidés, vous pouvez les configurer pour se comporter comme vous voulez. Tout ceci nous donne un haut niveau de contrôle sur la réactivité.
+De plus, bien que les calculs se re-exécutent habituellement quand ils sont invalidés, vous pouvez les configurer pour se comporter comme vous le voulez. Tout ceci nous donne un haut niveau de contrôle sur la réactivité.
 
 Dans Angular, la réactivité est controlée par l'objet `scope`. Un scope peut être imaginé comme un objet JavaScript simple avec plusieurs méthodes spéciales.
 
-Quand vous voulez dépendre réactivement d'une valeur dans un scope, vous appellez `scope.$watch`, en fournissant l'expression qui a un intérêt pour vous (i.e. la partie du scope qui vous interesse) et une fonction listener qui s'exécutera à chaque fois que la valeur de l'expression change.
+Quand vous voulez dépendre réactivement d'une valeur dans un scope, vous appellez `scope.$watch`, en fournissant l'expression qui vous intéresse (c'est-à-dire la partie du scope qui vous interesse) et une fonction listener qui s'exécutera à chaque fois que la valeur de l'expression change.
 
 De retour sur notre exemple Facebook, nous écririons :
 
@@ -103,13 +103,13 @@ $rootScope.$watch('currentLikeCount', function(likeCount) {
 });
 ~~~
 
-Bien sûr, comme vous mettez rarement en place des calculs dans Meteor, vous n'appelez pas souvent `$watch` explicitement dans Angular comme les directives `ng-model` et les `{{expressions}}` configurent automatiquement des watches qui ensuite s'occupent de re-rendre la page.
+Bien sûr, tout comme vous ne mettez que rarement en place des calculs dans Meteor, vous n'appelez pas souvent `$watch` explicitement dans Angular puisque les directives `ng-model` et les `{{expressions}}` configurent automatiquement des watches qui ensuite s'occupent de réactualiser la page.
 
 Quand ce type de valeur réactive a changé, `scope.$apply()` doit être appelé. Ceci réévalue chaque watcher du scope, mais appelle seulement la fonction listener des veilleurs pour qui la valeur de l'expression a *changé*.
 
-`scope.$apply()` est similaire à `dependency.changed()`, excepté qu'il agit au niveau du scope, plutôt que vous donner le contrôle de dire précisément quels listeners devrait être réévalués. Ceci dit, ce léger manque de contrôle donne à Angular l'abilité d'être vraiment intelligent et efficace dans la manière qu'il détermine précisément quels listeners doivent être réévalués.
+`scope.$apply()` est similaire à `dependency.changed()`, excepté qu'il agit au niveau du scope, plutôt que vous donner le contrôle de dire précisément quels listeners doivent être réévalués. Ceci dit, ce léger manque de contrôle donne à Angular l'abilité d'être vraiment intelligent et efficace dans la manière dont il détermine précisément quels listeners doivent être réévalués.
 
-Avec Angular, notre code de fonction `getFacebookLikeCount()` devrait ressemblé à ça :
+Avec Angular, notre code de fonction `getFacebookLikeCount()` devrait ressembler à ça :
 
 ~~~js
 Meteor.setInterval(function() {
@@ -124,4 +124,4 @@ Meteor.setInterval(function() {
 ~~~
 <%= highlight "5~6" %>
 
-Certes, Meteor s'occupe de la plupart de la couche lourde pour nous et nous laisse bénéficier de la réactivité sans trop de travail de notre part. Mais heureusement, apprendre ces patterns prouvera son utilité si vous avez besoin de pousser les choses un peu plus loin.
+Certes, Meteor s'occupe du gros du travail pour nous et nous laisse bénéficier de la réactivité sans trop de travail de notre part. Mais heureusement, apprendre ces pratiques s'avèrera utile si vous avez besoin de pousser les choses un peu plus loin.
