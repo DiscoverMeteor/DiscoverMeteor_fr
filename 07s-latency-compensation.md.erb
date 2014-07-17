@@ -20,16 +20,16 @@ Une Méthode Meteor est un moyen d'exécuter une série de commandes sur le serv
 Cependant, si Meteor exécute des Methodes dans sa plus simple façon, nous aurions un problème. Considérez la séquence suivante d'évènements (note : les horodatages sont des valeurs aléatoires choisies seulement pour l'exemple) :
 
 - *+0ms:* L'utilisateur clique sur un bouton et le navigateur renvoie un appel de Méthode.
-- *+200ms:* Le serveur fait des changements dans la base de données
+- *+200ms:* Le serveur fait des changements dans la base de données Mongo
 - *+500ms:* Le client reçoit ces changements, met à jour l'UI.
 
-Si ceci est la façon dont Meteor opère, alors il va y avoir un petit décalage entre effectuer de telles actions et voir les résultats (ce décalage plus ou moins notable dépend de votre proximité avec le serveur). Nous ne pouvons nous permettre ça dans une application web moderne !
+Si ceci était la façon dont Meteor opèrait, alors il y aurait un petit décalage entre effectuer de telles actions et en voir les résultats (ce décalage étant plus ou moins visible selon votre proximité avec le serveur). Nous ne pouvons nous permettre ça dans une application web moderne !
 
-### Conpensation de latence
+### Compensation de latence
 
 <%= diagram "latency2", "Avec compensation de latence", "pull-right" %>
 
-Pour éviter ce problème, Meteor introduit un concept appelé **Compensation de latence**. Quand nous définissons notre Méthode `post`, nous la plaçons à l'intérieur d'un fichier dans le répertoire `collections/`. Ceci signifie qu'elle est disponible pour le serveur *et le client* -- et elle s'exécutera sur les deux en même temps !
+Pour éviter ce problème, Meteor introduit un concept appelé **Compensation de latence**. Quand nous avons définit notre Méthode `post`, nous l'avons plaçé à l'intérieur d'un fichier dans le répertoire `collections/`. Ceci signifie qu'elle est disponible pour le serveur *et le client* -- et elle s'exécutera sur les deux en même temps !
 
 Quand nous faisons un appel de Méthode, le client envoie l'appel au serveur, mais *simule* également simultanément l'action de la Méthode sur ses collections côté client. Notre workflow devient :
 
@@ -38,7 +38,7 @@ Quand nous faisons un appel de Méthode, le client envoie l'appel au serveur, ma
 - *+200ms:* Le serveur fait les changements dans la base de données Mongo.
 - *+500ms:* Le client reçoit ces changements et annule ses changements simulés, en les remplaçant par les changements du serveur (qui sont généralement les mêmes). L'UI change pour refléter ceci.
 
-Le résultat pour l'utilisateur est de voir les changements instantanément. Quand la réponse du serveur retourne un peu plus tard, elle peut être ou pas des changements notables à mesure que les documents canoniques du serveur arrivent. Une chose à retenir est que nous devons nous assurer que nous simulons les documents aussi proches de la réalité que possible.
+Le résultat pour l'utilisateur est de voir les changements instantanément. Quand la réponse du serveur revient un peu plus tard, il peut y avoir (ou non) des changements visibles à mesure que les documents canoniques du serveur arrivent. Une chose à retenir est donc que nous devons nous assurer que nous simulons les documents aussi proches de la réalité que possible.
 
 ### Observer une compensation de latence
 
