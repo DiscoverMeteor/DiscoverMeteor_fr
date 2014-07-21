@@ -42,11 +42,11 @@ Le résultat pour l'utilisateur est de voir les changements instantanément. Qua
 
 ### Observer une compensation de latence
 
-Nous pouvons faire un petit changement à l'appel de Méthode `post` pour voir ça en action. Pour faire ça, nous développerons du code avancé avec le paquet npm `futures` pour délayer l'insertion d'objets dans notre méthode.
+Nous pouvons faire un petit changement à l'appel de Méthode `post` pour voir cela en action. Pour ce faire, nous développerons du code avancé avec le paquet npm `futures` pour retarder l'insertion d'objets dans notre méthode.
 
-Nous utiliserons `isSimulation` pour demander à Meteor si la Méthode est en cours d'invocation comme un stub. Un [stub](http://docs.meteor.com/#methods_header) est la simulation d'une Méthode que Meteor exécute sur le client en parallèle, pendant que la "vraie" Méthode est en cours d'exécution sur le serveur.
+Nous utiliserons `isSimulation` pour demander à Meteor si la Méthode actuellement invoquée est une ébauche. Une [ébauche](http://docs.meteor.com/#methods_header) est la simulation d'une Méthode que Meteor exécute sur le client en parallèle, pendant que la "vraie" Méthode est en cours d'exécution sur le serveur.
 
-Donc nous allons demander à Meteor si le code est en cours d'exécution sur le client. Si c'est le cas, nous allons ajouter la chaîne de caractère `(client)` à la fin du titre de notre article. Sinon, nous ajouterons la chaîne de caractère `(server)` :
+Nous allons donc demander à Meteor si le code est en cours d'exécution sur le client. Si c'est le cas, nous allons ajouter la chaîne de caractère `(client)` à la fin du titre de notre article. Sinon, nous ajouterons la chaîne de caractère `(server)` :
 
 ~~~js
 Meteor.methods({
@@ -80,11 +80,11 @@ Meteor.methods({
 <%= caption "collections/posts.js" %>
 <%= highlight "6, 7, 13~22" %>
 
-Note : Au cas ou vous vous demandez, le `this` dans `this.isSimulation` est un [objet d'invocation de Méthode](http://docs.meteor.com/#meteor_methods) qui fournit un accès aux diverses variables utiles.
+Note : Au cas où vous vous le demandez, le `this` dans `this.isSimulation` est un [objet d'invocation de Méthode](http://docs.meteor.com/#meteor_methods) qui fournit un accès à diverses variables utiles.
 
-Exactement comment les [Futures](https://npmjs.org/package/future) travaillent est hors du cadre de ce livre, mais nous avons simplement dit à Meteor d'attendre 5 secondes avant de faire l'insertion dans la collection côté serveur.
+Comment fonctionnent exactement les [Futures](https://npmjs.org/package/future) est hors du cadre de ce livre, mais nous avons simplement dit à Meteor d'attendre 5 secondes avant de faire l'insertion dans la collection côté serveur.
 
-Nous allons faire une redirection d'envoi directement à la liste d'articles :
+Nous allons faire une redirection d'envoi directement vers la liste d'articles :
 
 ~~~js
 Template.postSubmit.events({
@@ -112,25 +112,25 @@ Template.postSubmit.events({
 
 Si nous créons un article maintenant, nous voyons clairement la compensation de latence en action. Premièrement, un article est inséré avec `(client)` dans le titre (le premier article dans la liste, relié à Github) :
 
-<%= screenshot "s5-1", "Notre article comme premier stocké dans la collection côté client" %>
+<%= screenshot "s5-1", "Notre article comme initialement stocké dans la collection côté client" %>
 
-Ensuite, cinq secondes plus tard, c'est proprement remplacé avec le vrai document qui a été inséré par le serveur :
+Ensuite, cinq secondes plus tard, il est proprement remplacé avec le vrai document qui a été inséré par le serveur :
 
 <%= screenshot "s5-2", "Notre article une fois que le client reçoit la mise à jour de la collection côté serveur" %>
 
 ### Méthodes des collections sur le client
 
-Vous pourriez penser que les Méthodes sont compliquées après ça, mais en fait elles peuvent être plutôt simples. Actuellement, nous avons déjà vu trois méthodes très simples : les Méthodes de mutation de collection, `insert`, `update` et `remove`.
+Vous pourriez penser que les Méthodes sont compliquées après cela, mais en fait elles peuvent être plutôt simples. En fait, nous avons déjà vu trois méthodes très simples : les Méthodes de mutation de collection, `insert`, `update` et `remove`.
 
-Quand vous définissez une collection serveur appelée `'posts'`, vous êtes implicitement en train de définir trois Méthodes : `posts/insert`, `posts/update` et `posts/delete`. En d'autres mots, quand vous appelez `Posts.insert()` sur votre collection cliente, vous appelez une Méthode de compensation de latence qui fait deux choses :
+Quand vous définissez une collection serveur appelée `'posts'`, vous êtes implicitement en train de définir trois Méthodes : `posts/insert`, `posts/update` et `posts/delete`. En d'autres mots, quand vous appelez `Posts.insert()` sur votre collection client, vous appelez une Méthode de compensation de latence qui fait deux choses :
 
-1. Des vérifications pour voir si vous faites la mutation en appelant des callbacks `allow` et `deny` (cependant il n'est pas nécessaire que ça arrive dans la simulation).
-2. Faire la modification vers le stockage de données sous-jacent.
+1. Des vérifications pour voir si vous faites la mutation en appelant des callbacks `allow` et `deny` (cependant il n'est pas nécessaire que cela arrive dans la simulation).
+2. La modification vers le stockage de données sous-jacent.
 
 ### Des méthodes qui appellent des Méthodes
 
-Si vous prenez du recul, vous venez peut-être juste de réaliser que notre Méthode `post` appelle une autre Méthode (`posts/insert`) quand nous insérons notre article. Comment ça fonctionne ?
+Si vous suivez bien, vous venez peut-être juste de réaliser que notre Méthode `post` appelle une autre Méthode (`posts/insert`) quand nous insérons notre article. Comment ça marche ?
 
 Quand la simulation (version côté client de la Méthode) est en cours d'exécution, nous effectuons la simulation d'un `insert` (nous insérons donc dans notre collection cliente), mais nous *ne* faisons *pas* le vrai, `insert` côté serveur, nous attendons que la version *côté serveur* de `post` le fasse.
 
-Par conséquent, quand la Méthode `post` côté serveur appelle `insert` il n'y a pas besoin de s'inquiéter à propos de la simulation, et l'insertion continue sans encombre.
+Par conséquent, quand la Méthode `post` côté serveur appelle `insert` il n'y a pas besoin de s'inquiéter de la simulation, et l'insertion continue sans encombre.
