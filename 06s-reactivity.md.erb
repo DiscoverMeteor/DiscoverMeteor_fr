@@ -82,7 +82,7 @@ En arrière-plan, Meteor déclenche des callbacks `observe()` pour nous, et red�
 
 Alors que Meteor est un framework temps réel, réactif, *tout* le code à l'intérieur d'une application Meteor n'est pas réactif. Si c'était le cas, votre application entière se rechargerait à chaque fois qu'il y a un changement. A la place, la réactivité est limitée à des zones spécifiques de votre code, et nous appellerons ces zones **calculs**.
 
-////
+En d'autres termes, un calcul est un bloc de code qui est exécuté à chaque fois qu'une des sources de données réactives dont il dépend change. Si vous avez une source de données réactive (par exemple, une variable de Session) et que vous aimeriez réagir de manière réactive, vous aurez besoin de mettre en place un calcul.
 
 ////
 
