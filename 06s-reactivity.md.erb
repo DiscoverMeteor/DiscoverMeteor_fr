@@ -54,7 +54,7 @@ Meteor nous fournit un meilleur outil : la réactivité, qui est dans sa structu
 
 Ceci est un concept puissant, parce qu'un système temps réel a beaucoup d'entrées qui peuvent changer à de façon imprévisible. En exposant déclarativement la façon dont nous affichons le HTML basé sur les sources de données réactives que nous observons, Meteor peut surveiller ces sources et accomplir de manière transparente ce travail de mise à jour permanente de l'interface utilisateur.
 
-////
+Tout ceci pour dire qu'au lieu de réfléchir sur des callbacks `observe()`, Meteor nous permet d'écrire :
 
 ~~~html
 <template name="postsList">
