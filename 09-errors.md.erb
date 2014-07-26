@@ -40,7 +40,7 @@ throwError = function(message) {
 ~~~
 <%= caption "client/helpers/errors.js" %>
 
-L'avantage d'utiliser une collection locale pour stocker les erreurs est que, comme toutes les collections, c'est réactif -- ça veut dire que nous pouvons afficher les erreurs déclarativement de la même façon que nous affichons les données de n'importe quelle autre collection. 
+L'avantage d'utiliser une collection locale pour stocker les erreurs est que, comme toutes les collections, c'est réactif -- ça veut dire que nous pouvons afficher les erreurs déclarativement de la même façon que nous affichons les données de n'importe quelle autre collection.
 
 ### Afficher les erreurs
 
@@ -113,18 +113,18 @@ En plus, si nous obtenons une erreur `302` (laquelle indique que l'article avec 
 Template.postSubmit.events({
   'submit form': function(e) {
     e.preventDefault();
-    
+
     var post = {
       url: $(e.target).find('[name=url]').val(),
       title: $(e.target).find('[name=title]').val(),
       message: $(e.target).find('[name=message]').val()
     }
-    
+
     Meteor.call('post', post, function(error, id) {
       if (error) {
         // Afficher l'erreur à l'utilisateur
         throwError(error.reason);
-        
+
         if (error.error === 302)
           Router.go('postPage', {_id: error.details})
       } else {
@@ -152,8 +152,6 @@ Mais pendant que Bootstrap supprime le `<div>` d'erreur dans le DOM, ça ne supp
 Premièrement, nous allons modifier la fonction `throwError` pour inclure une propriété `seen`. Ça sera utile plus tard de garder une trace pour savoir si une erreur a été vue par l'utilisateur.
 
 Une fois fait, nous pouvons coder une simple fonction `clearErrors` qui efface ces erreurs "vues".
-
-////
 
 ~~~js
 // Collection locale (client-seulement)
