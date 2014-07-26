@@ -8,7 +8,7 @@ sidebar: true
 photoUrl: http://www.flickr.com/photos/ikewinski/9632550278/
 photoAuthor: Mike Lewinski
 contents: En apprendre plus sur le système de dépendance du code réactif de Meteor.|Comprendre les motivations et comment ça rend le code dclaratif.|Apprendre à écrire du code avancé qui utilise des données réactives.
-paragraphs: 20
+paragraphs: 21
 ---
 
 Si les collections sont la fonctionnalité principale de Meteor, la * Réactivité * est la coquille qui la rend utile.
@@ -95,16 +95,20 @@ Les calculs sont généralement mis en place pour réévaluer simplement leurs c
 Maintenant que nous comprenons la théorie derrière les calculs, en mettre un en place semble trop facile. Nous utiliserons simplement la fonction `Deps.autorun` pour enfermer un bloc de code dans un calcul et le rendre réactif :
 
 ~~~js
-Deps.autorun(function() {
-  console.log('There are ' + Posts.find().count() + ' posts');
+Meteor.startup(function() {
+  Deps.autorun(function() {
+    console.log('There are ' + Posts.find().count() + ' posts');
+  });
 });
 ~~~
 
-////
+Notez que nous avons besoin d'envelopper le bloc `Deps` à l'intérieur d'un bloc `Meteor.startup()` pour nous assurer qu'il s'exécutera seulement une fois que Meteor a fini de charger la collection `Posts`.
+
+En arrière-plan, `autorun` crée ensuite un calcul, et le déclenche pour réévaluer à chaque fois que la source de données dont il dépend change. Nous avons mis en place un calcul vraiment très simple qui journalise simplement le nombre d'articles à la console. Maintenant que `Posts.find()` est une source de données réactive, il prendra soin de dire au calcul de réévaluer à chaque fois que le nombre d'articles change.
 
 ~~~js
 > Posts.insert({title: 'New Post'});
 There are 4 posts.
 ~~~
 
-////
+Le résultat net de tout ceci est que nous pouvons écrire du code qui utilise une donnée réactive de façon très naturelle, en sachant qu'en arrière-plan le système de dépendance prendra soin de le réexécuter juste au bon moment.
