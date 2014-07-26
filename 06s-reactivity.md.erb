@@ -76,11 +76,11 @@ Template.postsList.helpers({
 });
 ~~~
 
-En arrière-plan, Meteor déclenche des callbacks `observe()` pour nous, et re-déssine les sections pertinentes du HTML quand les données réactives changent.
+En arrière-plan, Meteor déclenche des callbacks `observe()` pour nous, et redéssine les sections pertinentes du HTML quand les données réactives changent.
 
-### Dependency Tracking in Meteor: Computations
+### Surveillance de dépendance dans Meteor: Calculs (Computations)
 
-////
+Alors que Meteor est un framework temps réel, réactif, *tout* le code à l'intérieur d'une application Meteor n'est pas réactif. Si c'était le cas, votre application entière se rechargerait à chaque fois qu'il y a un changement. A la place, la réactivité est limitée à des zones spécifiques de votre code, et nous appellerons ces zones **calculs**.
 
 ////
 
