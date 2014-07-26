@@ -88,11 +88,11 @@ Notez qu'habituellement vous n'avez pas besoin de faire ceci parce que Meteor do
 
 Chaque source de données réactive surveille tous les calculs qui l'utilisent pour qu'elle puisse les laisser savoir quand sa propre valeur change. Pour ce faire, il appelle la fonction `invalidate()` sur le calcul.
 
-////
+Les calculs sont généralement mis en place pour réévaluer simplement leurs contenus sur invalidation, et c'est ce qui arrive aux calculs de template (bien que les calculs de template font également la magie d'essayer et redessiner la page plus efficacement). Bien que nous pouvons avoir plus de contrôle sur ce que fait le calcul sur invalidation si vous en avez besoin, en pratique c'est presque toujours le comportement que vous utiliserez.
 
-### Setting Up a Computation
+### Mettre en place un Calcul
 
-////
+Maintenant que nous comprenons la théorie derrière les calculs, en mettre un en place semble trop facile. Nous utiliserons simplement la fonction `Deps.autorun` pour enfermer un bloc de code dans un calcul et le rendre réactif :
 
 ~~~js
 Deps.autorun(function() {
