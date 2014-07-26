@@ -52,7 +52,7 @@ Dans certains cas, vous aurez besoin d'utiliser des callbacks `observe()` afin d
 
 Meteor nous fournit un meilleur outil : la réactivité, qui est dans sa structure une approche **déclarative**. Être déclaratif nous laisse définir la relation entre les objets une fois et savoir qu'ils resteront synchronisés, au lieu de devoir spécifier les comportements pour tous les changements potentiels.
 
-////
+Ceci est un concept puissant, parce qu'un système temps réel a beaucoup d'entrées qui peuvent changer à de façon imprévisible. En exposant déclarativement la façon dont nous affichons le HTML basé sur les sources de données réactives que nous observons, Meteor peut surveiller ces sources et accomplir de manière transparente ce travail de mise à jour permanente de l'interface utilisateur.
 
 ////
 
