@@ -84,9 +84,9 @@ Alors que Meteor est un framework temps réel, réactif, *tout* le code à l'int
 
 En d'autres termes, un calcul est un bloc de code qui est exécuté à chaque fois qu'une des sources de données réactives dont il dépend change. Si vous avez une source de données réactive (par exemple, une variable de Session) et que vous aimeriez réagir de manière réactive, vous aurez besoin de mettre en place un calcul.
 
-////
+Notez qu'habituellement vous n'avez pas besoin de faire ceci parce que Meteor donne déjà à chaque template qu'il affiche son propre calcul (ce qui signifie que le code dans les helpers de template et les callbacks est réactif par défaut).
 
-////
+Chaque source de données réactive surveille tous les calculs qui l'utilisent pour qu'elle puisse les laisser savoir quand sa propre valeur change. Pour ce faire, il appelle la fonction `invalidate()` sur le calcul.
 
 ////
 
