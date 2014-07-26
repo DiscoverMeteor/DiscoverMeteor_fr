@@ -17,7 +17,7 @@ Les Collections transforment radicalement la façon dont votre application trait
 
 Prenez un moment pour y penser: dans les coulisses, Meteor est capable de changer * toute * partie de votre interface utilisateur chaque fois qu'une collection sous-jacente est mise à jour.
 
-La * meilleure * façon de parvenir à celà serait d'utiliser `.observe()`, une fonction de curseur qui déclenche des callbacks lorsque des documents correspondant à ce curseur changent. Nous pourrions alors faire des changements dans le DOM (le rendu HTML de notre page Web) à travers ces callbacks. Le code pour ce faire ressemblerait à quelque chose comme ceci:
+La * meilleure * façon de parvenir à celà serait d'utiliser `.observe()`, une fonction de curseur qui déclenche des callbacks lorsque des documents correspondant à ce curseur changent. Nous pourrions alors faire des changements dans le DOM (le rendu HTML de notre page Web) à travers ces callbacks. Le code résultant ressemblerait à quelque chose comme ceci:
 
 ~~~js
 Posts.find().observe({
