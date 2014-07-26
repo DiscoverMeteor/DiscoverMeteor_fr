@@ -22,15 +22,15 @@ La * meilleure * façon de parvenir à celà serait d'utiliser `.observe()`, une
 ~~~js
 Posts.find().observe({
   added: function(post) {
-    // when 'added' callback fires, add HTML element
+    // quand le callback 'added' est déclenché, ajout de l'élément HTML
     $('ul').append('<li id="' + post._id + '">' + post.title + '</li>');
   },
   changed: function(post) {
-    // when 'changed' callback fires, modify HTML element's text
+    // quand le callback 'changed' est déclenché, modification du texte de l'élément HTML
     $('ul li#' + post._id).text(post.title);
   },
   removed: function(post) {
-    // when 'removed' callback fires, remove HTML element
+    // quand le callback 'removed' est déclenché, suppression de l'élément HTML
     $('ul li#' + post._id).remove();
   }
 });
