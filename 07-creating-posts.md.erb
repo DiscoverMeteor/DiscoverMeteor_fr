@@ -378,7 +378,7 @@ Meteor.methods({
         postWithSameLink._id);
     }
     
-    // pick out the whitelisted keys
+    // filtrons pour prendre les attributs attendus
     var post = _.extend(_.pick(postAttributes, 'url', 'title', 'message'), {
       userId: user._id, 
       author: user.username, 
@@ -409,9 +409,9 @@ Si toutes ces vérifications passent, nous prenons les champs que nous voulons i
 
 Finalement, nous insérons le post, et retournons l'`id` du nouveau post à l'utilisateur.
 
-### Sorting Posts
+### Trier les posts
 
-////
+Maintenant que nous avons une date de création sur tous nos posts, il semble bienvenu de s'assurer qu'ils soient classés en fonction de cet attribut. Pour cela, nous pouvons simplement utiliser l'opérateur `sort` de Mongo, qui attend un objet constitué des clés par lesquelles trier et d'un signe indiquant si le tri doit être croissant ou décroissant.
 
 ~~~js
 Template.postsList.helpers({
@@ -423,8 +423,8 @@ Template.postsList.helpers({
 <%= caption "client/views/posts/posts_list.js" %>
 <%= highlight "3" %>
 
-<%= commit "7-7", "Sort posts by submitted timestamp." %>
+<%= commit "7-7", "Tri des posts par date de création." %>
 
-////
+Ça a demandé un peu de travail, mais nous avons maintenant une interface utilisateur qui d'ajouter du contenu de façon sécurisée à notre appli !
 
-////
+Mais toute application qui permet à ses utilisateurs de créer du contenu doit aussi leur donner la possibilité de le modifier ou de le supprimer. Ce sera le sujet du chapitre Éditer les posts.
