@@ -6,17 +6,17 @@ number: 7
 points: 5
 photoUrl: http://www.flickr.com/photos/markezell/9688179085
 photoAuthor: Mark Ezell
-contents: Learn how to submit a post client-side.|Implement a simple security check.|Restrict access to the post submit form.|Learn to use a server-side Method for added security.
+contents: Apprendre à envoyer un post côté client.|Implémenter une vérification de sécurité simple.|Restreindre l'accès au formulaire d'envoi de post.|Apprendre à utiliser une Method côté serveur pour plus de sécurité.
 paragraphs: 60
 ---
 
-////
+Nous avons vu combien il était facile de créer des posts en passant par la console, avec l'appel à la base de données `Posts.insert`. Mais nous ne pouvons pas attendre de nos utilisateurs qu'ils ouvrent la console pour créer un nouveau post.
 
-////
+À un moment, nous devrons créer une interface pour permettre à nos utilisateurs de poster de nouvelles histoires sur notre application.
 
-### Building The New Post Page
+### Construire la page d'ajout de post
 
-////
+Nous commençons par définir une route pour notre nouvelle page :
 
 ~~~js
 Router.configure({
@@ -37,15 +37,15 @@ Router.map(function() {
     path: '/submit'
   });
 });
+
+Router.onBeforeAction('loading');
 ~~~
 <%= caption "lib/router.js" %>
 <%= highlight "13~15" %>
 
-////
+### Ajouter un lien à l'en-tête
 
-### Adding A Link To The Header
-
-////
+Une fois cette route définie, nous pouvons maintenant ajouter un lien à notre page d'envoi dans notre en-tête :
 
 ~~~html
 <template name="header">
@@ -72,7 +72,7 @@ Router.map(function() {
 <%= caption "client/views/includes/header.html" %>
 <%= highlight "11~16" %>
 
-////
+Configurer notre route signifie que si un utilisateur se rend à l'URL `/submit`, Meteor affichera le template `postSubmit`. Écrivons donc ce template :
 
 ~~~html
 <template name="postSubmit">
@@ -109,15 +109,15 @@ Router.map(function() {
 ~~~
 <%= caption "client/views/posts/post_submit.html" %>
 
-////
+Note : ça fait beaucoup de code, mais ça vient simplement du fait que nous utilisons Twitter Bootstrap. Bien que seuls les éléments de formulaire soient essentiels, les balises supplémentaires aideront à rendre notre appli un peu plus jolie. Cela devrait maintenant ressembler à ça :
 
 <%= screenshot "7-1", "The post submit form" %>
 
-////
+C'est un formulaire simple. Nous n'avons pas à nous inquiéter de lui ajouter un champ 'action', puisque nous allons intercepter les événements sur le formulaire et mettre à jour les données en passant par JavaScript. Il n'y aurait pas de sens à fournir une solution alternative sans JavaScript quand on considère qu'une appli Meteor est complètement non-fonctionnelle si JavaScript est désactivé.
 
-### Creating Posts
+### Créer des posts
 
-////
+Lions un gestionnaire d'événement à l'événement `submit` du formulaire. Il est préférable d'utiliser l'événement `submit` (plutôt que qu'un événement `click` sur le bouton par exemple), car cela permettra de prendre en compte toutes les façons possibles d'envoyer le formulaire (comme appuyer sur entrée dans le champ URL par exemple).
 
 ~~~js
 Template.postSubmit.events({
@@ -139,13 +139,13 @@ Template.postSubmit.events({
 
 <%= commit "7-1", "Added a submit post page and linked to it in the header." %>
 
-////
+Cette fonction utilise [jQuery](http://jquery.com) pour vérifier les valeurs de nos divers champs de formulaire et construire un nouvel objet post à partir des résultats. Nous devons nous assurer d'utiliser `preventDefault` sur l'argument `event` de notre gestionnaire pour être sûr que le navigateur n'essaie pas de prendre les devants en essayant d'envoyer le formulaire.
 
-////
+Finalement, nous pouvons router l'utilisateur vers la page de son nouveau post. La fonction `insert()` (utilisée sur une collection), renvoie l'`id` généré pour l'objet qui vient d'être inséré dans la base de données. La fonction `go()` du Router va utiliser cet `id` pour construire l'URL correspondante, et nous amener sur la bonne page.
 
-////
+Au final, l'utilisateur envoie le formulaire, un nouveau post est créé, et l'utilisateur est instantanément dirigé vers la page de discussion pour ce nouveau post.
 
-### Adding Some Security
+### Ajouter un peu de sécurité
 
 ////
 
