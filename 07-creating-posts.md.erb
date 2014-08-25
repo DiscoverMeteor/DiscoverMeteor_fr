@@ -137,7 +137,7 @@ Template.postSubmit.events({
 ~~~
 <%= caption "client/views/posts/post_submit.js" %>
 
-<%= commit "7-1", "Added a submit post page and linked to it in the header." %>
+<%= commit "7-1", "Ajouté une page d'ajout de post et fait un lien vers elle dans l'en-tête." %>
 
 Cette fonction utilise [jQuery](http://jquery.com) pour vérifier les valeurs de nos divers champs de formulaire et construire un nouvel objet post à partir des résultats. Nous devons nous assurer d'utiliser `preventDefault` sur l'argument `event` de notre gestionnaire pour être sûr que le navigateur n'essaie pas de prendre les devants en essayant d'envoyer le formulaire.
 
@@ -147,29 +147,29 @@ Au final, l'utilisateur envoie le formulaire, un nouveau post est créé, et l'u
 
 ### Ajouter un peu de sécurité
 
-////
+Créer des posts est très bien, mais nous ne voulons pas laisser n'importe quel visiteur le faire : ils doivent être connectés avec leurs identifiants pour pouvoir poster. Bien sûr, nous pouvons commencer en cachant la page d'ajout de post pour les utilisateurs non connectés. Cependant, il toujours concevable qu'un utilisateur puisse créer un post depuis la console du navigateur sans être connecté, et nous ne pouvons nous permettre ça.
 
-////
+Heureusement les collections Meteor sont conçues pour la sécurité des données; c'est juste qu'elle est désactivée par défaut quand vous créez un nouveau projet. Cela vous permet de démarrer rapidement et de construire votre appli en laissant les trucs ennuyeux pour plus tard.
 
-////
+Notre appli n'a plus besoin de ces petites roues, alors enlevons-les ! Nous enlevons le paquet `insecure` :
 
 ~~~bash
 $ meteor remove insecure
 ~~~
 <%= caption "Terminal" %>
 
-////
+Après avoir fait ça, vous remarquerez que le formulaire de post ne fonctionne plus. C'est parce que sans le paquet `insecure`, les `insert()` côté client sur la collection des posts _ne sont plus autorisés_. Nous devons soit donner quelques règles explicites à Meteor pour définir quand un client est autorisé à insérer un post, soit faire nos insertions côté serveur.
 
-### Allowing Post Inserts
+### Autoriser les insertions de post
 
-////
+Pour commencer, nous allons voir comment autoriser les insertions de post côté client pour que notre formulaire fonctionne à nouveau. Il s'avère que nous finiront par adopter une technique différente, mais pour le moment, le simple code suivant permettra que les choses fonctionnent à nouveau :
 
 ~~~js
 Posts = new Meteor.Collection('posts');
 
 Posts.allow({
   insert: function(userId, doc) {
-    // only allow posting if you are logged in
+    // autoriser les posts seulement si l'utilisateur est connecté
     return !! userId;
   }
 });
@@ -177,23 +177,23 @@ Posts.allow({
 <%= caption "collections/posts.js" %>
 <%= highlight "3~8" %>
 
-<%= commit "7-2", "Removed insecure, and allowed certain writes to posts." %>
+<%= commit "7-2", "Enlevé insecure et autorisé certaines modifications sur les posts." %>
 
-////
+Nous appelons `Posts.allow`, qui dit à Meteor que "ceci est un ensemble de circonstances dans lesquelles les clients sont autorisés à faire des choses à la collection `Post`". Dans notre cas, nous disons "les clients peuvent insérer des posts du moment qu'ils ont un `userId`".
 
-////
+Le `userId` de l'utilisateur procédant à la modification est passé lors des appels à `allow` et `deny` (ou renvoie `null` si l'utilisateur pas connecté), ce qui est presque toujours utile. Et comme les comptes utilisateurs sont liés au noyau de Meteor, nous pouvons compter sur `userId` pour toujours être correct.
 
-////
+Nous avons réussi à nous assurer que l'on doit être connecté pour créer un post. Essayez de vous déconnecter et de créer un post; vous devriez voir ceci dans votre console :
 
-<%= screenshot "7-2", "Insert failed: Access denied " %>
+<%= screenshot "7-2", "Échec de l'insertion : Accès refusé " %>
 
-////
+Cependant, nous avons encore à nous occuper de quelques problèmes :
 
- - ////
- - ////
- - ////
+ - Les utilisateurs non connectés peuvent toujours accéder au formulaire de création de post
+ - Le post n'est pas lié l'utilisateur de quelque façon que ce soit (et il n'y a rien côté serveur pour assurer ce lien).
+ - Plusieurs posts peuvent être créés pointant vers la même URL
 
-////
+Résolvons ces problèmes.
 
 ### Securing Access To The New Post Form
 
