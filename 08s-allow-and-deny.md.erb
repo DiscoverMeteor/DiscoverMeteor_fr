@@ -11,13 +11,13 @@ contents: En savoir plus à propos des callbacks Allow et Deny.|Comprendre dans 
 paragraphs: 16
 ---
 
-Le système de sécurité de Meteor nous permet de contrôler les modifications de la base de données sans avoir à définir des Méthodes à chaque fois qu'on fait des changements.
+Le système de sécurité de Meteor nous permet de contrôler les modifications de la base de données sans avoir à définir des Méthodes à chaque fois que l'on fait des changements.
 
-Parce que nous avons eu besoin de faire des tâches auxiliaires comme décorer l'article avec des propriétés supplémentaires et décider d'une action spéciale quand l'URL de l'article a déjà été postée, utiliser une Méthode `post` spécifique a beaucoup de sens quand un article est créé.
+Parce que nous avions besoin de réaliser des tâches auxiliaires comme décorer l'article avec des propriétés supplémentaires et décider d'une action spéciale quand l'URL de l'article était déjà été postée, utiliser une Méthode `post` spécifique quand un article est créé était tout à fait sensé.
 
-D'un autre côté, nous n'avons pas vraiment besoin de créer des nouvelles Méthodes pour mettre à jour ou supprimer des articles. Nous avons juste besoin de vérifier si l'utilisateur a la permission de faire ces actions, et c'est rendu très facile par les callbacks `allow` et `deny`.
+D'un autre côté, nous n'avions pas vraiment eu besoin de créer de nouvelles Méthodes pour mettre à jour ou supprimer des articles. Nous avions juste besoin de vérifier si l'utilisateur avait la permission de réaliser ces actions, et cela fut facilité par les callbacks `allow` et `deny`.
 
-Utiliser ces callbacks nous laisse être plus déclaratif à propos des modifications de la base de données, et dire quels types de mises à jour peuvent être utilisés. Le fait qu'ils intègrent le système de comptes est un bonus.
+Utiliser ces callbacks nous laisse être plus déclaratif à propos des modifications de la base de données, et dire quels types de mises à jour peuvent être utilisées. Le fait qu'ils s'intègrent avec le système de comptes est un bonus.
 
 ### Multiples callbacks
 
