@@ -21,15 +21,15 @@ Utiliser ces callbacks nous laisse être plus déclaratif à propos des modifica
 
 ### Multiples callbacks
 
-Nous pouvons définir autant de callbacks `allow` que nécessaires. Nous avons juste besoin d'_au moins un_ d'entre eux pour retourner `true` durant le changement qui est en train de s'opérer. Donc quand `Posts.insert` est appelé dans un navigateur (peu importe si c'est depuis le code côté client de votre application ou depuis la console), le serveur va faire à son tour toutes les vérifications allowed-`insert` qu'il peut jusqu'à ce qu'il en trouve une qui retourne true. S'il n'en trouve aucune, il n'autorisera pas le insert, et retournera une erreur `403` au client.
+Nous pouvons définir autant de callbacks `allow` que nécessaires. Nous avons juste besoin qu'_au moins l'un_ d'entre eux retourne `true` durant le changement qui est en train de s'opérer. Donc quand `Posts.insert` est appelé dans un navigateur (peu importe si c'est depuis le code côté client de votre application ou depuis la console), le serveur va faire à son tour toutes les vérifications allowed-`insert` qu'il peut jusqu'à ce qu'il en trouve une qui retourne true. S'il n'en trouve aucune, il n'autorisera pas le insert, et retournera une erreur `403` au client.
 
-De la même façon, nous pouvons définir un ou plusieurs callbacks `deny`. Si _un_ de ces callbacks return `true`, le changement sera annulé et un `403` sera retourné. La logique de tout ça signifie que pour un `insert` avec succès, un ou plusieurs callback `allow` `insert` aussi bien que _chaque_ callback `deny` `insert` seront exécutés.
+De la même façon, nous pouvons définir un ou plusieurs callbacks `deny`. Si _un_ de ces callbacks retourne `true`, le changement sera annulé et une erreur `403` sera retourné. La logique de tout cela signifie que pour un `insert` réussi, un ou plusieurs callbacks `allow` `insert` aussi bien que _chaque_ callback `deny` `insert` seront exécutés.
 
 <%= diagram "allow_deny", "Note: n/e est l'abbréviation de Not Executed" %>
 
-En d'autres mots, Meteor descend la liste de callback en partant du premier avec `deny`, puis avec `allow`, et exécute chaque callback jusqu'à ce qu'un d'entre eux retourne `true`.
+En d'autres mots, Meteor descend la liste de callback en partant du premier avec `deny`, puis avec `allow`, et exécute chaque callback jusqu'à ce que l'un d'entre eux retourne `true`.
 
-Un exemple pratique de ce pattern serait d'avoir deux callbacks `allow()`, un qui vérifie si un article appartient à l'utilisateur courant, et un second qui vérifie si l'utilisateur courant a les droits d'administration. Si l'utilisateur courant est un administrateur, cela assure qu'il sera capable de mettre à jour l'article, car au moins un de ces callback retournera true.
+Un exemple pratique de ce pattern serait d'avoir deux callbacks `allow()`, l'un qui vérifie si un article appartient à l'utilisateur courant, et un second qui vérifie si l'utilisateur courant a les droits d'administration. Si l'utilisateur courant est un administrateur, cela assure qu'il sera capable de mettre à jour n'importe quel article, puisqu'au moins l'un de ces callback retournera true.
 
 ### Compensation de latence
 
