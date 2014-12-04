@@ -33,17 +33,17 @@ Un exemple pratique de ce pattern serait d'avoir deux callbacks `allow()`, l'un 
 
 ### Compensation de latence
 
-Souvenez-vous que ces Méthodes de mutation de base de données (telles que `.update()`) sont compensé en latence, juste comme les autres méthodes. Donc par exemple, si vous supprimez un article qui ne vous appartient pas via la console du navigateur, nous verrons l'article brièvement disparaître comme votre collection locale perd le document, mais ensuite réapparaître comme le serveur l'informe que, non, en fait le document n'a pas été supprimé.
+Souvenez-vous que ces Méthodes de mutation de base de données (telles que `.update()`) sont compensé en latence, comme toutes les autres méthodes. Donc par exemple, si vous essayez de supprimer un article qui ne vous appartient pas via la console du navigateur, vous verrez l'article brièvement disparaître au moment où votre collection locale perd le document, puis réapparaître lorsque le serveur l'informe que, non, en fait le document n'a pas été supprimé.
 
-Bien sûr ce comportement n'est pas un problème quand il est déclenché dans la console (après tout, si les utilisateurs essaient de bidouiller avec les données dans la console, ce n'est pas vraiment votre problème ce qui se passe dans _leur_ navigateur). Cependant, vous devez vous assurer que ça n'arrive pas dans l'interface utilisateur. Par exemple, vous devez vous donner de la peine pour vous assurer que vous ne montrez pas les boutons pour supprimer les données qu'ils ne sont pas autorisés à supprimer.
+Bien sûr ce comportement n'est pas un problème quand il est déclenché depuis la console (après tout, si les utilisateurs essaient de bidouiller avec les données dans la console, ce qui se passe dans _leur_ navigateur n'est pas vraiment votre problème). Cependant, vous devez vous assurer que cela n'arrive pas dans l'interface utilisateur. Par exemple, vous devez vous donner du mal pour vous assurer que vous ne montrez pas les boutons supprimer lorsqu'ils ne sont pas autorisés à supprimer.
 
-Heureusement, vous pouvez partager le code de permissions entre client et serveur (par exemple, vous pourriez écrire une fonction bibliothèque `canDeletePost(user, post)` et la mettre dans le répertoire `lib` partagé), faire ça ne requiert habituellement pas beaucoup de code supplémentaire.
+Heureusement, puisque vous pouvez partager le code de permissions entre client et serveur (par exemple, vous pourriez écrire une fonction bibliothèque `canDeletePost(user, post)` et la mettre dans le répertoire `lib` partagé), cela ne requiert habituellement pas beaucoup de code supplémentaire.
 
 ### Permissions côté serveur
 
 Souvenez-vous que le système de permissions s'applique seulement sur les mutations de base de données initiées par le client. Sur le serveur, Meteor assume que _toutes_ les opérations sont permises.
 
-Ceci signifie que dans le cas où vous écrivez une Méthode Meteor côté serveur `deletePost` qui pourrait être appelé par le client, n'importe qui serait capable de supprimer un article. Donc vous ne voulez probablement pas faire ça à moins que vous ayez vérifié les permissions à l'intérieur de cette Méthode.
+Ceci signifie que dans le cas où vous écririez une Méthode Meteor côté serveur `deletePost` qui pourrait être appelée par le client, n'importe qui serait capable de supprimer chaque article. Vous ne voulez donc probablement pas faire cela à moins que vous ayez également vérifié les permissions à l'intérieur de cette Méthode.
 
 ### Utiliser un deny comme callback
 
@@ -61,4 +61,4 @@ Posts.deny({
 
 Comme les callbacks `deny` sont exécutés pour *chaque* `update` avec succès, nous savons que ce callback sera exécuté et peut faire des changements du document d'une manière structurée.
 
-Certes, cette technique est un peu de hack, donc vous pourriez vouloir effectuer des mises à jour en préférant l'utilisation d'une Méthode. Cependant, c'est encore utile à savoir, et dans le futur nous pouvons espérer que ce type de callback `beforeUpdate` deviendra disponible.
+Certes, cette technique est un peu un hack, donc vous pourriez vouloir effectuer des mises à jour en préférant l'utilisation d'une Méthode. Cependant, c'est encore utile à savoir, et dans le futur nous pouvons espérer que ce type de callback `beforeUpdate` deviendra disponible.
