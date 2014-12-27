@@ -1,4 +1,4 @@
-# DiscoverMeteor_LEXIQUE ALPHABETIQUE ANGLAIS --> FRANCAIS
+# DiscoverMeteor_LEXIQUE ANGLAIS --> FRANCAIS
 
 ##A
 
