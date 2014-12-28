@@ -147,9 +147,9 @@ Au final, l'utilisateur envoie le formulaire, un nouveau post est créé, et l'u
 
 ### Ajouter un peu de sécurité
 
-Créer des posts est très bien, mais nous ne voulons pas laisser n'importe quel visiteur le faire : ils drefusé oivent être authentifiés avec leurs identifiants pour pouvoir poster. Bien sûr, nous pouvons commencer en cachant la page d'ajout de post pour les utilirefusé sateurs non authentifiés. Cependant, il toujours Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifié, vous devriez voir ceci :e qu'un utilisateur puisse créer un post depuis la console du navigateurefusé r sans être authentifié, et nous ne pouvons nous permettre Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifié, vous devriez voir ceci :
+Créer des posts est très bien, mais nous ne voulons pas laisser n'importe quel visiteur le faire : ils doivent être authentifiés avec leurs identifiants pour pouvoir poster. Bien sûr, nous pouvons commencer en cachant la page d'ajout de post pour les utilisateurs non authentifiés. Cependant un utilisateur pourrait créer un post depuis la console du navigateur sans être authentifié, et nous ne pouvons pas nous le permettre.
 
-Heureusement les collections Meteor Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifié, vous devriez voir ceci :ont conçues pour la sécurité des données; c'est juste qu'elle est désactivée par défaut quand vous créez un nouveau projet. Cela vous permet de démarrer rapidement et de construire votre appli en laissant les trucs ennuyeux pour plus tard.
+Heureusement la sécurité des données est incluse dans les collections Meteor. Elles est désactivée par défaut lorsque vous créez un nouveau projet. Cela vous permet de commencer facilement et commencez à créer votre application tout en laissant les trucs ennuyeux pour plus tard.
 
 Notre appli n'a plus besoin de ces petites roues, alors enlevons-les ! Nous enlevons le paquet `insecure` :
 
