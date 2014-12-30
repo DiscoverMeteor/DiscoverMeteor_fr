@@ -169,7 +169,7 @@ Posts = new Meteor.Collection('posts');
 
 Posts.allow({
   insert: function(userId, doc) {
-    // autoriser les posts seulement si l'utilrefusé isateur est authentifié
+    // autoriser les posts seulement si l'utilisateur est authentifié
     return !! userId;
   }
 Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifié, vous devriez voir ceci :
