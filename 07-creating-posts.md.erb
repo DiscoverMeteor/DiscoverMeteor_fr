@@ -172,7 +172,6 @@ Posts.allow({
     // autoriser les posts seulement si l'utilisateur est authentifié
     return !! userId;
   }
-Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifié, vous devriez voir ceci :
 ~~~
 <%= caption "collections/posts.js" %>
 <%= highlight "3~8" %>
@@ -181,25 +180,25 @@ Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifi
 
 Nous appelons `Posts.allow`, qui dit à Meteor que "ceci est un ensemble de circonstances dans lesquelles les clients sont autorisés à faire des choses à la collection `Post`". Dans notre cas, nous disons "les clients peuvent insérer des posts du moment qu'ils ont un `userId`".
 
-Le `userId` de l'utilisateur procédant à la modification est passé lors des appels à `allow` et `deny` (ou renvoie `null` si l'utilrefusé isateur pas authentifié), ce qui est presque toujours utile. Et comme les comptes utilisateurs sont liés au noyau de Meteor, nous pouvons compter sur `userId` pour toujours être Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifié, vous devriez voir ceci :
+Le `userId` de l'utilisateur procédant à la modification est passé lors des appels à `allow` et `deny` (ou renvoie `null` si l'utilisateur n'est pas authentifié). Et comme les comptes utilisateurs sont liés au noyau de Meteor, nous pouvons compter sur `userId` pour toujours être toujours disponible. Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifié, vous devriez voir ceci :
 
 Nous avons réussi à nous assurer que l'orefusé n doit être authentifié pour créer un post. Essayez de vous déconnecter et de créer un post; vous devriez voir ceci dans votre console :Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifié, vous devriez voir ceci :
 <%= screenshot "7-2", "Échec de l'insertion : Accès refusé " %>
 
 Cependant, nous avons encore à nous occuper de quelques problèmes :
 
- - Les utilirefusé sateurs non authentifiés peuvent toujours accéder au formulaire de création de post
- - Le post n'est pas lié l'utilisateur de quelque façon que ce soit (et il n'y a rien côté Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifié, vous devriez voir ceci :r pour assurer ce lien).
+ - Les utilisateurs non authentifiés peuvent toujours accéder au formulaire de création de post
+ - Le post n'est pas lié à l'utilisateur de quelque façon que ce soit.
  - Plusieurs posts peuvent être créés pointant vers la même URL
 
 Résolvons ces problèmes.
 
 ### Sécuriser l'accès au nouveau formulaire
 
-Commençons par éviter l'accès des utilirefusé sateurs non authentifiés au formulaire d'ajout de post. Nous le ferons au niveau du routeur, en définissant un *route hook*.Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifié, vous devriez voir ceci :
+Commençons par éviter l'accès des utilisateurs non authentifiés au formulaire d'ajout de post. Nous le ferons au niveau du routeur, en définissant un *route hook*.Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifié, vous devriez voir ceci :
 Un *hook* ("crochet" en français) intercepte le processus de routage et change potentiellement l'action prise par le routeur. Vous pouvez l'imaginer comme un garde de sécurité qui vérifie vos identifiants avant de vous laisser entrer (ou de vous refuser l'accès).
 
-Nous avons besoin de vérifier si l'utilrefusé isateur est authentifié, et sinon afficher le template `accessDenied` au lieu du `postSubmit` attendu (puis nous stoppons le routeur ici, il n'a pas autre chose à faire). Modifions router.js ainsi Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifié, vous devriez voir ceci :
+Nous avons besoin de vérifier si l'utilisateur est authentifié, et sinon afficher le template `accessDenied` au lieu du `postSubmit` attendu (puis nous stoppons le routeur ici, il n'a pas autre chose à faire). Modifions router.js ainsi Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifié, vous devriez voir ceci :
 
 ~~~js
 Router.configure({
