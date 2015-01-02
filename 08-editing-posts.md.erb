@@ -166,9 +166,9 @@ Template.postItem.helpers({
 <%= caption "client/templates/posts/post_item.js" %>
 <%= highlight "2~4" %>
 
-<%= screenshot "8-1", "Post edit form." %>
+<%= screenshot "8-1", "Formulaire d'édition" %>
 
-<%= commit "8-1", "Added edit posts form." %>
+<%= commit "8-1", "Ajout des formulaire d'édition." %>
 
 Notre formulaire pour modifier les posts parait correct, pourtant vous ne pourrez pas les modifier. Que se passe-t-il ?
 
@@ -203,7 +203,7 @@ Posts.allow({
 <%= caption "lib/collections/posts.js" %>
 <%= highlight "3~6" %>
 
-<%= commit "8-2", "Added basic permission to check the post's owner." %>
+<%= commit "8-2", "Ajout de permissions basiques pour vérifier le propriétaire d'un posts." %>
 
 ### Les limites de l'édition
 
@@ -231,7 +231,7 @@ Posts.deny({
 <%= caption "lib/collections/posts.js" %>
 <%= highlight "8~13" %>
 
-<%= commit "8-3", "Only allow changing certain fields of posts." %>
+<%= commit "8-3", "Accepter le chamgement de seulement certain champs." %>
 
 Nous transmettons le tableau `fieldNames` qui contient la liste des champs qui peuvent être modifiés et en utilisant la fonction `without()` d'[Underscore](http://underscorejs.org/) nous avons un tableau qui contient les champs qui *ne sont pas* `url` ou `title`.
 
