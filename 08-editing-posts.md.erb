@@ -122,13 +122,13 @@ Normalement ces codes devraient vous être familier à présent.
 
 Deux événements sont présents dans notre template : l'un pour l'événement `submit` du formulaire et l'autre pour l'évenement `click` du lien de suppression du post.
 
-L'événement de suppression est très simple : on empêche l'activation des événements classiques dû à un clic et on demande une confirmation à l'utilisateur. Enfin si on l'obtient, on récupère l'ID du post actuel depuis les informations de la template, on supprime le post et on redirige l'utilisateur sur l'accueil.
+L'événement de suppression est très simple : on empêche l'activation des événements par défaut et on demande une confirmation à l'utilisateur. Enfin si on l'obtient, on récupère l'ID du post actuel depuis les informations de la template, on supprime le post et on redirige l'utilisateur sur l'accueil.
 
-L'événement de mise à jour du post est un peu plus long, mais pas plus compliqué. Après avoir, une fois de plus, empêché l'activation des évènements classiques (lors de la soumission du formulaire) et récupérer l'ID du post concerné, on récupère les valeurs du formulaire depuis la page et on les sauvegarde dans l'objet `postProperties`.
+L'événement de mise à jour du post est un peu plus long, mais pas plus compliqué. Après avoir, une fois de plus, empêché l'activation des évènements classiques (lors de la soumission du formulaire) et récupéré l'ID du post concerné, on récupère les valeurs du formulaire depuis la page et on les sauvegarde dans l'objet `postProperties`.
 
-Nous passons alors cet objet à la méthode `Collection.update()` de Meteor avec l'opérateur [`$set`](http://docs.mongodb.org/manual/reference/operator/update/set/) (qui met à jour les champs spécifiés sans toucher aux autres) et utilisons un callback pour afficher une erreur si la mise à jour est un échec ou renvoie l'utilisateur sur le post concerné si la mise à jour est un succès.
+Nous passons alors cet objet à la méthode `Collection.update()` de Meteor avec l'opérateur [`$set`](http://docs.mongodb.org/manual/reference/operator/update/set/) (qui remplace un ensemble de champs) et utilisons un callback pour afficher une erreur si la mise à jour est un échec ou renvoie l'utilisateur sur le post concerné si la mise à jour est un succès.
 
-### Rajouter des liens
+### Ajouter des liens
 
 Nous devons bien évidemment rajouter un lien pour que les utilisateurs puissent modifier leurs posts :
 
@@ -170,13 +170,13 @@ Template.postItem.helpers({
 
 <%= commit "8-1", "Ajout des formulaire d'édition." %>
 
-Notre formulaire pour modifier les posts parait correct, pourtant vous ne pourrez pas les modifier. Que se passe-t-il ?
+Notre formulaire pour modifier les posts parait correct, pourtant vous ne pourrez pas les modifier tout de suite. Que se passe-t-il ?
 
 ### Mettre en place les permissions
 
-Depuis que nous avons supprimé le paquet `insecure`, toutes les requêtes de modifications provenant du client sont catégoriquement refusés.
+Depuis que nous avons supprimé le paquet `insecure`, toutes les requêtes de modifications provenant du client sont catégoriquement refusées.
 
-Pour régler cela, nous devons fixer des permissions. Pour commencer, créez un nouveau fichier `permissions.js` dans le dossier `lib`. Nous serons ainsi sûr que nos permissions seront chargés en premier (et disponible dans les deux environnements) :
+Pour régler cela, nous devons fixer des permissions. Pour commencer, créez un nouveau fichier `permissions.js` dans le dossier `lib`. Nous serons ainsi sûr que nos permissions seront chargées en premières (et disponible dans les deux environnements) :
 
 ~~~js
 // check that the userId specified owns the documents
@@ -186,7 +186,7 @@ ownsDocument = function(userId, doc) {
 ~~~
 <%= caption "lib/permissions.js" %>
 
-Dans le chapitre [Créer des Posts](/chapter/creating-posts), nous n'avions pas utilisé la méthode `allow()` car nous insérions les nouveaux posts via des méthodes *server-side* (qui passent outre `allow()`).
+Dans le chapitre [Créer des Posts](/chapter/creating-posts), nous n'avions pas utilisé la méthode `allow()` car nous insérions les nouveaux posts via des méthodes côté serveur (qui passent outre `allow()`).
 
 Mais maintenant que nous éditons et supprimons des posts depuis le client, retournons dans le fichier `posts.js` et rajoutons la fameuse méthode `allow()` :
 
@@ -205,7 +205,7 @@ Posts.allow({
 
 <%= commit "8-2", "Ajout de permissions basiques pour vérifier le propriétaire d'un posts." %>
 
-### Les limites de l'édition
+### Limiter les éditions
 
 Ce n'est pas parce que vous pouvez éditer vos propres posts que vous devez être capable d'éditer *toutes* les propriétés. Par exemple, nous ne voulons pas que l'utilisateur crée un post et l'assigne à quelqu'un d'autre.
 
