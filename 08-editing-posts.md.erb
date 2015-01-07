@@ -231,13 +231,13 @@ Posts.deny({
 <%= caption "lib/collections/posts.js" %>
 <%= highlight "8~13" %>
 
-<%= commit "8-3", "Accepter le chamgement de seulement certain champs." %>
+<%= commit "8-3", "Accepter le changement de seulement certain champs." %>
 
-Nous transmettons le tableau `fieldNames` qui contient la liste des champs qui peuvent être modifiés et en utilisant la fonction `without()` d'[Underscore](http://underscorejs.org/) nous avons un tableau qui contient les champs qui *ne sont pas* `url` ou `title`.
+Nous transmettons le tableau `fieldNames` qui contient la liste des champs modifiés et en utilisant la fonction `without()` d'[Underscore](http://underscorejs.org/) nous obtenons un tableau qui contient les champs qui *ne sont pas* `url` ou `title`.
 
 Si tout se passe bien, le tableau sera vide et sa taille devra être de 0. Si quelqu'un essaie de jouer un peu avec le code, la taille du tableau vaudra 1 ou plus, et le callback retournera `true` (ce qui empêchera la mise à jour).
 
-Vous devrez avoir remarqué que nous vérifions nulle part dans notre code de modification des posts la présence de lien dupliqués. Cela veut dire qu'un utilisateur peut soumettre un lien et l'éditer afin de changer l'URL pour passer outre la vérification. La solution à ce problème serait d'utiliser une méthode de Meteor (`Meteor.methods()`) pour modifier les posts, mais nous avons voulu vous montrer cela pour le principe et vous exercer.
+Vous aurez remarqué que nous ne vérifions nulle part dans notre code de modification des posts la présence de lien dupliqués. Cela veut dire qu'un utilisateur pourrait soumettre un lien et l'éditer afin de changer l'URL pour passer outre la vérification. La solution à ce problème serait d'utiliser une méthode de Meteor (`Meteor.methods()`) pour modifier les posts, mais nous avons voulu vous montrer cela pour le principe et vous exercer.
 
 <% note do %>
 
