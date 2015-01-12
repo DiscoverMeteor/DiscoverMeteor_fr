@@ -82,24 +82,26 @@ Donc si vous voyez une reference à la ligne de commande `mrt` de Meteorite au t
 
 Nous allons donc utiliser le système de paquet de Meteor pour ajouter [Bootstrap](http://getbootstrap.com/) à notre projet.
 
-Il n'y a aucune différence par rapport à la méthode usuelle c'est à dire l'inclusion des fichiers CSS et JavaScript de Bootstrap à part le fait que nous laissons le soin à [Andrew Mao](https://github.com/mizzao) de garder le paquet à jour ("mizzao" dans `mizzao:bootstrap-3` est le nom d'utilisateur de l'auteur du paquet).
+Il n'y a aucune différence par rapport à la méthode usuelle c'est à dire l'inclusion manuelle des fichiers CSS et JavaScript de Bootstrap à part le fait que nous laissons le soin à [Andrew Mao](https://github.com/mizzao) de garder le paquet à jour ("mizzao" dans `mizzao:bootstrap-3` est le nom d'utilisateur de l'auteur du paquet).
 
 Pendant qu'on y est, nous allons aussi installer [Underscore](http://underscorejs.org/). Underscore est une bibliothèque utilitaire pour JavaScript vraiment très pratique pour manipuler des données.
+
+Comme l'indique la syntaxe suivante, le paquet `underscore` fait partie des paquets "officiels" Meteor. C'est pour cette raison qu'il ne possède pas d'auteur.
 
 ~~~bash
 meteor add mizzao:bootstrap-3
 meteor add underscore
 ~~~
 
-Notez que nous ajoutons Bootstrap **3**. Certaines screenshots de ce livre ont été prises avec une ancienne version de Microscope utilisant Bootstrap **2**, ce qui signifie qu'elle seront légérement différente de votre version.
+Notez que nous ajoutons Bootstrap **3**. Certaines captures d'écran de ce livre ont été prises avec une ancienne version de Microscope utilisant Bootstrap **2**, ce qui signifie qu'elle seront légérement différente de votre version.
 
 <%= commit "2-2", "Ajouté le paquet Bootstrap et Underscore." %>
 
 Vous devriez maintenant voir quelques changements dans votre application suite à l'ajout de Bootstrap :
 
-<%= screenshot "2-1b", "With Bootstrap." %>
+<%= screenshot "2-1b", "Avec Bootstrap." %>
 
-Contrairement la "traditionnel" manière d'inclure des ressources externes, nous n'avons à lier aucun fichier CSS ou JavaScript car Meteor s'en occupe pour nous ! Mais ce n'est qu'un avantage des paquets Meteor parmis tant d'autres.
+Contrairement à la "traditionnel" manière d'inclure des ressources externes, nous n'avons à lier aucun fichier CSS ou JavaScript car Meteor s'en occupe pour nous ! Mais ce n'est qu'un avantage des paquets Meteor parmis tant d'autres.
 
 <% note do %>
 
@@ -108,7 +110,7 @@ Contrairement la "traditionnel" manière d'inclure des ressources externes, nous
 Lorsque nous parlons de paquets (_packages_) dans le contexte de Meteor, il est bon d'être précis. Meteor distingue cinq types de paquets:
 
 - Le c&oelig;ur de Meteor comprend lui-même différents **paquets essentiels** (_core packages_). Ils font partie de chaque application Meteor, et vous n'aurez pratiquement jamais besoin de vous en soucier.
-- Les paquets classique de Meteor se nomment "**isopacks**", ou paquets isomorphiques (ce qui signifie qu'ils peuvent fonctionnenr sur le client et sur le serveur). **First-party packages** comme `accounts-ui` ou `appcache` sont maintenu par la team Meteor et sont directement [intégrés à Meteor]http://docs.meteor.com/#packages).
+- Les paquets classique de Meteor se nomment "**isopacks**", ou paquets isomorphiques (ce qui signifie qu'ils peuvent fonctionnent sur le client et sur le serveur). **First-party packages** comme `accounts-ui` ou `appcache` sont maintenu par la team Meteor et sont directement [intégrés à Meteor]http://docs.meteor.com/#packages).
 - **Les paquets tierces** (_Third-party packages_) sont juste des *isopacks* développés par d'autres utilisateurs qui les ont envoyés sur le serveur de paquet de Meteor. Vous pouvez les trouver sur [Atmosphere](http://atmosphere.meteor.com) ou avec la commande `meteor search`.
 - Les **paquets locaux** (_local packages_) sont des paquets spécifiques que vous pouvez créer et placer dans le sous-dossier `/packages`.
 - Les **paquets NPM** (_NPM packages_, Node.js Packaged Modules) sont des paquets Node.js. Bien qu'ils ne fonctionneront pas tels quels avec Meteor, ils *peuvent* être exploités par les précédents types de paquets.
@@ -132,7 +134,7 @@ Certains de ces sous-dossiers sont particuliers. Meteor traite les fichiers des 
 
 Il est également très utile de connaitre dans quel ordre Meteor charge vos fichiers :
 
-- Les fichiers dans `/lib` sont chargés *avant* tout les autres.
+- Les fichiers dans `/lib` sont chargés *avant* tous les autres.
 - Tous fichiers `main.*` sont chargés *après* les autres.
 - Tout le reste est chargé dans l'ordre alphabétique.
 
