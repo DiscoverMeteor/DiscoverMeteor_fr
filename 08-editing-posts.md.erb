@@ -6,91 +6,82 @@ number: 8
 points: 5
 photoUrl: http://www.flickr.com/photos/ikewinski/9473337133/
 photoAuthor: Mike Lewinski
-contents: Add a form for editing your posts.|Set up edit permissions.|Restrict which properties can be edited.
+contents: Ajouter un formulaire pour modifier ses posts.|Mettre en place les permissions.|Empêcher certaines propriétés d'être modifiées.
 paragraphs: 29
 ---
 
-////
+Maintenant que nous pouvons créer des posts, la prochaine étape est de pouvoir les modifier et les supprimer. Puisque l'interface est simple à mettre en oeuvre, c'est le moment idéal de voir comment Meteor gère les permissions des utilisateurs.
 
-////
+Voyons d'abord le *router*. Nous lui ajoutons une route afin d'accéder à la page de modification des posts et lui donnons des données :
 
 ~~~js
 Router.configure({
-  layoutTemplate: 'layout'
+  layoutTemplate: 'layout',
+  loadingTemplate: 'loading',
+  notFoundTemplate: 'notFound',
+  waitOn: function() { return Meteor.subscribe('posts'); }
 });
 
-Router.map(function() {
-  this.route('postsList', {path: '/'});
+Router.route('/', {name: 'postsList'});
 
-  this.route('postPage', {
-    path: '/posts/:_id',
-    data: function() { return Posts.findOne(this.params._id); }
-  });
-
-  this.route('postEdit', {
-    path: '/posts/:_id/edit',
-    data: function() { return Posts.findOne(this.params._id); }
-  });
-
-  this.route('postSubmit', {
-    path: '/submit'
-  });
+Router.route('/posts/:_id', {
+  name: 'postPage',
+  data: function() { return Posts.findOne(this.params._id); }
 });
+
+Router.route('/posts/:_id/edit', {
+  name: 'postEdit',
+  data: function() { return Posts.findOne(this.params._id); }
+});
+
+Router.route('/submit', {name: 'postSubmit'});
 
 var requireLogin = function() {
   if (! Meteor.user()) {
-    if (Meteor.loggingIn())
-      this.render('loading')
-    else
+    if (Meteor.loggingIn()) {
+      this.render(this.loadingTemplate);
+    } else {
       this.render('accessDenied');
-  
-    this.stop();
+    }
+  } else {
+    this.next();
   }
 }
 
-Router.before(requireLogin, {only: 'postSubmit'});
+Router.onBeforeAction('dataNotFound', {only: 'postPage'});
+Router.onBeforeAction(requireLogin, {only: 'postSubmit'});
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "12~15" %>
+<%= highlight "15~18" %>
 
-### The Post Edit Template
+### La template de modification des posts
 
-////
+Concentrons nous maintenant sur la template. Notre template `postEdit` reste très classique :
 
 ~~~html
 <template name="postEdit">
-  <form class="main">
-    <div class="control-group">
-        <label class="control-label" for="url">URL</label>
-        <div class="controls">
-            <input name="url" type="text" value="{{url}}" placeholder="Your URL"/>
-        </div>
+  <form class="main form">
+    <div class="form-group">
+      <label class="control-label" for="url">URL</label>
+      <div class="controls">
+          <input name="url" id="url" type="text" value="{{url}}" placeholder="Your URL" class="form-control"/>
+      </div>
     </div>
-
-    <div class="control-group">
-        <label class="control-label" for="title">Title</label>
-        <div class="controls">
-            <input name="title" type="text" value="{{title}}" placeholder="Name your post"/>
-        </div>
+    <div class="form-group">
+      <label class="control-label" for="title">Title</label>
+      <div class="controls">
+          <input name="title" id="title" type="text" value="{{title}}" placeholder="Name your post" class="form-control"/>
+      </div>
     </div>
-
-    <div class="control-group">
-        <div class="controls">
-            <input type="submit" value="Submit" class="btn btn-primary submit"/>
-        </div>
-    </div>
+    <input type="submit" value="Submit" class="btn btn-primary submit"/>
     <hr/>
-    <div class="control-group">
-        <div class="controls">
-            <a class="btn btn-danger delete" href="#">Delete post</a>
-        </div>
-    </div>
+    <a class="btn btn-danger delete" href="#">Delete post</a>
   </form>
 </template>
 ~~~
-<%= caption "client/views/posts/post_edit.html" %>
+<%= caption "client/templates/posts/post_edit.html" %>
 
-////
+Et voilà le fichier `post_edit.js` qui va avec :
 
 ~~~js
 Template.postEdit.events({
@@ -125,21 +116,21 @@ Template.postEdit.events({
   }
 });
 ~~~
-<%= caption "client/views/posts/post_edit.js" %>
+<%= caption "client/templates/posts/post_edit.js" %>
 
-////
+Normalement ces codes devraient vous être familier à présent.
 
-////
+Deux événements sont présents dans notre template : l'un pour l'événement `submit` du formulaire et l'autre pour l'évenement `click` du lien de suppression du post.
 
-////
+L'événement de suppression est très simple : on empêche l'activation des événements par défaut et on demande une confirmation à l'utilisateur. Enfin si on l'obtient, on récupère l'ID du post actuel depuis les informations de la template, on supprime le post et on redirige l'utilisateur sur l'accueil.
 
-////
+L'événement de mise à jour du post est un peu plus long, mais pas plus compliqué. Après avoir, une fois de plus, empêché l'activation des évènements classiques (lors de la soumission du formulaire) et récupéré l'ID du post concerné, on récupère les valeurs du formulaire depuis la page et on les sauvegarde dans l'objet `postProperties`.
 
-////
+Nous passons alors cet objet à la méthode `Collection.update()` de Meteor avec l'opérateur [`$set`](http://docs.mongodb.org/manual/reference/operator/update/set/) (qui remplace un ensemble de champs) et utilisons un callback pour afficher une erreur si la mise à jour est un échec ou renvoie l'utilisateur sur le post concerné si la mise à jour est un succès.
 
-### Adding Links
+### Ajouter des liens
 
-////
+Nous devons bien évidemment rajouter un lien pour que les utilisateurs puissent modifier leurs posts :
 
 ~~~html
 <template name="postItem">
@@ -151,19 +142,19 @@ Template.postEdit.events({
         {{#if ownPost}}<a href="{{pathFor 'postEdit'}}">Edit</a>{{/if}}
       </p>
     </div>
-    <a href="{{pathFor 'postPage'}}" class="discuss btn">Discuss</a>
+    <a href="{{pathFor 'postPage'}}" class="discuss btn btn-default">Discuss</a>
   </div>
 </template>
 ~~~
-<%= caption "client/views/posts/post_item.html" %>
+<%= caption "client/templates/posts/post_item.html" %>
 <%= highlight "5~8" %>
 
-////
+De plus, nous ne devons pas afficher ce lien à n'importe qui. C'est pour cela que nous rajoutons un helper `ownPost` :
 
 ~~~js
 Template.postItem.helpers({
   ownPost: function() {
-    return this.userId == Meteor.userId();
+    return this.userId === Meteor.userId();
   },
   domain: function() {
     var a = document.createElement('a');
@@ -172,20 +163,20 @@ Template.postItem.helpers({
   }
 });
 ~~~
-<%= caption "client/views/posts/post_item.js" %>
+<%= caption "client/templates/posts/post_item.js" %>
 <%= highlight "2~4" %>
 
-<%= screenshot "8-1", "Post edit form." %>
+<%= screenshot "8-1", "Formulaire d'édition" %>
 
-<%= commit "8-1", "Added edit posts form." %>
+<%= commit "8-1", "Ajout des formulaire d'édition." %>
 
-////
+Notre formulaire pour modifier les posts parait correct, pourtant vous ne pourrez pas les modifier tout de suite. Que se passe-t-il ?
 
-### Setting Up Permissions
+### Mettre en place les permissions
 
-////
+Depuis que nous avons supprimé le paquet `insecure`, toutes les requêtes de modifications provenant du client sont catégoriquement refusées.
 
-////
+Pour régler cela, nous devons fixer des permissions. Pour commencer, créez un nouveau fichier `permissions.js` dans le dossier `lib`. Nous serons ainsi sûr que nos permissions seront chargées en premières (et disponible dans les deux environnements) :
 
 ~~~js
 // check that the userId specified owns the documents
@@ -195,38 +186,37 @@ ownsDocument = function(userId, doc) {
 ~~~
 <%= caption "lib/permissions.js" %>
 
-////
+Dans le chapitre [Créer des Posts](/chapter/creating-posts), nous n'avions pas utilisé la méthode `allow()` car nous insérions les nouveaux posts via des méthodes côté serveur (qui passent outre `allow()`).
 
-////
+Mais maintenant que nous éditons et supprimons des posts depuis le client, retournons dans le fichier `posts.js` et rajoutons la fameuse méthode `allow()` :
 
 ~~~js
-Posts = new Meteor.Collection('posts');
+Posts = new Mongo.Collection('posts');
 
 Posts.allow({
-  update: ownsDocument,
-  remove: ownsDocument
+  update: function(userId, post) { return ownsDocument(userId, post); },
+  remove: function(userId, post) { return ownsDocument(userId, post); },
 });
 
-Meteor.methods({
-  ...
+//...
 ~~~
-<%= caption "collections/posts.js" %>
+<%= caption "lib/collections/posts.js" %>
 <%= highlight "3~6" %>
 
-<%= commit "8-2", "Added basic permission to check the post's owner." %>
+<%= commit "8-2", "Ajout de permissions basiques pour vérifier le propriétaire d'un posts." %>
 
-### Limiting Edits
+### Limiter les éditions
 
-////
+Ce n'est pas parce que vous pouvez éditer vos propres posts que vous devez être capable d'éditer *toutes* les propriétés. Par exemple, nous ne voulons pas que l'utilisateur crée un post et l'assigne à quelqu'un d'autre.
 
-////
+Donc nous allons utiliser le callback `deny()` pour permettre à l'utilisateur d'éditer *seulement certains* champs :
 
 ~~~js
-Posts = new Meteor.Collection('posts');
+Posts = new Mongo.Collection('posts');
 
 Posts.allow({
-  update: ownsDocument,
-  remove: ownsDocument
+  update: function(userId, post) { return ownsDocument(userId, post); },
+  remove: function(userId, post) { return ownsDocument(userId, post); },
 });
 
 Posts.deny({
@@ -235,35 +225,38 @@ Posts.deny({
     return (_.without(fieldNames, 'url', 'title').length > 0);
   }
 });
+
+//...
 ~~~
-<%= caption "collections/posts.js" %>
+<%= caption "lib/collections/posts.js" %>
 <%= highlight "8~13" %>
 
-<%= commit "8-3", "Only allow changing certain fields of posts." %>
+<%= commit "8-3", "Accepter le changement de seulement certain champs." %>
 
-////
+Nous transmettons le tableau `fieldNames` qui contient la liste des champs modifiés et en utilisant la fonction `without()` d'[Underscore](http://underscorejs.org/) nous obtenons un tableau qui contient les champs qui *ne sont pas* `url` ou `title`.
 
-////
+Si tout se passe bien, le tableau sera vide et sa taille devra être de 0. Si quelqu'un essaie de jouer un peu avec le code, la taille du tableau vaudra 1 ou plus, et le callback retournera `true` (ce qui empêchera la mise à jour).
+
+Vous aurez remarqué que nous ne vérifions nulle part dans notre code de modification des posts la présence de lien dupliqués. Cela veut dire qu'un utilisateur pourrait soumettre un lien et l'éditer afin de changer l'URL pour passer outre la vérification. La solution à ce problème serait d'utiliser une méthode de Meteor (`Meteor.methods()`) pour modifier les posts, mais nous avons voulu vous montrer cela pour le principe et vous exercer.
 
 <% note do %>
 
-### Method Calls vs Client-side Data Manipulation
+### Manipulation des données via `Meteor.methods` vs du code *client-side*
 
-////
+Pour créer des posts, nous avons utilisé une méthode Meteor `postInsert`, par contre pour les modifier et les supprimer nous appelons `update` et `remove` directement depuis le client en utilisant `allow` et `deny` pour sécuriser les transactions de données.
 
-////
+Quand utiliser l'une ou l'autre méthode ?
 
-////
+Lorsque les choses sont relativement simple et que vous pouvez rapidement adapter votre sécurité avec `allow` et `deny`, il est plus simple de faire les opérations directement depuis le client.
 
-////
+Par contre, à partir du moment où vous devez faire des choses qui ne doivent pas être contrôlé par l'utilisateur (comme dater un nouveau post ou l'assigner au bon utilisateur), vous devriez utiliser une méthode Meteor `Meteor.methods`.
 
-////
+Les méthodes Meteor sont aussi plus adaptés dans certains cas :
 
-////
+- Quand vous devez connaitre ou renvoyer des valeurs via un callback plutôt que d'attendre que la réactivité et la synchronisation prennent effet.
+- Pour les fonctions opérant de grosses manipulations sur la base de données qui seraient trop lourdes à transmettre entre le client et le serveur
+- Pour des calculs sur la base de données (exemple : count, average, sum).
 
-- ////
-- ////
-- ////
+[Jetez un oeil sur notre blog](https://www.discovermeteor.com/blog/meteor-methods-client-side-operations/) pour une exploration plus en détail de ce sujet.
 
 <% end %>
-
