@@ -16,7 +16,7 @@ Dans ce chapitre, nous allons regarder de plus près comment ça fonctionne, et 
 
 Nous fabriquons une application sociale d'actualités, donc la première chose que nous voulons est de créer une liste de liens que les personnes ont postés. Nous appellerons chacun de ces items un "post" (article).
 
-Naturellement, nous avons besoin de stocker ces articles quelque part. Le bundle Meteor propose la base de données Mongo qui se lance sur votre serveur et est votre votre entrepôt de données *persistant*.
+Naturellement, nous avons besoin de stocker ces articles quelque part. Le bundle Meteor propose la base de données Mongo qui se lancesur votre serveur et est votre votre entrepôt de données *persistant*.
 
 Bien que le navigateur d'un utilisateur puisse contenir un état particulier (instance de la page en cours, ou le commentaire en train d'être tapé), le serveur, et spécifiquement Mongo, contient la source de données *canonique*, permanente. Par *canonique*, nous voulons dire que c'est la même pour tous les utilisateurs : chaque utilisateur peut être sur une page différente, mais la liste principale d'articles est la même pour tous.
 
