@@ -12,7 +12,7 @@ paragraphs: 49
 
 La première impression est importante, l'installation de Meteor devrait se faire sans difficulté. Vous serez en selle en moins de cinq minutes dans la plupart des cas.
 
-Pour commencer, installons Meteor; ouvrez un terminal, saisissez et exécutez ce qui suit sur la ligne de commande:
+Pour commencer, installons Meteor ; ouvrez un terminal, saisissez et exécutez ce qui suit sur la ligne de commande :
 
 ~~~bash
 curl https://install.meteor.com | sh
@@ -28,19 +28,19 @@ Si vous ne pouvez pas --- ou ne souhaitez pas --- installer Meteor localement su
 
 Nitrous.io est un service qui vous permet d'exécuter vos applications, et d'éditer leur code, directement dans votre navigateur. Nous avons rédigé [un petit guide](https://www.discovermeteor.com/blog/meteor-nitrous/) pour vous aider à le mettre en &oelig;uvre.
 
-Suivez simplement ce guide jusqu'à --- et y compris --- la section "Installing Meteor", puis reprenez dans ce chapitre-ci, à la section « Créer une application simple ».
+Suivez simplement ce guide jusqu'à la section "Installing Meteor" comprise, puis revenez dans ce chapitre-ci, à la section « Créer une application basique ».
 
 <% end %>
 
-### Créer une application simple
+### Créer une application basique
 
-Maintenant que Meteor est installé, créons une application. Pour ce faire, allons utiliser l'outil en ligne de commande `meteor` :
+Maintenant que Meteor est installé, créons une application. Pour ce faire, on utilise l'outil en ligne de commande `meteor` :
 
 ~~~bash
 meteor create microscope
 ~~~
 
-Cette commande téléchargera Meteor, puis établira un projet Meteor élémentaire, prêt à l'emploi. Lorsqu'elle aura abouti, vous devriez trouver un dossier `microscope/` avec le contenu suivant:
+Cette commande téléchargera Meteor, puis établira un projet Meteor élémentaire, prêt à l'emploi. Lorsqu'elle aura abouti, vous devriez trouver un dossier `microscope/` avec le contenu suivant :
 
 ~~~bash
 .meteor
@@ -49,22 +49,22 @@ microscope.html
 microscope.js
 ~~~
 
-L'application que Meteor a créé pour vous est une simple ébauche (*boilerplate*), qui met cependant déjà en &oelig;uvre quelques _patterns_ courants.
+L'application que Meteor a créée pour vous est une simple ébauche (*boilerplate*), qui met cependant déjà en &oelig;uvre quelques _patterns_ courants.
 
-Même si notre application ne fait pas grand chose, nous pouvons déjà la démarrer. Pour lancer l'application, retournez à la ligne de commande et saisissez:
+Même si notre application ne fait pas grand chose, nous pouvons déjà la démarrer. Pour lancer l'application, retournez à la ligne de commande et saisissez :
 
 ~~~bash
 cd microscope
 meteor
 ~~~
 
-Ouvrez une fenêtre de navigateur à l'adresse `http://localhost:3000/` (ou à l'adresse `http://0.0.0.0:3000/`, ce qui est équivalent) et vous devriez voir ce qui ressemble à:
+Ouvrez une fenêtre de navigateur à l'adresse `http://localhost:3000/` (ou à l'adresse `http://0.0.0.0:3000/`, ce qui est équivalent) et vous devriez voir quelque chose qui ressemble à :
 
 <%= screenshot "2-1", "Le ‹ Hello World › de Meteor." %>
 
-<%= commit "2-1", "Créé un projet Microscope élémentaire." %>
+<%= commit "2-1", "Crée un projet Microscope élémentaire." %>
 
-Félicitations! Vous avez mis en service votre première application Meteor. Au passage, pour arrêter l'application, il vous suffit de ramener au premier plan la fenêtre de terminal dans laquelle tourne l'application, et de presser la combinaison de touches `ctrl+c`.
+Félicitations ! Vous avez mis en service votre première application Meteor. Au passage, pour arrêter l'application, il vous suffit de ramener au premier plan la fenêtre de terminal dans laquelle tourne l'application, et de presser la combinaison de touches `ctrl+c`.
 
 N'oubliez pas que si vous utilisez Git, c'est le bon moment pour initialiser votre repo avec `git init`.
 
@@ -80,38 +80,38 @@ Donc si vous voyez une reference à la ligne de commande `mrt` de Meteorite au t
 
 ### Ajouter un paquet
 
-Nous allons donc utiliser le système de paquet de Meteor pour ajouter [Bootstrap](http://getbootstrap.com/) à notre projet.
+Nous allons maintenant utiliser le système de paquet de Meteor pour ajouter [Bootstrap](http://getbootstrap.com/) à notre projet.
 
-Il n'y a aucune différence par rapport à la méthode usuelle c'est à dire l'inclusion manuelle des fichiers CSS et JavaScript de Bootstrap à part le fait que nous laissons le soin à [Andrew Mao](https://github.com/mizzao) de garder le paquet à jour ("mizzao" dans `mizzao:bootstrap-3` est le nom d'utilisateur de l'auteur du paquet).
+Il n'y a aucune différence par rapport à la méthode usuelle c'est-à-dire l'inclusion manuelle des fichiers CSS et JavaScript de Bootstrap à part le fait que nous laissons le soin au mainteneur du paquet de le garder à jour.
 
 Pendant qu'on y est, nous allons aussi installer [Underscore](http://underscorejs.org/). Underscore est une bibliothèque utilitaire pour JavaScript vraiment très pratique pour manipuler des données.
 
-Comme l'indique la syntaxe suivante, le paquet `underscore` fait partie des paquets "officiels" Meteor. C'est pour cette raison qu'il ne possède pas d'auteur.
+Comme l'indique la syntaxe suivante, le paquet `underscore` fait partie des paquets "officiels" de Meteor. C'est pour cette raison qu'il ne possède pas d'auteur.
 
 ~~~bash
-meteor add mizzao:bootstrap-3
+meteor add twbs:bootstrap
 meteor add underscore
 ~~~
 
-Notez que nous ajoutons Bootstrap **3**. Certaines captures d'écran de ce livre ont été prises avec une ancienne version de Microscope utilisant Bootstrap **2**, ce qui signifie qu'elle seront légérement différente de votre version.
+Notez que nous ajoutons Bootstrap **3**. Certaines captures d'écran de ce livre ont été prises avec une ancienne version de Microscope utilisant Bootstrap **2**, ce qui signifie qu'elles seront légèrement différentes de votre version.
 
-<%= commit "2-2", "Ajouté le paquet Bootstrap et Underscore." %>
+<%= commit "2-2", "Avec les paquets Bootstrap et Underscore." %>
 
-Vous devriez maintenant voir quelques changements dans votre application suite à l'ajout de Bootstrap :
+Vous devriez voir dès maintenant quelques changements dans votre application suite à l'ajout de Bootstrap :
 
 <%= screenshot "2-1b", "Avec Bootstrap." %>
 
-Contrairement à la "traditionnel" manière d'inclure des ressources externes, nous n'avons à lier aucun fichier CSS ou JavaScript car Meteor s'en occupe pour nous ! Mais ce n'est qu'un avantage des paquets Meteor parmis tant d'autres.
+Contrairement à la "traditionnelle" manière d'inclure des ressources externes, nous n'avons à lier aucun fichier CSS ou JavaScript car Meteor s'en occupe pour nous ! Mais ce n'est qu'un avantage des paquets Meteor parmi tant d'autres.
 
 <% note do %>
 
 ### À propos des paquets
 
-Lorsque nous parlons de paquets (_packages_) dans le contexte de Meteor, il est bon d'être précis. Meteor distingue cinq types de paquets:
+Lorsque nous parlons de paquets (_packages_) dans le contexte de Meteor, il est bon d'être précis. Meteor distingue cinq types de paquets :
 
 - Le c&oelig;ur de Meteor comprend lui-même différents **paquets essentiels** (_core packages_). Ils font partie de chaque application Meteor, et vous n'aurez pratiquement jamais besoin de vous en soucier.
-- Les paquets classique de Meteor se nomment "**isopacks**", ou paquets isomorphiques (ce qui signifie qu'ils peuvent fonctionnent sur le client et sur le serveur). **First-party packages** comme `accounts-ui` ou `appcache` sont maintenu par la team Meteor et sont directement [intégrés à Meteor]http://docs.meteor.com/#packages).
-- **Les paquets tierces** (_Third-party packages_) sont juste des *isopacks* développés par d'autres utilisateurs qui les ont envoyés sur le serveur de paquet de Meteor. Vous pouvez les trouver sur [Atmosphere](http://atmosphere.meteor.com) ou avec la commande `meteor search`.
+- Les paquets classique de Meteor se nomment "**isopacks**", ou paquets isomorphiques (ce qui signifie qu'ils peuvent fonctionner sur le client et sur le serveur). **First-party packages** comme `accounts-ui` ou `appcache` sont maintenus par la team Meteor et sont directement [intégrés à Meteor]http://docs.meteor.com/#packages).
+- **Les paquets tiers** (_Third-party packages_) sont simplement des *isopacks* développés par d'autres utilisateurs qui les ont envoyés sur le serveur de paquet de Meteor. Vous pouvez les trouver sur [Atmosphere](http://atmosphere.meteor.com) ou avec la commande `meteor search`.
 - Les **paquets locaux** (_local packages_) sont des paquets spécifiques que vous pouvez créer et placer dans le sous-dossier `/packages`.
 - Les **paquets NPM** (_NPM packages_, Node.js Packaged Modules) sont des paquets Node.js. Bien qu'ils ne fonctionneront pas tels quels avec Meteor, ils *peuvent* être exploités par les précédents types de paquets.
 
@@ -121,18 +121,18 @@ Lorsque nous parlons de paquets (_packages_) dans le contexte de Meteor, il est 
 
 Avant de plonger dans le code, il convient de configurer notre projet correctement. Afin que l'assemblage (_build_) ne contienne que l'essentiel, ouvrez le dossier `microscope` et supprimez-en les fichiers `microscope.html`, `microscope.js` et `microscope.css`.
 
-Puis, créez quatres dossiers dans `/microscope` : `/client`, `/server`, `/public`, et `/lib`.
+Puis créez quatres dossiers dans `/microscope` : `/client`, `/server`, `/public`, et `/lib`.
 
-Enfin, créez `main.html` et `main.js` dans `/client`. Ne vous inquiètez pas si votre application ne fonctionne plus pour le moment, nous allons remplir ces fichiers dans les chapitres suivant.
+Enfin, créez `main.html` et `main.js` dans `/client`. Ne vous inquiétez pas si votre application ne fonctionne plus pour le moment, nous allons remplir ces fichiers dans les chapitres suivants.
 
-Certains de ces sous-dossiers sont particuliers. Meteor traite les fichiers des dossiers selon les conventions suivantes:
+Certains de ces sous-dossiers sont particuliers. Meteor traite les fichiers des dossiers selon les conventions suivantes :
 
 - Le code dans le dossier `/server` n'est exécuté que par le serveur.
 - Le code dans le dossier `/client` n'est exécuté que par le client.
 - Tout le reste est exécuté à la fois par le client et le serveur.
 - Vos ressources statiques (polices, images, etc) vont dans le dossier `/public`.
 
-Il est également très utile de connaitre dans quel ordre Meteor charge vos fichiers :
+Il est également très utile de connaître dans quel ordre Meteor charge vos fichiers :
 
 - Les fichiers dans `/lib` sont chargés *avant* tous les autres.
 - Tous fichiers `main.*` sont chargés *après* les autres.
@@ -154,9 +154,9 @@ Pour faire court, non. À la différence de Rails, Meteor n'impose aucune struct
 
 ### Public ou pas?
 
-Pardonnez notre excès de zèle. En pratique, nous n'aurons pas besoin du dossier `/public`, car Microscope n'utilisera pas de ressources statiques! Néanmoins, nous avons voulu vous signaler l'utilité de ce dossier, car la plupart des applications Meteor comprendront tout au moins quelques images.
+Pardonnez notre excès de zèle. En pratique, nous n'aurons pas besoin du dossier `/public`, car Microscope n'utilisera pas de ressources statiques ! Néanmoins, nous avons voulu vous signaler l'utilité de ce dossier, car la plupart des applications Meteor comprendront tout au moins quelques images.
 
-À ce propos, vous aurez peut-être observé la présence d'un dossier caché nommé `.meteor`. C'est l'emplacement où Meteor enregistre son propre code, et y apporter des modifications peut conduire à un effet potentiellement désastreux. Vous n'aurez généralement pas besoin de prêter attention à son contenu --- sinon, à de rares exceptions, aux fichiers `.meteor/packages` et `.meteor/release`, qui contiennent respectivement la liste de vos paquets intelligents (_smart packages_) et la version de Meteor en usage dans votre projet. Lorsque vous ajoutez des paquets et changez de version de Meteor, vous pouvez vérifier ces changements en examinant ces deux fichiers.
+À ce propos, vous avez peut-être observé la présence d'un dossier caché nommé `.meteor`. C'est l'emplacement où Meteor enregistre son propre code, et y apporter des modifications peut conduire à un effet potentiellement désastreux. Vous n'aurez généralement pas besoin de prêter attention à son contenu --- sinon, à de rares exceptions, aux fichiers `.meteor/packages` et `.meteor/release`, qui contiennent respectivement la liste de vos paquets intelligents (_smart packages_) et la version de Meteor en usage dans votre projet. Lorsque vous ajoutez des paquets et changez de version de Meteor, vous pouvez vérifier ces changements en examinant ces deux fichiers.
 
 <% note do %>
 
@@ -174,15 +174,11 @@ Les noms de fichiers font exception à cette règle, qui utilisent des tirets ba
 
 Ce livre ne traite pas de CSS. Ainsi, pour ne pas vous ralentir avec des considérations de style, nous avons préféré vous mettre à disposition la feuille de style complète dès le départ. Vous n'aurez, dès lors, plus à vous en préoccuper.
 
-Les feuilles de style CSS sont automatiquement chargées et comprimées à la volée par Meteor, de sorte qu'elles doivent être placées dans le dossier `/client`, plutôt que `/public` comme le seraient les autres ressources statiques. Allez-y, créez-y maintenant un sous-dossier `/client/stylesheets/`, puis placez-y un fichier `style.css` avec le contenu suivant:
+Les feuilles de style CSS sont automatiquement chargées et comprimées à la volée par Meteor, de sorte qu'elles doivent être placées dans le dossier `/client`, plutôt que `/public` comme le seraient les autres ressources statiques. Allez-y, créez-y maintenant un sous-dossier `/client/stylesheets/`, puis placez-y un fichier `style.css` avec le contenu suivant :
 
 ~~~css
 .grid-block, .main, .post, .comments li, .comment-form {
   background: #fff;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
   border-radius: 3px;
   padding: 10px;
   margin-bottom: 10px;
@@ -194,14 +190,19 @@ body {
   background: #eee;
   color: #666666; }
 
+#main {
+  position: relative;
+}
+.page {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+}
+
 .navbar {
   margin-bottom: 10px; }
   /* line 32, ../sass/style.scss */
   .navbar .navbar-inner {
-    -webkit-border-radius: 0px 0px 3px 3px;
-    -moz-border-radius: 0px 0px 3px 3px;
-    -ms-border-radius: 0px 0px 3px 3px;
-    -o-border-radius: 0px 0px 3px 3px;
     border-radius: 0px 0px 3px 3px; }
 
 #spinner {
@@ -226,7 +227,7 @@ body {
     -o-transition: none;
     transition: none; }
   .post.animate{
-    -webkit-transition: all 300ms 0ms ease-in;
+    -webkit-transition: all 300ms 0ms;
     -moz-transition: all 300ms 0ms ease-in;
     -o-transition: all 300ms 0ms ease-in;
     transition: all 300ms 0ms ease-in; }
@@ -279,10 +280,6 @@ body {
 
 .load-more {
   display: block;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
   border-radius: 3px;
   background: rgba(0, 0, 0, 0.05);
   text-align: center;
@@ -343,13 +340,13 @@ body {
 ~~~
 <%= caption "client/stylesheets/style.css" %>
 
-<%= commit "2-3","Réorganisé la structure de fichiers." %>
+<%= commit "2-3","Structure de fichiers réorganisée." %>
 
 <% note do %>
 
 ### Au sujet de CoffeeScript
 
-Dans ce livre, nous écrirons les scripts en JavaScript pur. Si vous préférez néanmoins utiliser CoffeeScript, Meteor n'est pas en reste. Ajoutez simplement le paquet CoffeeScript et vous êtes paré:
+Dans ce livre, nous écrirons les scripts en JavaScript pur. Si vous préférez néanmoins utiliser CoffeeScript, Meteor n'est pas en reste. Ajoutez simplement le paquet CoffeeScript et vous êtes paré :
 
 `meteor add coffeescript`
 

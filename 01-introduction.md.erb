@@ -14,9 +14,9 @@ Commençons avec un petit exercice mental. Imaginez que vous ouvriez le même do
 
 Cliquez maintenant dans une des deux fenêtres et effacez un fichier. Ce fichier a-t-il aussi disparu de l'autre fenêtre ?
 
-Il n'est pas nécessaire de passer par ces étapes pour savoir que c'est bien le cas. Quand on modifie quelque chose dans notre système de fichier local, le changement s'applique partout sans avoir besoin de rafraîchir ou d'utiliser une fonction de rappel (callback). Ça marche, tout simplement. 
+Il n'est pas nécessaire de passer par ces étapes pour savoir que c'est bien le cas. Quand on modifie quelque chose dans notre système de fichier local, le changement s'applique partout sans avoir besoin de rafraîchir ou d'utiliser une fonction de rappel (callback). Ça marche, tout simplement.
 
-Par contre, imaginons ce même scénario sur le web. Considérons par exemple que vous ouvriez le même panneau d'administration Wordpress dans deux fenêtres de navigateur, puis que vous créiez un nouveau post dans l'une d'elles. Contrairement à l'expérience précedente, et même si vous attendez, l'autre fenêtre ne changera pas à moins de la rafraîchir. 
+Par contre, imaginons ce même scénario sur le web. Considérons par exemple que vous ouvriez le même panneau d'administration Wordpress dans deux fenêtres de navigateur, puis que vous créiez un nouveau post dans l'une d'elles. Contrairement à l'expérience précedente, et même si vous attendez, l'autre fenêtre ne changera pas à moins de la rafraîchir.
 
 Nous nous sommes habitués d'années en années à l'idée qu'on ne communique avec un site que par de courtes actions, distinctes les unes des autres.
 
@@ -24,7 +24,7 @@ Heureusement, Meteor fait partie d'une nouvelle vague de frameworks et de techno
 
 ### Qu'est-ce que Meteor ?
 
-Meteor est une plateforme basée sur Node.js pour créer des applications web temps-réel. C'est ce qui fait le lien entre la base de données de votre application et son interface utilisateur, tout en s'assurant que les deux restent bien synchronisés. 
+Meteor est une plateforme basée sur Node.js pour créer des applications web temps-réel. C'est ce qui fait le lien entre la base de données de votre application et son interface utilisateur, tout en s'assurant que les deux restent bien synchronisés.
 
 Puisque Meteor est basé sur Node.js, il utilise JavaScript à la fois coté client et coté serveur. Autre chose, Meteor permet aussi de partager du code entre les deux environnements.
 
@@ -32,7 +32,7 @@ Tout cela nous donne une plateforme pouvant être très puissante et très simpl
 
 ### Pourquoi Meteor ?
 
-Bon alors pourquoi passer votre temps à apprendre Meteor plutôt qu'une autre plateforme ? Sans compter les nombreuses fonctionnalités de Meteor, la raison est claire : Meteor est facile à apprendre. 
+Bon alors pourquoi passer votre temps à apprendre Meteor plutôt qu'une autre plateforme ? Sans compter les nombreuses fonctionnalités de Meteor, la raison est claire : Meteor est facile à apprendre.
 
 Comparé aux autres plateformes, Meteor permet l'implémentation et le déploiement d'une application web temps-réel en l'espace de seulement quelques heures. Et si vous avez un peu d'expérience avec le développement front-end, vous êtes déjà familier avec le JavaScript et vous n'aurez pas à apprendre un nouveau langage.
 
@@ -46,9 +46,17 @@ Nous avons beaucoup appris, mais trouver les réponses à nos questions n'était
 
 L'application que nous allons construire est une version simplifié des sites sociaux de news tels que [Hacker News](http://news.ycombinator.com) ou [Reddit](http://reddit.com). Nous l'avons appelé Microscope (par analogie avec son grand frère, [Telescope](http://telesc.pe) un autre projet Meteor open-source). Pendant que nous le construirons, nous vous apprendrons tout les éléments nécéssaire au développement d'une application Meteor comme la gestion des utilisateurs, les collections Meteor, le routing et beaucoup plus.
 
-### A propos des auteurs
+### À qui ce livre est-il destiné ?
 
-Au cas où vous vous demandez qui nous sommes et pourquoi vous pouvez nous faire confiance, voici un peu d'information sur nous.  
+Un de nos objectifs, en écrivant ce livre, est de garder les choses simples et accessibles. Ainsi, vous devriez être capable de suivre le cours sans expérience préalable de Meteor, Node.js, des frameworks MVC, ou encore de la programmation côté serveur en général.
+
+En revanche, on attend un connaissance élémentaire de la syntaxe et des concepts du JavaScript. Mais si vous avez déjà expérimenté un peu de code jQuery ou joué avec la console développeur du navigateur, vous ne devriez pas avoir de problème.
+
+Si vous ne vous sentez pas au point avec JavaScript pour le moment, nous vous suggerons de jeter un œil à [JavaScript primer for Meteor (en anglais)](https://www.discovermeteor.com/blog/javascript-for-meteor/) avant de revenir sur ce livre.
+
+### À propos des auteurs
+
+Au cas où vous vous demandez qui nous sommes et pourquoi vous pouvez nous faire confiance, voici un peu d'information sur nous.
 
 <%= image "tom-photo.jpg", "portrait" %>
 
@@ -72,7 +80,7 @@ Ainsi, si vous êtes débutant, vous pouvez passer les apartés pour votre premi
 
 Il n’y a rien de pire que d’être en train de suivre un livre de programmation et de tout à coup se rendre compte que notre code n’est plus synchronisé avec les exemples et que plus rien ne fonctionne comme cela devrait.
 
-Pour éviter cela, nous avons créé un [dépôt sur GitHub pour Microscope](https://github.com/SachaG/Microscope), et nous proposerons également des liens directs vers les commits de Git à chaque modification de code. De plus, chaque commit est lié à une instance en ligne de l’application, ainsi vous pourrez le comparer avec votre copie locale. Ici un exemple de ce que vous pourriez voir :
+Pour éviter cela, nous avons créé un [dépôt sur GitHub pour Microscope](https://github.com/DiscoverMeteor/Microscope), et nous proposerons également des liens directs vers les commits de Git à chaque modification de code. De plus, chaque commit est lié à une instance en ligne de l’application, ainsi vous pourrez le comparer avec votre copie locale. Ici un exemple de ce que vous pourriez voir :
 
 <%= commit "11-2", "Afficher les notifications dans l'entête." %>
 
