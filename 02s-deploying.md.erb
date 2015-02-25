@@ -38,7 +38,7 @@ Déployer sur Meteor est simple. Ouvrez juste votre terminal allez dans le répe
 meteor deploy myapp.meteor.com
 ~~~
 
-Bien sûr, vous devrez faire attention à remplacer "myapp" avec un nom de votre choix, de préférence un qui n'est pas déjà utilisé. 
+Bien sûr, vous devrez faire attention à remplacer "myapp" avec un nom de votre choix, de préférence un qui n'est pas déjà utilisé.
 
 Si c'est votre premier déploiement d'application, il vous sera demandé de créer un compte Meteor. Et si tout va bien après quelques secondes vous serez capable d'accéder à votre application à l'adresse `http://myapp.meteor.com`.
 
@@ -48,47 +48,7 @@ Vous pouvez vous référer à [la documentation officielle](http://docs.meteor.c
 
 [Modulus](https://modulus.io/) est une bonne option pour déployer des applications Node.js. C'est un des fournisseurs PaaS (platform-as-a-service) qui supporte officiellement Meteor, et il y a déjà quelques personnes qui exécutent des applications Meteor en production dessus.
 
-<% note do %>
-
-### Demeteorizer
-
-Modulus a rendu open-source un outil appelé [demeteorizer](https://github.com/onmodulus/demeteorizer) qui convertit votre application Meteor dans une application NodeJS standard.
-
-<% end %>
-
-Commencez par [créer un compte](https://modulus.io/register). Pour déployer une application sur Modulus, nous aurons besoin d'installer l'outil en ligne de commande de Modulus :
-
-~~~bash
-npm install -g modulus
-~~~
-
-Et s'authentifier avec :
-
-~~~bash
-modulus login
-~~~
-
-Nous allons créer un projet Modulus (notez que vous pouvez également faire ça via le tableau de bord web de Modulus) :
-
-~~~bash
-modulus project create
-~~~
-
-L'étape suivante sera de créer une base de données MongoDB pour notre application. Nous pouvons créer une base de données MongoDB avec [Modulus lui-même](https://modulus.io/codex/database/getting_started), [Compose](https://www.compose.io/) ou avec un autre founisseur de cloud MongoDB.
-
-Une fois que nous avons créé notre base de données MongoDB, nous pouvons obtenir le paramètre 'MONGO_URL' pour notre base de données de l'UI web de Modulus (Dashboard > Databases > Select your database > Administration), puis utilisez le pour configurer votre application comme ceci :
-
-~~~bash
-modulus env set MONGO_URL "mongodb://<user>:<pass>@mongo.onmodulus.net:27017/<database_name>"
-~~~
-
-Il est temps maintenant de déployer votre application. C'est aussi simple que taper :
-
-~~~bash
-modulus deploy
-~~~
-
-Nous avons maintenant déployé avec succès notre application sur Modulus. Référez vous à [la documentation Modulus](https://modulus.io/codex/projects) pour plus d'informations à propos de l'accès aux logs, la configuration des domaines personnalisés et SSL.
+Vous pouvez en apprendre plus à propos de Modulus en lisant leur [guide de déploiement pour application Meteor](http://help.modulus.io/customer/portal/articles/1647770-using-meteor-with-modulus).
 
 ### Meteor Up
 
@@ -177,7 +137,7 @@ Si vous avez décidé d'utiliser Compose, mettez `setupMongo` à `false` et ajou
 
 **Chemin de l'application Meteor**
 
-Maintenant que notre configuration Meteor Up a pris vie dans un répertoire différent, nous allons avoir besoin de faire pointer Meteor Up vers notre application en utilisant la propriété `app`. Entrez juste votre chemin local complet, que vous pouvez trouver en utilisant la commande `pwd` dans le temrinal quand vous êtes placé dans votre répertoire. 
+Maintenant que notre configuration Meteor Up a pris vie dans un répertoire différent, nous allons avoir besoin de faire pointer Meteor Up vers notre application en utilisant la propriété `app`. Entrez juste votre chemin local complet, que vous pouvez trouver en utilisant la commande `pwd` dans le temrinal quand vous êtes placé dans votre répertoire.
 
 **Variables d'environnement**
 
@@ -191,7 +151,7 @@ Avant qu'on puisse déployer nous allons avoir besoin de configurer le serveur p
 mup setup
 ~~~
 
-Ça prendre quelques minutes en fonction de la performance du serveur et de la connectivité réseau. Après le succès de l'installation, vous pouvez finalement déployer votre application avec :
+Ça va prendre quelques minutes en fonction de la performance du serveur et de la connectivité réseau. Après le succès de l'installation, vous pouvez finalement déployer votre application avec :
 
 ~~~bash
 mup deploy
@@ -209,4 +169,4 @@ mup logs -f
 
 Ça vous donne une vue d'ensemble des capacités de Meteor Up. Pour plus d'informations, nous vous suggérons de visiter [le dépôt Github de Meteor Up](https://github.com/arunoda/meteor-up).
 
-Ces trois façons de déployer des applications Meteor devrait être suffisantes pour la plupart des cas. Bien sûr, nous savons que plusieurs d'entre vous préféreront avoir un contrôle complet et configurer leur serveur Meteor de bout en bout. Mais c'est un sujet pour un autre jour... ou peut-être un autre livre !
+Ces trois façons de déployer des applications Meteor devrait être suffisantes pour la plupart des cas. Bien sûr, nous savons que plusieurs d'entre vous préféreront avoir un contrôle complet et configurer leur serveur Meteor de bout en bout. Mais c'est un sujet pour un autre jour… ou peut-être un autre livre !

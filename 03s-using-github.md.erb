@@ -13,7 +13,7 @@ paragraphs: 32
 
 [GitHub](https://github.com/) est un dépôt social pour les projets open-source basé sur le système de control de version [Git](http://git-scm.com/), et sa fonction première est de partager du code facilement et de collaborer sur des projets. Mais c'est aussi un merveilleux outil d'apprentissage. Dans cette sidebar, nous allons rapidement discuter de quelques moyens pour que vous puissiez utiliser GitHub afin de suivre avec *Discover Meteor*.
 
-Cette sidebar suppose que vous n'êtes pas familier avec Git et GitHub. Si vous êtes déjà à l'aise avec les deux, vous êtes libres de passer au chapitre suivant!
+Cette sidebar suppose que vous n'êtes pas familier avec Git et GitHub. Si vous êtes déjà à l'aise avec les deux, vous êtes libres de passer au chapitre suivant !
 
 ### Etre committed
 
@@ -62,7 +62,7 @@ Nous venons de voir comment explorer le code entier d'un commit en ligne sur Git
 Pour faire ça il y a plusieurs étapes (bien, dans ce livre du moins) avec l'utilitaire en ligne de commande `git`. Pour les débutants, [assurez vous d'avoir Git installé](http://git-scm.com/downloads). Ensuite **clone** (en d'autres termes, télécharger une copie localement) le dépôt de Microscope avec :
 
 ~~~bash
-$ git clone git@github.com:DiscoverMeteor/Microscope.git github_microscope
+git clone https://github.com/DiscoverMeteor/Microscope.git github_microscope
 ~~~
 
 Ce `github_microscope` à la fin est simplement le nom du répertoire local dans lequel vous allez cloner l'application. Dans le cas où vous avez déjà un répertoire `microscope`, prenez juste un nom différent (il n'y a pas besoin d'avoir le même nom que le dépôt GitHub).
@@ -70,7 +70,7 @@ Ce `github_microscope` à la fin est simplement le nom du répertoire local dans
 Allez dans le répertoire avec la commande `cd` afin de pouvoir utiliser l'utilitaire en ligne de commande `git` :
 
 ~~~bash
-$ cd github_microscope
+cd github_microscope
 ~~~
 
 Quand nous avons cloné le dépôt de GitHub, nous avons téléchargé *tout* le code de l'application, ce qui veut dire que nous avons le code du dernier commit.
@@ -78,7 +78,7 @@ Quand nous avons cloné le dépôt de GitHub, nous avons téléchargé *tout* le
 Heureusement, il y a un moyen de revenir dans le temps et de "consulter" un commit spécifique sans affecter les autres. Essayons :
 
 ~~~bash
-$ git checkout chapter3-1
+git checkout chapter3-1
 Note: checking out 'chapter3-1'.
 
 You are in 'detached HEAD' state. You can look around, make experimental
@@ -106,7 +106,7 @@ Une fois encore, GitHub nous simmplfie la vie. Vous pouvez trouver un hash de co
 Testons avec un hash au lieu d'un tag :
 
 ~~~bash
-$ git checkout c7af59e425cd4e17c20cf99e51c8cd78f82c9932
+git checkout c7af59e425cd4e17c20cf99e51c8cd78f82c9932
 Previous HEAD position was a004b56... Added basic posts list template and static data.
 HEAD is now at c7af59e... Augmented the postsList route to take a limit
 ~~~
@@ -114,8 +114,10 @@ HEAD is now at c7af59e... Augmented the postsList route to take a limit
 Et finalement, si nous voulons arrêter de regarder dans notre boule de cristal et que nous voulons revenir dans le présent ? Nous demandons à Git de consulter la branche **master** :
 
 ~~~bash
-$ git checkout master
+git checkout master
 ~~~
+
+Notez que vous pouvez lancer l'application avec la commande `meteor` à tout moment, même lorsque vous êtes dans l'état "detached HEAD". Vous aurez peut-être besoin de lancer d'abord `meteor update` si Meteor se plaint de paquets manquant, puisque le code des packages n'est pas inclu dans le repo Git de Microscope.
 
 ### Perspective historique
 
