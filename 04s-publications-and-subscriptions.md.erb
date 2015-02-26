@@ -118,7 +118,7 @@ Comme nous l'avons fait sur le serveur, nous utiliserons la fonction `Posts.find
 // on the client
 Template.posts.helpers({
   posts: function(){
-    return Posts.find(author: 'bob-smith', category: 'JavaScript');
+    return Posts.find({author: 'bob-smith', category: 'JavaScript'});
   }
 });
 ~~~
