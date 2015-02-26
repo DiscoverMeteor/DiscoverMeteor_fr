@@ -25,13 +25,11 @@ Non seulement c'est une aide pour le routage (la mise en place des chemins), mai
 Commençons par installer le package depuis Atmosphere :
 
 ~~~bash
-$ mrt add iron-router
+meteor add iron:router
 ~~~
 <%= caption "Terminal" %>
 
-Cette commande va télécharger et installer le package iron-router dans votre application. Notez que vous devrez probablement redémarrer votre application Meteor (avec `ctrl+c` pour terminer le processus, puis `mrt` pour le redémarrer) avant que le package ne soit utilisable.
-
-Notez que Iron Router est un package tier, ce qui signifie qu'il vous faudra Meteorite pour l'installer (`meteor add iron-router` ne marchera pas).
+Cette commande va télécharger et installer le package Iron Router dans votre application. Notez que vous devrez probablement redémarrer votre application Meteor (avec `ctrl+c` pour terminer le processus, puis `meteor` pour le redémarrer) avant que le package ne soit utilisable.
 
 <% note do %>
 
@@ -45,8 +43,8 @@ Nous allons aborder plusieurs fonctionnalités du routage dans ce chapitre. Si v
 - **Hooks** : Les Hooks sont les actions qui seront effectuées avant, après ou même pendant le processus de routage. Un exemple typique serait de vérifier si l'utilisateur a les droits nécessaire pour afficher une page.
 - **Filtres** : Les filtres sont des hooks qui sont définis globalement pour une ou plusieurs routes.
 - **Template de routes** : Chaque route doit pointer vers un template. Si vous n'en précisez pas un, le routeur cherchera le template avec le même nom que la route.
-- **Layouts** : On peut voir les layouts comme des cadres photo numérique. Ils contiennent tout le code HTML qui entoure les templates et qui ne bougera pas même si le template est modifié.
-- **Controlleurs** : Quelques fois, vous réaliserez que beaucoup de templates réutilisent les mêmes paramètres. Plutôt que de dupliquer votre code, vous pouvez faire hériter toutes ces routes d'un même *controlleur de routage* qui contient toute la logique de routage.
+- **Layouts** : Vous pouvez voir les layouts comme des cadres pour vos données. Ils contiennent tout le code HTML qui entoure les templates et qui ne bougera pas même si le template lui-même est modifié.
+- **Contrôleurs** : Quelques fois, vous vous rendrez compte que beaucoup de templates réutilisent les mêmes paramètres. Plutôt que de dupliquer votre code, vous pouvez faire hériter toutes ces routes d'un même *contrôleur de routage* qui contient toute la logique de routage ordinaire.
 
 Pour plus d'information sur Iron Router, consultez [la documentation complète sur GitHub](https://github.com/EventedMind/iron-router).
 
@@ -58,13 +56,13 @@ Jusqu'à présent nous avons construit notre layout en utilisant des inclusions 
 
 Iron Router nous laisse sortir du cadre en nous laissant changer ce qui est affiché dans la balise HTML `<body>`. Donc nous n'allons pas définir le contenu de cette balise nous-même comme dans une page HTML classique. A la place, nous allons pointer le routeur vers un template spécial qui contient un helper de template `{{> yield}}`.
 
-Ce helper `{{> yield}}` va définir une zone dynamique qui va automatiquement afficher le template correspondant à la route courante (par convention, nous désignerons à partir de maintenant ces templates spéciaux les "templates de routage") :
+Ce helper `{{> yield}}` va définir une zone dynamique qui va automatiquement afficher le template correspondant à la route courante (par convention, nous désignerons à partir de maintenant ce template spécial le "template de routage") :
 
 <%= diagram "router-diagram", "Layouts et templates.", "pull-center" %>
 
-Nous allons commencer par créer notre layout et ajouter le helper `{{> yield}}`. Premièrement, nous allons supprimer l'élément HTML `<body>` de `main.html`, et déplacer son contenu vers son propre template, `layout.html`.
+Nous allons commencer par créer notre layout et ajouter le helper `{{> yield}}`. Premièrement, nous allons supprimer l'élément HTML `<body>` de `main.html`, et déplacer son contenu vers son propre template, `layout.html` (que nous placerons dans un nouveau dossier `client/templates/application`).
 
-Notre `main.html` réduit ressemble maintenant à ça :
+Iron Router s'occupera d'intégrer notre layout dans le template minimaliste `main.html`, qui ressemble maintenant à ça :
 
 ~~~html
 <head>
@@ -78,35 +76,37 @@ Le fichier `layout.html` nouvellement créé contiendra maintenant le layout ext
 ~~~html
 <template name="layout">
   <div class="container">
-  <header class="navbar">
-    <div class="navbar-inner">
-      <a class="brand" href="/">Microscope</a>
-    </div>
-  </header>
-  <div id="main" class="row-fluid">
-    {{> yield}}
-  </div>
-  </div>
+  	<header class="navbar navbar-default" role="navigation">
+  		<div class="navbar-header">
+  			<a class="navbar-brand" href="/">Microscope</a>
+  		</div>
+  	</header>
+  	<div id="main">
+  		{{> yield}}
+		</div>
+	</div>
 </template>
 ~~~
-<%= caption "client/views/application/layout.html" %>
+<%= caption "client/templates/application/layout.html" %>
 
-Vous noterez que nous avons remplacé l'inclusion du template `postsList` avec un appel du helper `yield`. Vous noterez qu'après ce changement, nous ne voyons rien à l'écran. C'est parce que nous n'avons pas encore dit au routeur quoi faire avec l'URL `/`, donc il renvoie un template vide.
+Vous noterez que nous avons remplacé l'inclusion du template `postsList` avec un appel du helper `yield`.
 
-Pour démarrer, nous pouvons retrouver notre ancien comportement en assignant l'URL racine `/` au template `postList`. Nous allons créer un répertoire `/lib` dans la racine du projet, et à l'intérieur créer `router.js` :
+Après ce changement, l'onglet de notre navigateur n'affiche plus rien et une erreur apparaît dans la console du navigateur. C'est parce que nous n'avons pas encore dit au routeur que faire avec l'URL `/`, donc il renvoie un template vide.
+
+Pour démarrer, nous pouvons retrouver notre ancien comportement en assignant l'URL racine `/` au template `postList`. Nous allons créer un nouveau fichier `router.js` à l'intérieur du répertoire `/lib` dans la racine du projet :
 
 ~~~js
 Router.configure({
   layoutTemplate: 'layout'
 });
 
-Router.map(function() {
-  this.route('postsList', {path: '/'});
-});
+Router.route('/', {name: 'postsList'});
 ~~~
 <%= caption "lib/router.js"%>
 
-Nous avons effectué deux choses importantes. Premièrement, nous avons dit au routeur d'utiliser le layout que nous venons juste de créer comme layout par défaut pour toutes les routes. Deuxièmement, nous avons défini une nouvelle route appelée `postList` et on l'a assignée au chemin `/`.
+Nous avons effectué deux choses importantes. Premièrement, nous avons dit au routeur d'utiliser le layout que nous venons tout juste de créer comme layout par défaut pour toutes les routes.
+
+Deuxièmement, nous avons défini une nouvelle route appelée `postList` et nous l'avons assignée à la racine `/`.
 
 <% note do %>
 
@@ -122,72 +122,81 @@ Une petite mise en garde : notez que le répertoire `/lib` n'est ni dans `/clien
 
 Eclaircissons un peu l'ambiguité ici. Nous avons nommé notre route `postList`, mais nous avons également un *template* appelé `postList`. Donc qu'est-ce qu'il va se passer ici?
 
-Par défaut, Iron Router va chercher un template avec le même nom que la route. En fait, il va même chercher un *chemin* basé sur le nom de la route, ce qui signifie que si on ne définit pas un chemin personnalisé (ce que nous avons fait en fournissant une option `path` dans la définition de notre route), notre template ne sera pas accessible à l'URL `/postList` par défaut.
+Par défaut, Iron Router va chercher un template avec le même nom que celui de la route. En fait, il va même déduire le nom du *chemin* que vous spécifiez. Bien que cela ne marcherait pas dans ce cas en particulier (puisque notre chemin est `/`), Iron Router aurait trouvé le bon template si nous avions utilisé `http://localhost:3000/postsList` comme chemin.
 
-Vous pouvez demander pourquoi nous avons quand même besoin de nommer nos routes dans un premier temps. Nommer les routes nous laisse utiliser quelques fonctionnalités de Iron Router qui nous rend plus facile la création de liens dans notre application. La plus utile est le helper Handlebars `{{pathFor}}`, qui retourne l'URL du composant chemin de la route.
+Vous pouvez vous demander pourquoi nous avons quand même besoin de nommer nos routes dans un premier temps. Nommer les routes nous laisse utiliser quelques fonctionnalités de Iron Router qui nous rend plus facile la création de liens dans notre application. La plus utile est le helper Spacebars `{{pathFor}}`, qui retourne l'URL du composant chemin de la route.
 
-Nous voulons que notre lien d'accueil principal pointe vers la liste d'articles, donc au lieu de spécifier une URL statique `/`, nous allons pouvoir utiliser le helper Handlebars. Le résultat final sera le même, mais cela nous donne plus de flexibilité quand le helper nous renverra toujours la bonne URL même si nous changeons le chemin de la route dans le routeur.
+Nous voulons que notre lien d'accueil principal pointe vers la liste d'articles, donc au lieu de spécifier une URL statique `/`, nous allons pouvoir utiliser le helper Spacebars. Le résultat final sera le même, mais cela nous donne plus de flexibilité puisque le helper nous renverra toujours la bonne URL même si nous changeons après-coup le chemin de la route dans le routeur.
 
 ~~~html
-<header class="navbar">
-  <div class="navbar-inner">
-    <a class="brand" href="{{pathFor 'postsList'}}">Microscope</a>
+<header class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+    <a class="navbar-brand" href="{{pathFor 'postsList'}}">Microscope</a>
   </div>
 </header>
 
 //...
 ~~~
-<%= caption "client/views/application/layout.html"%>
+<%= caption "client/templates/application/layout.html"%>
 <%= highlight "3" %>
 
 <%= commit "5-1", "Routage très basique." %>
 
-### Attente de données
+### Attente De Données
 
-Si vous déployez la version courante de l'application (ou lancez l'instance en utilisant le lien au-dessus), vous noterez que la liste apparaît vide un petit moment avant que les articles apparaissent. C'est parce que quand la page se charge la première fois, il n'y a pas d'articles à afficher jusqu'à que la souscription aux `articles` soit terminée, récupérant les données des articles du serveur.
+Si vous déployez la version courante de l'application (ou lancez l'instance web en utilisant le lien au-dessus), vous noterez que la liste apparaît vide un petit moment avant que les articles apparaissent. C'est parce que quand la page se charge la première fois, il n'y a pas d'articles à afficher jusqu'à que la souscription aux `articles` soit terminée, récupérant les données des articles du serveur.
 
 Ce serait une bien meilleure experience de fournir un indicateur visuel que quelque chose est en train de se passer, et que l'utilisateur doit attendre un moment.
 
-Par chance, Iron Router nous donne un moyen facile de faire ça -- nous allons `waitOn` la souscription :
+Par chance, Iron Router nous donne un moyen facile de faire ça : nous pouvons lui demander *d'attendre* (to wait on) la souscription.
+
+On commence par déplacer notre souscription `posts` depuis `main.js` vers le routeur :
 
 ~~~js
+Router.configure({
+  layoutTemplate: 'layout',
+  waitOn: function() { return Meteor.subscribe('posts'); }
+});
+
+Router.route('/', {name: 'postsList'});
+~~~
+<%= caption "lib/router.js" %>
+<%= highlight "3" %>
+
+Ce que nous voulons dire ici, c'est que pour *chaque* route du site (nous n'en avons qu'une pour le moment, mais nous en aurons bientôt plus !), nous voulons souscrire à `posts`.
+
+La principale différence entre ceci et ce que nous avions précédemment (lorsque la souscription était dans `main.js`, qui devrait être dorénavant et que vous pouvez supprimer), est que maintenant, Iron Router "sait" quand la route est prête -- c'est-à-dire lorsqu'elle a les données dont il a besoin pour le rendu.
+
+### Visez un peu ça
+
+Savoir quand la route `postsList` est prête ne nous est pas grandement utile si de toute façon nous n'allons afficher qu'un template vide. Heureusement, Iron Router inclut une procédé pour retarder l'affichage d'un template jusqu'à ce que la route qui l'appelle soit prête, et affiche un template de chargement (`loading`) à la place :
+
+~~~js 
 Router.configure({
   layoutTemplate: 'layout',
   loadingTemplate: 'loading',
   waitOn: function() { return Meteor.subscribe('posts'); }
 });
 
-Router.map(function() {
-  this.route('postsList', {path: '/'});
-});
-
-Router.onBeforeAction('loading');
+Router.route('/', {name: 'postsList'});
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "3,4, 11" %>
+<%= highlight "3,4" %>
 
-Décomposons les choses. Premièrement, nous avons modifié le bloc `Router.configure()` pour fournir au routeur le nom du template de chargement (que nous allons créer plus tard) à rediriger pendant que notre application attend les données.
+Notez que puisque nous définissons notre fonction `waitOn` globalement au niveau du routeur, cette séquence ne se produira qu'une fois, lorsqu'un utilisateur accèdera à l'application pour la première fois. Après cela, les données seront chargées dans la mémoire du navigateur et le routeur n'aura plus besoin de les attendre.
 
-Deuxièmement, nous avons également une fonction `waitOn`, qui retourne notre souscription à `posts`. Finalement, nous avons activé une accroche `loading` intégrée. Ce que cela signifie est que le routeur va s'assurer que la souscription à `posts` est chargée avant l'envoi à l'utilisateur au travers de la route qui a été demandée.
-
-Notez que depuis que nous définissons notre fonction `waitOn` globalement au niveau du routeur, la séquence se passera seulement une fois que l'utilisateur accèdera la première fois à l'application. Après ça, les données seront déjà chargées dans la mémoire du navigateur et le routeur n'aura pas besoin de les attendre une nouvelle fois.
-
-Et maintenant que nous laissons le routeur gérer notre souscription, vous pouvez  tranquillement la supprimer de `main.js` (lequel doit maintenant être vide).
-
-C'est habituellement une bonne idée d'attendre vos souscriptions, pas juste pour l'expérience utilisateur, mais également parce que vous supposez sans problème que les données seront toujours disponibles à l'intérieur du template. Cela élimine le besoin d'échanger avec des templates en train d'être rendu avant que leur données associées soit disponibles, ce qui requiert toujours des moyens de contournements hasardeux.
-
-Nous allons également ajouter un filtre `onBeforeAction` pour déclencher le grappin `loading` natif d'Iron Router et nous assurer que nous affichons bien le template de chargement durant l'attente.
-
-La pièce finale du puzzle est le template de chargement. Nous allons utiliser le paquet `spin` pour créer un joli indicateur de chargement animé. Ajoutez le avec `mrt add spin`, et créer le template de `chargement` comme suit :
+La pièce finale du puzzle est le template de chargement. Nous allons utiliser le paquet `spin` pour créer un joli indicateur de chargement animé. Ajoutez le avec `meteor add sacha:spin`, et créez le template de `chargement` comme suit, dans le dossier `client/templates/includes` :
 
 ~~~html
 <template name="loading">
   {{>spinner}}
 </template>
 ~~~
-<%= caption "client/views/includes/loading.html" %>
+<%= caption "client/templates/includes/loading.html" %>
 
 Notez que `{{>spinner}}` est un partial contenu dans le paquet `spin`. Quand bien même ce partial "ne provient pas" de notre application, nous pouvons l'inclure comme n'importe quel autre template.
+
+C'est normalement une bonne idée d'attendre les souscriptions, non seulement pour l'expérience utilisateur, mais aussi parce que cela signifie que vous pouvez, avec certitude, partir du principe que les données seront toujours disponibles depuis un template. Cela supprime le besoin de gérer les cas où les templates sont interprétés avant que leur données sous-jacentes soient disponibles, ce qui nécessite souvent des astuces laborieuses.
 
 <%= commit "5-2", "Attendre la souscription aux articles." %>
 
@@ -213,27 +222,32 @@ Pour commencer, nous allons créer un template qui renvoie simplement le même t
 
 ~~~html
 <template name="postPage">
-  {{> postItem}}
+  <div class="post-page page">
+    {{> postItem}}
+  </div>
 </template>
 ~~~
-<%= caption "client/views/posts/post_page.html" %>
+<%= caption "client/templates/posts/post_page.html" %>
 
 Nous allons ajouter plus d'éléments dans le template plus tard (tels que les commentaires), mais pour l'instant il va simplement servir de coquille pour notre inclusion `postItem`.
 
 Nous allons créer une autre route nommée, cette fois en associant les chemins d'URL de la forme `/posts/<ID>` au template `postPage` :
 
 ~~~js
-Router.map(function() {
-  this.route('postsList', {path: '/'});
-
-  this.route('postPage', {
-    path: '/posts/:_id'
-  });
+Router.configure({
+  layoutTemplate: 'layout',
+  loadingTemplate: 'loading',
+  waitOn: function() { return 
+Meteor.subscribe('posts'); }
 });
 
+Router.route('/', {name: 'postsList'});
+Router.route('/posts/:_id', {
+  name: 'postPage'
+});
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "4~6" %>
+<%= highlight "8~10" %>
 
 La syntaxe spéciale `:_id` dit au routeur deux choses : premièrement, faire correspondre n'importe quelle route de la forme `/posts/xyz/`, où "xyz" peut être n'importe quoi. Deuxièmement, mettre ce qui trouve à la place de xyz dans une propriété `_id` dans le tableau des `params` du routeur.
 
@@ -248,18 +262,20 @@ Heureusement, le routeur a une solution intégrée intelligente : il vous laisse
 Dans notre cas, nous pouvons récupérer le bon contexte de données en regardant notre article basé sur l'`_id` récupéré dans l'URL :
 
 ~~~js
-Router.map(function() {
-  this.route('postsList', {path: '/'});
-
-  this.route('postPage', {
-    path: '/posts/:_id',
-    data: function() { return Posts.findOne(this.params._id); }
-  });
+Router.configure({
+  layoutTemplate: 'layout',
+  loadingTemplate: 'loading',
+  waitOn: function() { return Meteor.subscribe('posts'); }
 });
 
+Router.route('/', {name: 'postsList'});
+Router.route('/posts/:_id', {
+  name: 'postPage',
+  data: function() { return Posts.findOne(this.params._id); }
+}); 
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "4~7" %>
+<%= highlight "10" %>
 
 A chaque fois qu'un utilisateur accède à cette route, nous trouverons l'article approprié et le passerons au template. Souvenez-vous que `findOne` retourne un seul article qui correspond à la requête, et que fournir juste un `_id` comme argument est un raccourci pour `{_id: id}`.
 
@@ -293,11 +309,13 @@ Il s'avère que vous pour obtenir le même résultat en passant le contexte comm
 {{> widgetPage myWidget}}
 ~~~
 
+Pour une exploration plus poussée des contextes de données nous vous suggérons de [lire notre article de blog (en anglais)](https://www.discovermeteor.com/blog/a-guide-to-meteor-templates-data-contexts/) sur ce sujet.
+
 <% end %>
 
 ### En utilisant un Route Helper Dynamique Nommé
 
-Enfin, nous devons nous assurer que nous pointons vers le bon endroit chaque fois que nous voulons joindre un article précis. De plus, nous pourrions faire quelque chose comme `<a href="/posts/{{_id}}">`, mais c'est plus fiable en utilisant un route helper.
+Enfin, nous allons créer un nouveau bouton "Discuter" qui redirigera vers notre page personnelle d'articles. De même, nous pourrions faire quelque chose comme `<a href="/posts/{{_id}}">`, mais c'est plus fiable en utilisant un route helper.
 
 Nous avons nommé la route article `postPage`, donc nous pouvons utiliser le helper `{{pathFor 'postPage'}}` :
 
@@ -307,11 +325,11 @@ Nous avons nommé la route article `postPage`, donc nous pouvons utiliser le hel
     <div class="post-content">
       <h3><a href="{{url}}">{{title}}</a><span>{{domain}}</span></h3>
     </div>
-    <a href="{{pathFor 'postPage'}}" class="discuss btn">Discuss</a>
+    <a href="{{pathFor 'postPage'}}" class="discuss btn btn-default">Discuss</a>
   </div>
 </template>
 ~~~
-<%= caption "client/views/posts/post_item.html"%>
+<%= caption "client/templates/posts/post_item.html"%>
 <%= highlight "6" %>
 <%= commit "5-3", "Route vers la page d'un article." %>
 
@@ -321,7 +339,7 @@ Il s'avère que Iron Router est assez intelligent pour le trouver par lui-même.
 
 Donc le routeur cherchera cet `_id` dans l'endroit disponible le plus logique : le data context du helper `{{pathFor postPage}}`, en d'autre mots `this`. Et il se trouve que notre `this` va correspondre à l'article, lequel (surprise!) possède une propriété `_id`.
 
-Alternativement, nous pouvez également explicitement dire au routeur où vous aimeriez qu'il cherche la propriété `_id`, en passant un second argument au helper (i.e. `{{pathFor 'postPage' someOtherPost}}`). un usage pratique de ce modèle serait de récupérer le lien des articles précédents et suivants dans une liste, par exemple.
+Alternativement, vous pouvez également explicitement dire au routeur où vous aimeriez qu'il cherche la propriété `_id`, en passant un second argument au helper (i.e. `{{pathFor 'postPage' someOtherPost}}`). un usage pratique de ce modèle serait de récupérer le lien des articles précédents et suivants dans une liste, par exemple.
 
 Pour voir si ça fonctionne correctement, naviguez dans la liste d'articles et cliquez sur un des liens 'Discuss'. Vous devriez voir quelque chose comme ça :
 
@@ -338,3 +356,60 @@ Le routeur récupère les clics sur les URLs internes au site, et empêche le na
 Si tout fonctionne correctement la page devrait changer instantanément. En fait, parfois les choses changent si vite qu'une sorte de transition pourrait être nécessaire. C'est hors du champ de ce chapitre, mais un sujet tout de même interessant.
 
 <% end %>
+
+### Article non trouvé
+
+N'oublions pas que le routing fonctionne dans les deux sens : il permet de changer l'url lorsqu'on visite une page, mais il peut aussi afficher une nouvelle page lorsqu'on change *l'url*. Ainsi, nous devons nous assurer de ce qui se passe si quelqu'un entre une mauvaise url.
+
+Heureusement, Iron Router s'occupe de cela pour nous grâce à l'option `notFoundTemplate`.
+
+En premier lieu, nous allons mettre au point un nouveau template qui affiche un simple message d'erreur 404 :
+
+~~~html
+<template name="notFound">
+	<div class="not-found page jumbotron">
+	  <h2>404</h2>
+	  <p>Sorry, we couldn't find a page at this address.</p>
+	</div>
+</template>
+~~~
+<%= caption "client/templates/application/not_found.html"%>
+
+Ensuite, nous allons tout simplement lier Iron Route à ce template :
+
+~~~js
+Router.configure({
+  layoutTemplate: 'layout',
+  loadingTemplate: 'loading',
+  notFoundTemplate: 'notFound',
+  waitOn: function() { return Meteor.subscribe('posts'); }
+});
+
+//...
+~~~
+<%= caption "lib/router.js"%>
+<%= highlight "4" %>
+
+Pour tester notre nouvelle page d'erreur, vous pouvez essayer d'accéder à une url quelconque comme `http://localhost:3000/rien-par-ici`.
+
+Un instant ; que se passe-t-il si quelqu'un entre une url de la forme `http://localhost:3000/posts/xyz`, où `xyz` *n'*est*pas* un `_id` valide d'article ? C'est toujours une route valide, mais elle ne mène à aucune donnée.
+
+Heureusement, Iron Router est assez intelligent pour gérer cela, il suffit d'ajouter un hook spécial `dataNotFound` à la fin de `router.js` :
+
+~~~js
+//...
+
+Router.onBeforeAction('dataNotFound', {only: 'postPage'});```
+~~~
+<%= caption "lib/router.js"%>
+<%= highlight "4" %>
+
+Cela indique à Iron Router d'afficher la page "non trouvé" non seulement pour les routes invalides mais aussi à chaque fois que la fonction `data` renvoie un objet non désiré (i.e. `null`, `false`, `undefined` ou un objet vide).
+
+<%= commit "5-4", "Avec le template «non trouvé»." %>
+
+<% note do %>
+
+### Pourquoi "Iron" ?
+
+Au cas où vous vous demanderiez qu'elle est l'histoire derrière le nom "Iron Router" : d'après Chris Mather, créateur de Iron Router, cela s'explique par le fait que les météores sont composées principalement de fer (iron en anglais).
