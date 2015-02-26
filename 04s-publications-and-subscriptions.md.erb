@@ -39,7 +39,7 @@ C'est comme un marchand qui non seulement vous trouve le livre, mais aussi vous 
 
 Cette architecture laisse Meteor faire des choses sympathiques, parmi lesquelles la principale que Meteor appelle [database everywhere](http://docs.meteor.com/#sevenprinciples). Simplement, Meteor va prendre un sous-ensemble de votre base de données et le *copier sur le client*.
 
-Cela implique deux grosses idées : premièrement, au lieu d'envoyer du code HTML au client, une application Meteor va envoyer **la donnée brute, actuelle,** et laisser le client se débrouiller avec ça ([data on the wire](http://docs.meteor.com/#sevenprinciples)). Deuxièmement, vous allez pouvoir **accéder aux données instantanément** sans avoir à attendre un autre aller-retour vers le serveur ([latency compensation](http://docs.meteor.com/#sevenprinciples)).
+Cela implique deux idées importantes : premièrement, au lieu d'envoyer du code HTML au client, une application Meteor va envoyer **véritablement la donnée brute** et laisser le client se débrouiller avec ça ([data on the wire](http://docs.meteor.com/#sevenprinciples)). Deuxièmement, vous allez pouvoir **accéder aux données instantanément et même les modifier** sans avoir à attendre un autre aller-retour vers le serveur ([latency compensation](http://docs.meteor.com/#sevenprinciples)).
 
 ### Publier
 
