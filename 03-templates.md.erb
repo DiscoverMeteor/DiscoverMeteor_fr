@@ -39,7 +39,7 @@ Ce sera le template principal de notre application. Comme vous pouvez le voir c'
 
 ### Les templates Meteor
 
-En son coeur, un site d'actualités social est composé d'articles organisés en listes, et c'est exactement de cette façon que nous allons organiser nos templates.
+En son cœur, un site d'actualités social est composé d'articles organisés en listes, et c'est exactement de cette façon que nous allons organiser nos templates.
 
 Créons un répertoire `/templates` dans `/client`. C'est ici que nous mettrons tous nos templates, et pour garder les choses en ordre nous allons également créer `/posts` dans `/templates` juste pour nos templates relatifs aux articles (posts).
 
@@ -49,7 +49,7 @@ Créons un répertoire `/templates` dans `/client`. C'est ici que nous mettrons 
 
 Meteor est génial pour trouver les fichiers. Peu importe où vous mettez votre code dans le répertoire `/client`, Meteor le trouvera et le compilera proprement. Ce qui signifie que vous n'avez jamais besoin d'écrire manuellement des chemins d'inclusion (include) pour les fichiers javascript ou CSS.
 
-Ca signifie également que vous pourriez aussi bien mettre tous vos fichiers dans le même répertoire, ou même tout votre code dans le même fichier. Mais sachant que Meteor compilera tout dans un seul fichier minifié de toute façon, nous garderons plutôt les choses bien organisées et utiliserons une structure de fichier la plus claire possible.
+Ça signifie également que vous pourriez aussi bien mettre tous vos fichiers dans le même répertoire, ou même tout votre code dans le même fichier. Mais sachant que Meteor compilera tout dans un seul fichier minifié de toute façon, nous garderons plutôt les choses bien organisées et utiliserons une structure de fichier la plus claire possible.
 
 <% end %>
 
@@ -115,9 +115,9 @@ En d'autres termes, pendant que le rôle du template est limité à l'affichage 
 
 <% note do %>
 
-### Des controllers ?
+### Des contrôleurs ?
 
-Il peut sembler tentant de penser aux fichiers contenant tous les helpers d'un template comme une sorte de "controller". Mais cela peut être ambigu, puisque les "controllers" (du moins du point de vue MVC) ont habituellement un rôle légèrement différent.
+Il peut sembler tentant de penser aux fichiers contenant tous les helpers d'un template comme une sorte de "contrôleur" (controller). Mais cela peut être ambigu, puisque les "contrôleurs" (du moins du point de vue MVC) ont habituellement un rôle légèrement différent.
 
 Nous avons donc décidé de ne pas utiliser cette terminologie et de nous référer simplement à "les helpers du template" ou à "la logique du template" lorsque nous parlons du code JavaScript associé au template.
 
@@ -194,7 +194,7 @@ Le helper `domain` prend une URL et retourne son domaine via un peu de magie Jav
 
 Pour répondre à cette question nous avons besoin de revenir à notre template `posts_list.html`. Le block helper `{{#each}}` ne fais pas seulement des itérations sur notre tableau, il **insère également les valeurs dans `this` à l'intérieur du bloc de l'objet itéré**.
 
-Ca signifie qu'à l'intérieur des deux balises `{{#each}}`, chaque article (post) est assigné à `this` successivement, et ça s'étend dans le manager du template inclus (`post_item.js`).
+Ça signifie qu'à l'intérieur des deux balises `{{#each}}`, chaque article (post) est assigné à `this` successivement, et ça s'étend dans le manager du template inclus (`post_item.js`).
 
 Nous comprenons maintenant pourquoi `this.url` retourne l'URL de l'article courant. De plus, si nous utilisons `{{title}}` et `{{url}}` dans notre template `post_item.html`, Meteor sait ce que veut dire `this.title` et `this.url` et retourne les valeurs correctes.
 
@@ -222,6 +222,6 @@ Vous avez pu noter que vous n'aviez même pas eu besoin de recharger manuellemen
 
 C'est parce que Meteor traque tous les fichiers dans le répertoire de votre projet, et rafraîchit automatiquement le navigateur quand il détecte une modification sur l'un d'entre eux.
 
-Le Hot Code Reload de Meteor est très intelligent, en préservant même l'état de votre application entre deux rafraichissements !
+Le Hot Code Reload de Meteor est très intelligent, en préservant même l'état de votre application entre deux rafraîchissements !
 
 <% end %>
