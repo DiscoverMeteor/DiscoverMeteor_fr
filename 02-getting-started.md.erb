@@ -74,7 +74,7 @@ N'oubliez pas que si vous utilisez Git, c'est le bon moment pour initialiser vot
 
 Il fut un temps où Meteor était relié à un gestionnaire de paquet nommé Meteorite. Depuis la version 0.9.0 de Meteor, Meteorite n'est plus nécessaire puisqu'il a été intégré directement dans Meteor.
 
-Donc si vous voyez une reference à la ligne de commande `mrt` de Meteorite au travers de ce livre ou sur Internet, vous pouvez simplement la remplacer par `meteor`.
+Donc si vous voyez une référence à la ligne de commande `mrt` de Meteorite au travers de ce livre ou sur Internet, vous pouvez simplement la remplacer par `meteor`.
 
 <% end %>
 
@@ -110,7 +110,7 @@ Contrairement à la "traditionnelle" manière d'inclure des ressources externes,
 Lorsque nous parlons de paquets (_packages_) dans le contexte de Meteor, il est bon d'être précis. Meteor distingue cinq types de paquets :
 
 - Le c&oelig;ur de Meteor comprend lui-même différents **paquets essentiels** (_core packages_). Ils font partie de chaque application Meteor, et vous n'aurez pratiquement jamais besoin de vous en soucier.
-- Les paquets classique de Meteor se nomment "**isopacks**", ou paquets isomorphiques (ce qui signifie qu'ils peuvent fonctionner sur le client et sur le serveur). **First-party packages** comme `accounts-ui` ou `appcache` sont maintenus par la team Meteor et sont directement [intégrés à Meteor]http://docs.meteor.com/#packages).
+- Les paquets classique de Meteor se nomment "**isopacks**", ou paquets isomorphes (ce qui signifie qu'ils peuvent fonctionner sur le client et sur le serveur). **First-party packages** comme `accounts-ui` ou `appcache` sont maintenus par la team Meteor et sont directement [intégrés à Meteor]http://docs.meteor.com/#packages).
 - **Les paquets tiers** (_Third-party packages_) sont simplement des *isopacks* développés par d'autres utilisateurs qui les ont envoyés sur le serveur de paquet de Meteor. Vous pouvez les trouver sur [Atmosphere](http://atmosphere.meteor.com) ou avec la commande `meteor search`.
 - Les **paquets locaux** (_local packages_) sont des paquets spécifiques que vous pouvez créer et placer dans le sous-dossier `/packages`.
 - Les **paquets NPM** (_NPM packages_, Node.js Packaged Modules) sont des paquets Node.js. Bien qu'ils ne fonctionneront pas tels quels avec Meteor, ils *peuvent* être exploités par les précédents types de paquets.
@@ -121,7 +121,7 @@ Lorsque nous parlons de paquets (_packages_) dans le contexte de Meteor, il est 
 
 Avant de plonger dans le code, il convient de configurer notre projet correctement. Afin que l'assemblage (_build_) ne contienne que l'essentiel, ouvrez le dossier `microscope` et supprimez-en les fichiers `microscope.html`, `microscope.js` et `microscope.css`.
 
-Puis créez quatres dossiers dans `/microscope` : `/client`, `/server`, `/public`, et `/lib`.
+Puis créez quatre dossiers dans `/microscope` : `/client`, `/server`, `/public`, et `/lib`.
 
 Enfin, créez `main.html` et `main.js` dans `/client`. Ne vous inquiétez pas si votre application ne fonctionne plus pour le moment, nous allons remplir ces fichiers dans les chapitres suivants.
 
