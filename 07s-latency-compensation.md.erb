@@ -42,49 +42,92 @@ Le résultat pour l'utilisateur est de voir les changements instantanément. Qua
 
 ### Observer une compensation de latence
 
-Nous pouvons faire un petit changement à l'appel de Méthode `post` pour voir cela en action. Pour ce faire, nous développerons du code avancé avec le paquet npm `futures` pour retarder l'insertion d'objets dans notre méthode.
+Nous pouvons faire un petit changement à l'appel de la méthode `post` pour voir cela en action. Pour ce faire, nous utiliserons la fonction bien pratique `Meteor._sleepForMs()` pour retarder l'appel de la méthode de 5 secondes, mais (c'est un point crucial) *seulement sur le serveur*.
 
-Nous utiliserons `isSimulation` pour demander à Meteor si la Méthode actuellement invoquée est une ébauche. Une [ébauche](http://docs.meteor.com/#methods_header) est la simulation d'une Méthode que Meteor exécute sur le client en parallèle, pendant que la "vraie" Méthode est en cours d'exécution sur le serveur.
+Nous utiliserons `isServer` pour demander à Meteor si la Méthode est actuellement invoquée sur le client (comme une "ébauche") ou sur le serveur. Une [ébauche](http://docs.meteor.com/#methods_header) est la simulation d'une Méthode que Meteor exécute sur le client en parallèle, pendant que la "vraie" Méthode est en cours d'exécution sur le serveur.
 
-Nous allons donc demander à Meteor si le code est en cours d'exécution sur le client. Si c'est le cas, nous allons ajouter la chaîne de caractère `(client)` à la fin du titre de notre article. Sinon, nous ajouterons la chaîne de caractère `(server)` :
+Nous allons donc demander à Meteor si le code est en cours d'exécution sur le serveur. Si c'est le cas, nous allons retarder l'avancement des choses de 5 secondes et ajouter la chaîne de caractère `(server)` à la fin du titre de notre article. Sinon, nous ajouterons la chaîne de caractère `(client)` :
 
 ~~~js
+Posts = new Mongo.Collection('posts');
+
 Meteor.methods({
-  post: function(postAttributes) {
-    // […]
-
-    // récupérer les clés de la liste blanche
-    var post = _.extend(_.pick(postAttributes, 'url', 'message'), {
-      title: postAttributes.title + (this.isSimulation ? '(client)' : '(server)'),
-      userId: user._id,
-      author: user.username,
-      submitted: new Date().getTime()
-    });
-
-    // Attendre 5 secondes
-    if (! this.isSimulation) {
-      var Future = Npm.require('fibers/future');
-      var future = new Future();
-      Meteor.setTimeout(function() {
-        future.return();
-      }, 5 * 1000);
-      future.wait();
-    }
-
-    var postId = Posts.insert(post);
-
-    return postId;
-  }
+	postInsert: function(postAttributes) {
+		check(this.userId, String);
+		check(postAttributes, {
+			title: String,
+			url: String
+		});
+		
+	  if (Meteor.isServer) {
+			postAttributes.title += postAttributes.title + "(server)";
+			// attente de 5 secondes
+			Meteor._sleepForMs(5000);
+		} else {
+			postAttributes.title += "(client)";
+		}
+		
+		var postWithSameLink = Posts.findOne({url: postAttributes.url});
+		if (postWithSameLink) {
+			return {
+				postExists: true,
+				_id: postWithSameLink._id
+			}
+		}
+		
+		var user = Meteor.user();
+		var post = _.extend(postAttributes, {
+			userId: user._id, 
+			author: user.username, 
+			submitted: new Date()
+		});
+		
+		var postId = Posts.insert(post);
+		
+		return {
+			_id: postId
+		};
+	}
 });
 ~~~
 <%= caption "collections/posts.js" %>
-<%= highlight "6, 7, 13~22" %>
+<%= highlight "11~17" %>
 
-Note : Au cas où vous vous le demandez, le `this` dans `this.isSimulation` est un [objet d'invocation de Méthode](http://docs.meteor.com/#meteor_methods) qui fournit un accès à diverses variables utiles.
+Si nous nous arrêtions ici, la démonstration ne serait pas concluante. Dans l'état des choses, on dirait que le formulaire de soumission d'article se met en pause pendant 5 secondes avant de rediriger vers la liste des posts principaux, et pas grand chose d'autre se passe.
 
-Comment fonctionnent exactement les [Futures](https://npmjs.org/package/future) est hors du cadre de ce livre, mais nous avons simplement dit à Meteor d'attendre 5 secondes avant de faire l'insertion dans la collection côté serveur.
+Pour comprendre cela, revenons au manager de l'événement de soumission de post :
 
-Nous allons faire une redirection d'envoi directement vers la liste d'articles :
+~~~js
+Template.postSubmit.events({
+	'submit form': function(e) {
+	  e.preventDefault();
+		
+	  var post = {
+		  url: $(e.target).find('[name=url]').val(),
+		  title: $(e.target).find('[name=title]').val()
+		};
+		
+	  Meteor.call('postInsert', post, function(error, result) {
+		// affiche l'erreur à l'utilisateur et s'interrompt
+		  if (error)
+			  return alert(error.reason);
+			  
+		  // affiche ce résultat mais 'route' tout de même
+			if (result.postExists)
+				alert('This link has already been posted');
+				
+			Router.go('postPage', {_id: result._id});
+		});
+	}
+});
+~~~
+<%= caption "client/templates/posts/post_submit.js" %>
+
+Nous avons placé notre appel de routeur `Router.go()` à l'intérieur du callback de l'appel de la méthode. Ce qui signifie que le formulaire attend que cette méthode réussisse avant de rediriger.
+
+C'est normalement la bonne manière de faire les choses. Après tout, vous ne pouvez pas rediriger l'utilisateur avant de savoir si la soumission de son post est valide ou pas, parce que ce serait extrêmement déroutant d'être redirigé une première fois et ensuite d'être redirigé une nouvelle fois, en arrière, vers la page de soumission de post pour corriger vos données, tout cela en quelques secondes.
+
+Mais pour le bien de cet exemple, nous voulons voir les résultats de nos actions immédiatement. Ainsi, nous allons changer l'appel du routeur pour rediriger vers la route `postsList` (nous ne pouvons pas diriger vers le post car nous ne connaissons pas son `_id` en dehors de la méthode), pour ensuite l'extraire du callback, et voir ce qui se passe :
 
 ~~~js
 Template.postSubmit.events({
@@ -92,23 +135,29 @@ Template.postSubmit.events({
     event.preventDefault();
 
     var post = {
-      url: $(event.target).find('[name=url]').val(),
-      title: $(event.target).find('[name=title]').val(),
-      message: $(event.target).find('[name=message]').val()
-    }
-
-    Meteor.call('post', post, function(error, id) {
+    	url: $(e.target).find('[name=url]').val(),
+    	title: $(e.target).find('[name=title]').val()
+    };
+    
+    Meteor.call('postInsert', post, function(error, result) {
+    	// affiche l'erreur à l'utilisateur et s'interrompt
       if (error)
         return alert(error.reason);
+        
+      // affiche se résultat mais 'route' tout de même
+      if (result.postExists)
+      	alert('This link has already been posted');
     });
+    
     Router.go('postsList');
+    
   }
 });
 ~~~
-<%= caption "client/views/posts/post_submit.js" %>
-<%= highlight "15" %>
+<%= caption "client/templates/posts/post_submit.js" %>
+<%= highlight "20" %>
 
-<%= scommit "7-5-1", "Démontrer l'ordre d'apparition des articles en utilisant un sleep." %>
+<%= scommit "7-5-1", "Démonstration de l'ordre d'apparition des articles en utilisant un sleep." %>
 
 Si nous créons un article maintenant, nous voyons clairement la compensation de latence en action. Premièrement, un article est inséré avec `(client)` dans le titre (le premier article dans la liste, relié à Github) :
 
@@ -134,3 +183,5 @@ Si vous suivez bien, vous venez peut-être juste de réaliser que notre Méthode
 Quand la simulation (version côté client de la Méthode) est en cours d'exécution, nous effectuons la simulation d'un `insert` (nous insérons donc dans notre collection cliente), mais nous *ne* faisons *pas* le vrai, `insert` côté serveur, nous attendons que la version *côté serveur* de `post` le fasse.
 
 Par conséquent, quand la Méthode `post` côté serveur appelle `insert` il n'y a pas besoin de s'inquiéter de la simulation, et l'insertion continue sans encombre.
+
+N'oubliez pas comme précédemment de supprimer les changements effectués au cours de ce chapitre avant de passer au suivant.
