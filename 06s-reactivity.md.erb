@@ -11,7 +11,7 @@ contents: En apprendre plus sur le système de dépendance du code réactif de M
 paragraphs: 21
 ---
 
-Si les collections sont la fonctionnalité principale de Meteor, la *Réactivité* est la coquille qui la rend utile.
+Si les collections sont la fonctionnalité principale de Meteor, la **Réactivité** est la coquille qui la rend utile.
 
 Les Collections transforment radicalement la façon dont votre application traite les modifications de données. Plutôt que d'avoir à vérifier les modifications de données manuellement (par un appel AJAX, par exemple) et de les mettre à jour dans votre page HTML, Meteor applique automatiquement ces modifications à votre interface utilisateur de façon transparente.
 
@@ -84,7 +84,7 @@ Alors que Meteor est un framework temps réel, réactif, *tout* le code à l'int
 
 En d'autres termes, un calcul est un bloc de code qui est exécuté à chaque fois qu'une des sources de données réactives dont il dépend change. Si vous avez une source de données réactive (par exemple, une variable de Session) et que vous aimeriez réagir de manière réactive, vous aurez besoin de mettre en place un calcul.
 
-Notez qu'habituellement vous n'avez pas besoin de faire ceci parce que Meteor donne déjà à chaque template qu'il affiche son propre calcul (ce qui signifie que le code dans les helpers de template et les callbacks est réactif par défaut).
+Notez qu'habituellement vous n'avez pas besoin de faire ceci parce que Meteor donne déjà à chaque template et helper qu'il affiche son propre calcul (ce qui signifie que vous pouvez être sûr que vos templates seront réactif à afficher leurs données sources).
 
 Chaque source de données réactive surveille tous les calculs qui l'utilisent pour qu'elle puisse les laisser savoir quand sa propre valeur change. Pour ce faire, il appelle la fonction `invalidate()` sur le calcul.
 
@@ -92,17 +92,17 @@ Les calculs sont généralement mis en place pour réévaluer simplement leurs c
 
 ### Mettre en place un Calcul
 
-Maintenant que nous comprenons la théorie derrière les calculs, en mettre un en place semble trop facile. Nous utiliserons simplement la fonction `Deps.autorun` pour enfermer un bloc de code dans un calcul et le rendre réactif :
+Maintenant que nous comprenons la théorie derrière les calculs, en mettre un en place semble beaucoup plus sensé. Nous pouvons utiliser la fonction `Tracker.autorun` pour enfermer un bloc de code dans un calcul et le rendre réactif :
 
 ~~~js
 Meteor.startup(function() {
-  Deps.autorun(function() {
+  Tracker.autorun(function() {
     console.log('There are ' + Posts.find().count() + ' posts');
   });
 });
 ~~~
 
-Notez que nous avons besoin d'envelopper le bloc `Deps` à l'intérieur d'un bloc `Meteor.startup()` pour nous assurer qu'il s'exécutera seulement une fois que Meteor a fini de charger la collection `Posts`.
+Notez que nous avons besoin d'envelopper le bloc `Tracker` à l'intérieur d'un bloc `Meteor.startup()` pour nous assurer qu'il s'exécutera seulement une fois que Meteor a fini de charger la collection `Posts`.
 
 En arrière-plan, `autorun` crée ensuite un calcul, et le déclenche pour réévaluer à chaque fois que la source de données dont il dépend change. Nous avons mis en place un calcul vraiment très simple qui journalise simplement le nombre d'articles à la console. Maintenant que `Posts.find()` est une source de données réactive, il prendra soin de dire au calcul de réévaluer à chaque fois que le nombre d'articles change.
 
