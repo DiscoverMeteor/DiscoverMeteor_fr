@@ -22,51 +22,54 @@ Dans la plupart des frameworks web, ajouter des comptes utilisateurs est une fon
 
 Heureusement, Meteor a tout prévu. Grâce à la façon dont les paquets Meteor peuvent contribuer au code côté serveur (JavaScript) et côté client (JavaScript, HTML et CSS), nous pouvons bénéficier d'un système de compte presque sans effort.
 
-Nous pourrions simplement utiliser l'UI intégrée de Meteor pour les comptes (avec `mrt add accounts-ui`) mais comme nous avons développé toute notre application avec Bootstrap, nous utiliserons le paquet `accounts-ui-bootstrap-dropdown` à la place (ne vous inquiétez pas, la seule différence est le style). En ligne de commande, nous tapons:
+Nous pourrions simplement utiliser l'UI intégrée de Meteor pour les comptes (avec `meteor add accounts-ui`) mais comme nous avons développé toute notre application avec Bootstrap, nous utiliserons le paquet `ian:accounts-ui-bootstrap-3` à la place (ne vous inquiétez pas, la seule différence est le style). En ligne de commande, nous tapons:
 
 ~~~bash
-$ mrt add accounts-ui-bootstrap-dropdown
-$ mrt add accounts-password
+meteor add ian:accounts-ui-bootstrap-3
+meteor add accounts-password
 ~~~
 <%= caption "Terminal" %>
 
-Ces deux commandes nous donnent accès aux templates spéciaux des comptes; nous pouvons les inclure dans notre site en utilisant le helper `{{> loginButtons}}`. Une astuce: vous pouvez controler de quel côté s'affiche la fenêtre d'authentification en utilisant l'attribut `align` (par exemple `{{> loginButtons  align="right"}}`).
+Ces deux commandes nous donnent accès aux templates spéciaux des comptes, et nous pouvons les inclure dans notre site en utilisant le helper `{{> loginButtons}}`. Une astuce: vous pouvez controler de quel côté s'affiche la fenêtre d'authentification en utilisant l'attribut `align` (par exemple `{{> loginButtons  align="right"}}`).
 
-Nous ajouterons les boutons à notre en-tête. Et comme cet en-tête commence à grossir donnons lui un peu de place avec son propre template (nous le mettrons dans `client/views/includes/`). Nous utilisons également des balises externes et des classes Bootstrap pour nous assurer que tout semble beau:
+Nous ajouterons les boutons à notre en-tête. Et comme cet en-tête commence à grossir donnons lui un peu de place avec son propre template (nous le mettrons dans `client/templates/includes/`). Nous utilisons également des balises externes et des classes [spécifiées par Bootstrap](http://getbootstrap.com/components/#navbar) pour nous assurer que tout soit beau :
 
 ~~~html
 <template name="layout">
   <div class="container">
     {{>header}}
-    <div id="main" class="row-fluid">
+    <div id="main">
       {{> yield}}
     </div>
   </div>
 </template>
 ~~~
-<%= caption "client/views/application/layout.html" %>
-<%= highlight "6" %>
+<%= caption "client/templates/application/layout.html" %>
+<%= highlight "3~6" %>
 
 ~~~html
 <template name="header">
-  <header class="navbar">
-    <div class="navbar-inner">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-      <a class="brand" href="{{pathFor 'postsList'}}">Microscope</a>
-      <div class="nav-collapse collapse">
-        <ul class="nav pull-right">
-          <li>{{> loginButtons}}</li>
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+      	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
+        	<span class="sr-only">Toggle navigation</span>
+        	<span class="icon-bar"></span>
+        	<span class="icon-bar"></span>
+        	<span class="icon-bar"></span>
+        </button>
+      	<a class="navbar-brand" href="{{pathFor 'postsList'}}">Microscope</a>
+      </div>
+      <div class="collapse navbar-collapse" id="navigation">
+      	<ul class="nav navbar-nav navbar-right">
+      		{{> loginButtons}}
         </ul>
       </div>
     </div>
-  </header>
+  </nav>
 </template>
 ~~~
-<%= caption "client/views/includes/header.html" %>
+<%= caption "client/templates/includes/header.html" %>
 
 Maintenant, quand nous naviguons dans notre application, nous voyons les boutons d'authentificationen haut à droite dans le coin du site.
 
@@ -133,28 +136,23 @@ La publication publie donc eulement un objet utilisateurpar utilisateur authenti
 De plus, les documents ne semblent pas avoir les mêmes champs sur le serveur et sur le client. Dans Mongo, un utilisateur a beaucoup de données. Pour les voir, retournez sur votre terminal Mongo et tapez:
 
 ~~~bash
-> db.users.findOne()
+> db.users.find()
 {
-  "createdAt" : 1365649830922,
-  "_id" : "kYdBd9hr3fWPGPcii",
-  "services" : {
-    "password" : {
-      "srp" : {
-        "identity" : "qyFCnw4MmRbmGyBdN",
-        "salt" : "YcBjRa7ArXn5tdCdE",
-        "verifier" : "df2c001edadf4e475e703fa8cd093abd4b63afccbca48fad1d2a0986ff2bcfba920d3f122d358c4af0c287f8eaf9690a2c7e376d701ab2fe1acd53a5bc3e843905d5dcaf2f1c47c25bf5dd87764d1f58c8c01e4539872a9765d2b27c700dcdedadf5ac82521467356d3f91dbeaf9848158987c6d359c5423e6b9cabf34fa0b45"
-      }
-    },
-    "resume" : {
-      "loginTokens" : [
-        {
-          "token" : "BMHipQqjfLoPz7gru",
-          "when" : 1365649830922
-        }
-      ]
-    }
-  },
-  "username" : "tmeasday"
+	"_id": "H5kKyxtbkLhmPgtqs",
+	"createdAt": ISODate("2015-02-10T08:26:48.196Z"),
+	"profile": {},
+	"services": {
+		"password": {
+			"bcrypt": "$2a$10$yGPywo3/53IHsdffdwe766roZviT03YBGltJ0UG"
+		},
+		"resume": {
+			"loginTokens": [{
+				"when": ISODate("2015-02-10T08:26:48.203Z"),
+				"hashedToken": "npxGH7Rmkuxcv098wzz+qR0/jHl0EAGWr0D9ZpOw="
+			}]
+		}
+	},
+	"username": "sacha"
 }
 ~~~
 <%= caption "Console Mongo" %>
