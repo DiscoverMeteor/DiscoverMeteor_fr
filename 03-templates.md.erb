@@ -35,7 +35,7 @@ Si vous ne l'avez pas déjà fait, créez un nouveau fichier appelé `main.html`
 ~~~
 <%= caption "client/main.html" %>
 
-Ce sera le template principal de notre application. Comme vous pouvez le voir c'est du langage HTML excepté pour la balise d'inclusion de template `{{> postsList}}`, qui est un point d'insertion pour le template `postsList` que nous verrons bientôt. Maintenant, créez deux templates supplémentaires.
+Ce sera le template principal de notre application. Comme vous pouvez le voir c'est du langage HTML excepté pour la balise d'inclusion de template `{{> postsList}}`, qui est un point d'insertion pour le template `postsList` que nous verrons bientôt. Nous allons maintenant créer deux templates supplémentaires.
 
 ### Les templates Meteor
 
@@ -81,11 +81,11 @@ Et `post_item.html` :
 
 Notez l'attribut `name="postsList"` de la balise template. C'est le nom qui sera utilisé par Meteor pour garder la trace de quel template va où (le nom du fichier n'est pas important).
 
-Il est temps de présenter le système de templating de Meteor, **Spacebars**. Spacebars est du html simple, avec l'ajout de trois choses : *inclusions* (parfois désignée sous le nom de "partials"), *expressions* et *block helpers*.
+Il est temps de présenter le système de templating de Meteor, **Spacebars**. Spacebars est du html simple, avec trois choses en plus : *inclusions* (parfois désignée sous le nom de "partials"), *expressions* et *block helpers*.
 
-*Inclusions* utilise la syntaxe `{{> templateName}}`, et dit simplement à Meteor de remplacer l'inclusion avec le template du même nom (dans notre cas `postItem`).
+Les *Inclusions* utilisent la syntaxe `{{> templateName}}`, et indiquent simplement à Meteor de remplacer le champ par le template du même nom (dans notre cas `postItem`).
 
-Expressions telles que `{{title}}` appelle une propriété de l'objet courant, ou retourne la valeur du template helper comme défini dans le template manager courant (plus d'information sur ce sujet plus tard).
+Les *Expressions* telles que `{{title}}` appellent une propriété de l'objet courant, ou retourne la valeur du template helper comme défini dans le template manager courant (plus d'information sur ce sujet plus tard).
 
 Finalement, les *block helpers* sont des balises spéciales qui contrôlent le flux du template, tels que `{{#each}}...{{/each}}` ou `{{#if}}...{{/if}}`.
 
@@ -99,11 +99,11 @@ Vous pouvez consulter la [documentation Spacebars](https://github.com/meteor/met
 
 Armé de cette connaissance, vous pouvez dorénavant comprendre ce qui se passe ici.
 
-Premièrement, dans le template `postsList`, nous faisons des itérations dans un objet posts avec le block helper {{#each}}...{{/each}}. Ensuite, pour chaque itération nous allons inclure le template `postItem`.
+Premièrement, dans le template `postsList`, nous faisons des itérations sur un objet `posts` avec le block helper {{#each}}...{{/each}}. Ensuite, pour chaque itération nous allons inclure le template `postItem`.
 
 D'où vient cet objet `posts` ? Bonne question. C'est un **template helper** ; vous pouvez vous l'imaginer comme un substitut à un contenu dynamique.
 
-Le template `postItem` lui-même est assez simple. Il utilise trois expression : `{{url}}` et `{{title}}` retourne des propriétés du document, et `{{domain}}` appelle un template helper.
+Le template `postItem` lui-même est assez simple. Il utilise trois expression : `{{url}}` et `{{title}}` retournent des propriétés du document, et `{{domain}}` appelle un template helper.
 
 ### Template Managers
 
@@ -171,7 +171,7 @@ Définir le helper de `posts` implique qu'il est maintenant disponible pour notr
 
 <%= commit "3-1", "Avec le template basique de posts list et les données statiques." %>
 
-### Le helper de `domain`
+### Le helper `domain`
 
 De même, nous allons créer `post_item.js` pour y renseigner la logique du template de `postItem` :
 
