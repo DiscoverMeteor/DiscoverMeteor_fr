@@ -12,13 +12,13 @@ paragraphs: 27
 
 Depuis le début, nous avons appris à créer et afficher des données statiques brutes dans un style particulier et on a tout intégré dans un prototype simple.
 
-Nous avons même vu comment notre UI est responsive aux changements des données, et les données insérées ou modifiées apparaissent immédiatement. Par contre, notre site est paralysé par le fait que nous ne pouvons pas insérer de données. En fait, nous n'avons même pas encore d'utilisateurs!
+Nous avons même vu comment notre UI est réactive aux changements de données, et les données insérées ou modifiées apparaissent immédiatement. Par contre, notre site est paralysé par le fait que nous ne pouvons pas insérer de données. En fait, nous n'avons même pas encore d'utilisateurs !
 
 Voyons comment corriger ça.
 
 ### Comptes: création d'utilisateurs faciles
 
-Dans la plupart des frameworks web, ajouter des comptes utilisateurs est une fonctionnalité classique. Bien sur, vous devez faire ça dans presque tous les projets, mais c'est jamais aussi simple que ça le devrait. De plus, dès que vous devez interagir avec OAuth ou un systèmes d'authentification tiers, les choses ont tendance a se compliquer.
+Dans la plupart des frameworks web, ajouter des comptes utilisateurs est une fonctionnalité classique. Bien sur, vous devez faire ça dans presque tous les projets, mais ce n'est jamais aussi simple que ça le devrait. De plus, dès que vous devez interagir avec OAuth ou un systèmes d'authentification tiers, les choses ont tendance a se compliquer.
 
 Heureusement, Meteor a tout prévu. Grâce à la façon dont les paquets Meteor peuvent contribuer au code côté serveur (JavaScript) et côté client (JavaScript, HTML et CSS), nous pouvons bénéficier d'un système de compte presque sans effort.
 
@@ -30,7 +30,7 @@ meteor add accounts-password
 ~~~
 <%= caption "Terminal" %>
 
-Ces deux commandes nous donnent accès aux templates spéciaux des comptes, et nous pouvons les inclure dans notre site en utilisant le helper `{{> loginButtons}}`. Une astuce: vous pouvez controler de quel côté s'affiche la fenêtre d'authentification en utilisant l'attribut `align` (par exemple `{{> loginButtons  align="right"}}`).
+Ces deux commandes nous donnent accès aux templates spéciaux des comptes, et nous pouvons les inclure dans notre site en utilisant le helper `{{> loginButtons}}`. Une astuce: vous pouvez contrôler de quel côté s'affiche la fenêtre d'authentification en utilisant l'attribut `align` (par exemple `{{> loginButtons  align="right"}}`).
 
 Nous ajouterons les boutons à notre en-tête. Et comme cet en-tête commence à grossir donnons lui un peu de place avec son propre template (nous le mettrons dans `client/templates/includes/`). Nous utilisons également des balises externes et des classes [spécifiées par Bootstrap](http://getbootstrap.com/components/#navbar) pour nous assurer que tout soit beau :
 
@@ -71,7 +71,7 @@ Nous ajouterons les boutons à notre en-tête. Et comme cet en-tête commence à
 ~~~
 <%= caption "client/templates/includes/header.html" %>
 
-Maintenant, quand nous naviguons dans notre application, nous voyons les boutons d'authentificationen haut à droite dans le coin du site.
+Maintenant, quand nous naviguons dans notre application, nous voyons les boutons d'authentification en haut à droite dans le coin du site.
 
 <%= screenshot "6-1", "Interface intégrée des comptes utilisateur de Meteor" %>
 
@@ -92,14 +92,14 @@ Accounts.ui.config({
 
 Enregistrez un compte : le bouton "Sign In" changera pour afficher votre nom d'utilisateur. Ça confirme que le compte utilisateur a bien été créé pour vous. Mais d'où viennent les données de ce compte ?
 
-En ajoutant le paquet `accounts`, Meteora créé une nouvelle collection spéciale, laquelle peut être accéder avec `Meteor.users()`. Pour la voir, ouvrez la console de votre navigateur et tapez:
+En ajoutant le paquet `accounts`, Meteora créé une nouvelle collection spéciale, laquelle peut être accédée avec `Meteor.users()`. Pour la voir, ouvrez la console de votre navigateur et tapez:
 
 ~~~js
 ❯ Meteor.users.findOne();
 ~~~
 <%= caption "Console du navigateur" %>
 
-La console retournera un object correspondant à votre objet utilisateur; Si vous regardez de plus près, vous pouvez voir que votre nom d'utilisateur est dedans, avec un `_id` unique qui vous identifie. Notez que vous pouvez également récupérer l'utilisateur actuellement connecté avec `Meteor.user()`.
+La console retournera un objet correspondant à votre objet utilisateur; Si vous regardez de plus près, vous pouvez voir que votre nom d'utilisateur est dedans, avec un `_id` unique qui vous identifie. Notez que vous pouvez également récupérer l'utilisateur actuellement connecté avec `Meteor.user()`.
 
 Maintenant déconnectez-vous et enregistrez-vous avec un compte utilisateur différent. `Meteor.user()` devrait retourner un second utilisateur. Mais attendez, exécutons:
 
@@ -109,7 +109,7 @@ Maintenant déconnectez-vous et enregistrez-vous avec un compte utilisateur diff
 ~~~
 <%= caption "Console du navigateur" %>
 
-La console retourne 1. Il devrait pas y en avoir 2? Le premier utilisateur a-t-il été supprimé ? SI vous essayez de vous authentifier avec le premier utilisateur, vous verrez que ce n'est pas le cas.
+La console retourne 1. Ne devrait-il pas y en avoir 2 ? Le premier utilisateur a-t-il été supprimé ? SI vous essayez de vous authentifier avec le premier utilisateur, vous verrez que ce n'est pas le cas.
 
 Assurons nous-en et vérifions dans la zone de stockage des données canonique, la base de données Mongo. On se connectera à Mongo (`meteor mongo` dans votre terminal) et on vérifiera:
 
@@ -131,7 +131,7 @@ La réponse est que le paquet comptes *auto-publie* les détails de base du comp
 
 Le paquet comptes publie seulement l'utilisateur courant. Ceci explique pourquoi un utilisateur ne peut voir les détails d'un autre compte.
 
-La publication publie donc eulement un objet utilisateurpar utilisateur authentifié (et aucun si vous n'êtes pas authentifié).
+La publication publie donc seulement un objet utilisateur par utilisateur authentifié (et aucun si vous n'êtes pas authentifié).
 
 De plus, les documents ne semblent pas avoir les mêmes champs sur le serveur et sur le client. Dans Mongo, un utilisateur a beaucoup de données. Pour les voir, retournez sur votre terminal Mongo et tapez:
 
@@ -167,4 +167,4 @@ Object {_id: "kYdBd9hr3fWPGPcii", username: "tmeasday"}
 
 Cet exemple nous montre comment une collection local peut être un *sous-ensemble sécurisée* de la vrai base de données. L'utilisateur authentifié voit seulement les informations nécessaires à son bon fonctionnement (dans ce cas, l'authentification). C'est un cas utile pour apprendre, vous vous en apercevrez plus tard.
 
-Ça ne veut pas dire que vous ne pourrez rendre publique des données utilisateur si vous le souhaitez. Vous pouvez vous référer à la [Documentation Meteor](http://docs.meteor.com/#meteor_users) comment vous pouvez publier plus de champs dans la collection `Meteor.users`.
+Ça ne veut pas dire que vous ne pourrez rendre publiques des données utilisateur si vous le souhaitez. Vous pouvez vous référer à la [Documentation Meteor](http://docs.meteor.com/#meteor_users) pour savoir comment vous pouvez publier plus de champs dans la collection `Meteor.users`.
