@@ -59,7 +59,7 @@ Une fois cette route définie, nous pouvons maintenant ajouter un lien à notre 
 			</div>
 		  <div class="collapse navbar-collapse" id="navigation">
 		    <ul class="nav navbar-nav">
-				  <li><a href="{{pathFor 'postSubmit'}}">Submit Post</a></li>
+				  <li><a href="{{pathFor 'postSubmit'}}">Créer un post</a></li>
 				</ul>
 			  <ul class="nav navbar-nav navbar-right">
 				  {{> loginButtons}}
@@ -99,11 +99,11 @@ Note : ça fait beaucoup de code, mais ça vient simplement du fait que nous uti
 
 <%= screenshot "7-1", "Le formulaire de soumission d'article" %>
 
-C'est un formulaire simple. Nous n'avons pas à nous inquiéter de lui ajouter un champ 'action', puisque nous allons intercepter les événements sur le formulaire et mettre à jour les données en passant par JavaScript. Il n'y aurait pas de sens à fournir une solution alternative sans JavaScript quand on considère qu'une appli Meteor est ne fonctionne plus du tout si JavaScript est désactivé.
+C'est un formulaire simple. Nous n'avons pas à nous inquiéter de lui ajouter un champ 'action', puisque nous allons intercepter les événements sur le formulaire et mettre à jour les données en passant par JavaScript. Il n'y aurait pas de sens à fournir une solution alternative sans JavaScript quand on considère qu'une appli Meteor ne fonctionne plus du tout si JavaScript est désactivé.
 
 ### Créer des posts
 
-Lions un gestionnaire d'événement à l'événement `submit` du formulaire. Il est préférable d'utiliser l'événement `submit` (plutôt que qu'un événement `click` sur le bouton par exemple), car cela permettra de prendre en compte toutes les façons possibles d'envoyer le formulaire (comme appuyer sur entrée par exemple).
+Lions un gestionnaire d'événement à l'événement `submit` du formulaire. Il est préférable d'utiliser l'événement `submit` (plutôt qu'un événement `click` sur le bouton par exemple), car cela permettra de prendre en compte toutes les façons possibles d'envoyer le formulaire (comme appuyer sur entrée par exemple).
 
 ~~~js
 Template.postSubmit.events({
@@ -188,7 +188,7 @@ Commençons par éviter l'accès des utilisateurs non authentifiés au formulair
 
 Un *hook* ("crochet" en français) intercepte le processus de routage et change potentiellement l'action prise par le routeur. Vous pouvez l'imaginer comme un garde de sécurité qui vérifie vos identifiants avant de vous laisser entrer (ou de vous refuser l'accès).
 
-Nous avons besoin de vérifier si l'utilisateur est authentifié, et sinon afficher le template `accessDenied` au lieu du `postSubmit` attendu (puis nous stoppons le routeur ici, il n'a pas autre chose à faire). Modifions donc router.js :
+Nous avons besoin de vérifier si l'utilisateur est authentifié, et sinon afficher le template `accessDenied` au lieu du `postSubmit` attendu (puis nous stoppons le routeur ici, il n'a rien d'autre à faire). Modifions donc router.js :
 
 ~~~js
 Router.configure({
@@ -226,8 +226,8 @@ Nous créons aussi le template pour la page 'accès refusé', `accessDenied` :
 ~~~html
 <template name="accessDenied">
 	<div class="access-denied page jumbotron">
-		<h2>Access Denied</h2>
-		<p>You can't get here! Please log in.</p>
+		<h2>Accès refusé</h2>
+		<p>Vous ne pouvez pas accéder à cette page ! Veuillez vous connecter.</p>
 	</div>
 </template>
 ~~~
@@ -241,9 +241,9 @@ Maintenant, si vous allez à http://localhost:3000/submit/ sans être authentifi
 
 Ce qui est pratique à propos des hooks de routage, c'est qu'ils sont eux aussi *réactifs*. C'est-à-dire que nous n'avons pas besoin de penser à des callbacks quand l'utilisateur s'authentifie : quand l'état d'authentification de l'utilisateur change, le template utilisé par le routeur change instantanément de `accessDenied` à `postSubmit` sans que nous ayons rien à écrire d'explicite pour le gérer (et cela fonctionne d'ailleurs pour tous les onglets). 
 
-Authentifiez-vous, puis essayer de rafraîchir la page. Vous verrez peut-être parfoiss le template `accessDenied` s'afficher brièvement avant que la page d'ajout de post apparaisse. La raison en est que Meteor commence à afficher les templates dès que possible, avant même qu'il ait conversé avec le serveur est vérifié si l'utilisateur actuel (stocké dans la mémoire locale du navigateur) existe réellement.
+Authentifiez-vous, puis essayer de rafraîchir la page. Vous verrez peut-être parfois le template `accessDenied` s'afficher brièvement avant que la page d'ajout de post apparaisse. La raison en est que Meteor commence à afficher les templates dès que possible, avant même qu'il ait conversé avec le serveur est vérifié si l'utilisateur actuel (stocké dans la mémoire locale du navigateur) existe réellement.
 
-Pour éviter ce problème (qui est courant et que vous rencontrerez d'autant plus que vous allez vous pencher sur les subtilités de la latence entre client et serveur), nous allons simplement afficher un écran de chargement pendant que nous attendons de savoir si l'utilisateur est authentifié ou pas.
+Pour éviter ce problème (qui est courant et que vous rencontrerez d'autant plus que vous allez vous pencher sur les subtilités de latence entre client et serveur), nous allons simplement afficher un écran de chargement pendant que nous attendons de savoir si l'utilisateur est authentifié ou pas.
 
 Après tout, à cet instant nous ne savons pas si l'utilisateur a les identifiants corrects, et nous ne pouvons afficher aucun des templates `accessDenied` ou `postSubmit` avant de le savoir.
 
@@ -280,7 +280,7 @@ La façon la plus simple d'éviter aux utilisateurs d'essayer d'atteindre cette 
 //...
 
 <ul class="nav navbar-nav">
-	{{#if currentUser}}<li><a href="{{pathFor 'postSubmit'}}">Submit Post</a></li>{{/if}}
+	{{#if currentUser}}<li><a href="{{pathFor 'postSubmit'}}">Créer un post</a></li>{{/if}}
 </ul>
 
 //...
@@ -306,11 +306,11 @@ Vous pourriez penser que nous pouvons faire tout cela dans notre gestionnaire de
 - Le côté client ne sera pas au courant de _toutes_ les URL postées sur le site. Il connaîtra seulement les posts que l'utilisateur peut actuellement voir (nous verrons plus tard comment ceci fonctionne exactement). Il n'y a donc pas de moyen d'assurer l'unicité des URL du côté client.
 - Enfin, même si nous _pourrions_ ajouter les détails utilisateurs côté client, nous ne nous assurerions pas de leur exactitude, ce qui pourrait exposer notre appli à une exploitation par des gens utilisant la console.
 
-Pour toutes ces raisons, il vaut mieux garder nos gestionnaires d'événements simples. Et si nous faisons plus que les insertions et mises à jour les plus basiques, utilisons plutôt une **Method**.
+Pour toutes ces raisons, il vaut mieux garder nos gestionnaires d'événements simples. Et si nous faisons plus que les insertions et mises à jour les plus basiques, utilisons plutôt une **Méthode**.
 
-Une Méthode Meteor est une fonction côté serveur qui est *appelée* côté client. Elles ne nous sont pas totalement étrangères -- en fait, en coulisses, les fonctions `insert`, `update`, et `remove` de `Collection` sont toutes des Methodes. Voyons comment créer la nôtre.
+Une Méthode Meteor est une fonction côté serveur qui est *appelée* côté client. Elles ne nous sont pas totalement étrangères -- en fait, en coulisses, les fonctions `insert`, `update`, et `remove` de `Collection` sont toutes des Méthodes. Voyons comment créer la nôtre.
 
-Revenons à `post_submit.js`. Plutôt que d'insérer directement dans la collection `Posts`, nous allons appeler une Method nommée `postInsert` :
+Revenons à `post_submit.js`. Plutôt que d'insérer directement dans la collection `Posts`, nous allons appeler une Méthode nommée `postInsert` :
 
 ~~~js
 Template.postSubmit.events({
@@ -435,7 +435,7 @@ Nous cherchons dans notre base de données un post avec la même url. Si nous en
 
 Et puisque nous déclenchons un appel à `return`, la méthode s'interrompt à ce moment sans exécuter la déclaration `insert`, évitant ainsi avec élégance de créer des doublons
 
-Tout ce qui reste à faire est d'utiliser cette nouvelle information `postExists` dans notre helper d'événement côté client pour afficher un message d'avertissement :
+Tout ce qui nous reste à faire est d'utiliser cette nouvelle information `postExists` dans notre helper d'événement côté client pour afficher un message d'avertissement :
 
 ~~~js
 Template.postSubmit.events({
@@ -448,13 +448,13 @@ Template.postSubmit.events({
 		};
 
 		Meteor.call('postInsert', post, function(error, result) {
-			// display the error to the user and abort
+			// affiche l'erreur à l'utilisateur et s'interrompt
 			if (error)
 				return alert(error.reason);
 
-			// show this result but route anyway
+			// affiche ce résultat mais route tout de même
 			if (result.postExists)
-				alert('This link has already been posted');
+				alert('Ce lien a déjà été utilisé');
 
 			Router.go('postPage', {_id: result._id});
 		});
