@@ -60,22 +60,22 @@ Concentrons nous maintenant sur la template. Notre template `postEdit` reste tr�
 
 ~~~html
 <template name="postEdit">
-  <form class="main form">
+  <form class="main form page">
     <div class="form-group">
       <label class="control-label" for="url">URL</label>
       <div class="controls">
-          <input name="url" id="url" type="text" value="{{url}}" placeholder="Your URL" class="form-control"/>
+          <input name="url" id="url" type="text" value="{{url}}" placeholder="Votre URL" class="form-control"/>
       </div>
     </div>
     <div class="form-group">
       <label class="control-label" for="title">Title</label>
       <div class="controls">
-          <input name="title" id="title" type="text" value="{{title}}" placeholder="Name your post" class="form-control"/>
+      	<input name="title" id="title" type="text" value="{{title}}" placeholder="Nommez votre post" class="form-control"/>
       </div>
     </div>
     <input type="submit" value="Submit" class="btn btn-primary submit"/>
     <hr/>
-    <a class="btn btn-danger delete" href="#">Delete post</a>
+    <a class="btn btn-danger delete" href="#">Supprimer le post</a>
   </form>
 </template>
 ~~~
@@ -97,10 +97,10 @@ Template.postEdit.events({
     
     Posts.update(currentPostId, {$set: postProperties}, function(error) {
       if (error) {
-        // display the error to the user
-        alert(error.reason);
+        // affiche l'erreur à l'utilisateur
+      	alert(error.reason);
       } else {
-        Router.go('postPage', {_id: currentPostId});
+      	Router.go('postPage', {_id: currentPostId});
       }
     });
   },
@@ -118,7 +118,7 @@ Template.postEdit.events({
 ~~~
 <%= caption "client/templates/posts/post_edit.js" %>
 
-Normalement ces codes devraient vous être familier à présent.
+Normalement la majeure partie de ce code devrait vous être familier à présent.
 
 Deux événements sont présents dans notre template : l'un pour l'événement `submit` du formulaire et l'autre pour l'évenement `click` du lien de suppression du post.
 
@@ -142,7 +142,7 @@ Nous devons bien évidemment rajouter un lien pour que les utilisateurs puissent
         {{#if ownPost}}<a href="{{pathFor 'postEdit'}}">Edit</a>{{/if}}
       </p>
     </div>
-    <a href="{{pathFor 'postPage'}}" class="discuss btn btn-default">Discuss</a>
+    <a href="{{pathFor 'postPage'}}" class="discuss btn btn-default">Discuter</a>
   </div>
 </template>
 ~~~
@@ -176,7 +176,7 @@ Notre formulaire pour modifier les posts parait correct, pourtant vous ne pourre
 
 Depuis que nous avons supprimé le paquet `insecure`, toutes les requêtes de modifications provenant du client sont catégoriquement refusées.
 
-Pour régler cela, nous devons fixer des permissions. Pour commencer, créez un nouveau fichier `permissions.js` dans le dossier `lib`. Nous serons ainsi sûr que nos permissions seront chargées en premières (et disponible dans les deux environnements) :
+Pour régler cela, nous devons fixer des permissions. Pour commencer, créez un nouveau fichier `permissions.js` dans le dossier `lib`. Nous serons ainsi sûr que nos permissions seront chargées en premier (et disponible dans les deux environnements) :
 
 ~~~js
 // check that the userId specified owns the documents
@@ -237,11 +237,11 @@ Nous transmettons le tableau `fieldNames` qui contient la liste des champs modif
 
 Si tout se passe bien, le tableau sera vide et sa taille devra être de 0. Si quelqu'un essaie de jouer un peu avec le code, la taille du tableau vaudra 1 ou plus, et le callback retournera `true` (ce qui empêchera la mise à jour).
 
-Vous aurez remarqué que nous ne vérifions nulle part dans notre code de modification des posts la présence de lien dupliqués. Cela veut dire qu'un utilisateur pourrait soumettre un lien et l'éditer afin de changer l'URL pour passer outre la vérification. La solution à ce problème serait d'utiliser une méthode de Meteor (`Meteor.methods()`) pour modifier les posts, mais nous avons voulu vous montrer cela pour le principe et vous exercer.
+Vous aurez peut-être remarqué que nous ne vérifions nulle part dans notre code de modification des posts la présence de liens dupliqués. Cela veut dire qu'un utilisateur pourrait soumettre un lien et l'éditer afin de changer l'URL pour passer outre la vérification. La solution à ce problème serait d'utiliser une méthode de Meteor (`Meteor.methods()`) pour modifier les posts, mais nous avons voulu vous montrer cela pour le principe et vous exercer.
 
 <% note do %>
 
-### Manipulation des données via `Meteor.methods` vs du code *client-side*
+### Les appels de méthode vs la manipulation de données *côté client*
 
 Pour créer des posts, nous avons utilisé une méthode Meteor `postInsert`, par contre pour les modifier et les supprimer nous appelons `update` et `remove` directement depuis le client en utilisant `allow` et `deny` pour sécuriser les transactions de données.
 
@@ -254,9 +254,9 @@ Par contre, à partir du moment où vous devez faire des choses qui ne doivent p
 Les méthodes Meteor sont aussi plus adaptés dans certains cas :
 
 - Quand vous devez connaitre ou renvoyer des valeurs via un callback plutôt que d'attendre que la réactivité et la synchronisation prennent effet.
-- Pour les fonctions opérant de grosses manipulations sur la base de données qui seraient trop lourdes à transmettre entre le client et le serveur
+- Pour les fonctions opérant de grosses manipulations sur la base de données qui seraient trop lourdes à transmettre entre le client et le serveur.
 - Pour des calculs sur la base de données (exemple : count, average, sum).
 
-[Jetez un oeil sur notre blog](https://www.discovermeteor.com/blog/meteor-methods-client-side-operations/) pour une exploration plus en détail de ce sujet.
+[Jetez un œil à notre blog](https://www.discovermeteor.com/blog/meteor-methods-client-side-operations/) pour une exploration plus en détail de ce sujet.
 
 <% end %>
