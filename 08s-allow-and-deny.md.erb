@@ -44,21 +44,3 @@ Heureusement, puisque vous pouvez partager le code de permissions entre client e
 Souvenez-vous que le système de permissions s'applique seulement sur les mutations de base de données initiées par le client. Sur le serveur, Meteor assume que _toutes_ les opérations sont permises.
 
 Ceci signifie que dans le cas où vous écririez une Méthode Meteor côté serveur `deletePost` qui pourrait être appelée par le client, n'importe qui serait capable de supprimer chaque article. Vous ne voulez donc probablement pas faire cela à moins que vous ayez également vérifié les permissions à l'intérieur de cette Méthode.
-
-### Utiliser un deny comme callback
-
-Finalement, une astuce que vous pouvez faire avec `deny` est de l'utiliser comme un callback "onX". Par exemple, vous pouvez achever un horodate `lastModified` avec le code suivant :
-
-~~~js
-Posts.deny({
-  update: function(userId, doc, fields, modifier) {
-    doc.lastModified = +(new Date());
-    return false;
-  },
-  transform: null
-});
-~~~
-
-Comme les callbacks `deny` sont exécutés pour *chaque* `update` avec succès, nous savons que ce callback sera exécuté et peut faire des changements du document d'une manière structurée.
-
-Certes, cette technique est un peu un hack, donc vous pourriez vouloir effectuer des mises à jour en préférant l'utilisation d'une Méthode. Cependant, c'est encore utile à savoir, et dans le futur nous pouvons espérer que ce type de callback `beforeUpdate` deviendra disponible.
