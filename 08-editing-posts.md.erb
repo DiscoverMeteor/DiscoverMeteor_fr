@@ -70,7 +70,7 @@ Concentrons nous maintenant sur la template. Notre template `postEdit` reste tr√
     <div class="form-group">
       <label class="control-label" for="title">Title</label>
       <div class="controls">
-      	<input name="title" id="title" type="text" value="{{title}}" placeholder="Nommez votre post" class="form-control"/>
+        <input name="title" id="title" type="text" value="{{title}}" placeholder="Nommez votre post" class="form-control"/>
       </div>
     </div>
     <input type="submit" value="Submit" class="btn btn-primary submit"/>
@@ -98,9 +98,9 @@ Template.postEdit.events({
     Posts.update(currentPostId, {$set: postProperties}, function(error) {
       if (error) {
         // affiche l'erreur √† l'utilisateur
-      	alert(error.reason);
+        alert(error.reason);
       } else {
-      	Router.go('postPage', {_id: currentPostId});
+        Router.go('postPage', {_id: currentPostId});
       }
     });
   },
