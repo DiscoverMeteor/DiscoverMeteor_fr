@@ -16,7 +16,7 @@ Voyons d'abord le *router*. Nous lui ajoutons une route afin d'accéder à la pa
 
 ~~~js
 Router.configure({
-	layoutTemplate: 'layout',
+  layoutTemplate: 'layout',
   loadingTemplate: 'loading',
   notFoundTemplate: 'notFound',
   waitOn: function() { return Meteor.subscribe('posts'); }
