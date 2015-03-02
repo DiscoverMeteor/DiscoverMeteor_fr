@@ -25,7 +25,7 @@ Nous pouvons définir autant de callbacks `allow` que nécessaires. Nous avons j
 
 De la même façon, nous pouvons définir un ou plusieurs callbacks `deny`. Si _un_ de ces callbacks retourne `true`, le changement sera annulé et une erreur `403` sera retourné. La logique de tout cela signifie que pour un `insert` réussi, un ou plusieurs callbacks `allow` `insert` aussi bien que _chaque_ callback `deny` `insert` seront exécutés.
 
-<%= diagram "allow_deny", "Note: n/e est l'abbréviation de Not Executed" %>
+<%= diagram "allow_deny", "Note: n/e est l'abréviation de Not Executed" %>
 
 En d'autres mots, Meteor descend la liste de callback en partant du premier avec `deny`, puis avec `allow`, et exécute chaque callback jusqu'à ce que l'un d'entre eux retourne `true`.
 
