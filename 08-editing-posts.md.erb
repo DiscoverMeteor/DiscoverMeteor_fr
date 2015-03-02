@@ -10,13 +10,13 @@ contents: Ajouter un formulaire pour modifier ses posts.|Mettre en place les per
 paragraphs: 29
 ---
 
-Maintenant que nous pouvons créer des posts, la prochaine étape est de pouvoir les modifier et les supprimer. Puisque l'interface est simple à mettre en oeuvre, c'est le moment idéal de voir comment Meteor gère les permissions des utilisateurs.
+Maintenant que nous pouvons créer des posts, la prochaine étape est de pouvoir les modifier et les supprimer. Puisque l'interface est simple à mettre en œuvre, c'est le moment idéal de voir comment Meteor gère les permissions des utilisateurs.
 
 Voyons d'abord le *router*. Nous lui ajoutons une route afin d'accéder à la page de modification des posts et lui donnons des données :
 
 ~~~js
 Router.configure({
-  layoutTemplate: 'layout',
+	layoutTemplate: 'layout',
   loadingTemplate: 'loading',
   notFoundTemplate: 'notFound',
   waitOn: function() { return Meteor.subscribe('posts'); }
@@ -120,11 +120,11 @@ Template.postEdit.events({
 
 Normalement la majeure partie de ce code devrait vous être familier à présent.
 
-Deux événements sont présents dans notre template : l'un pour l'événement `submit` du formulaire et l'autre pour l'évenement `click` du lien de suppression du post.
+Deux événements sont présents dans notre template : l'un pour l'événement `submit` du formulaire et l'autre pour l'événement `click` du lien de suppression du post.
 
 L'événement de suppression est très simple : on empêche l'activation des événements par défaut et on demande une confirmation à l'utilisateur. Enfin si on l'obtient, on récupère l'ID du post actuel depuis les informations de la template, on supprime le post et on redirige l'utilisateur sur l'accueil.
 
-L'événement de mise à jour du post est un peu plus long, mais pas plus compliqué. Après avoir, une fois de plus, empêché l'activation des évènements classiques (lors de la soumission du formulaire) et récupéré l'ID du post concerné, on récupère les valeurs du formulaire depuis la page et on les sauvegarde dans l'objet `postProperties`.
+L'événement de mise à jour du post est un peu plus long, mais pas plus compliqué. Après avoir, une fois de plus, empêché l'activation des événements classiques (lors de la soumission du formulaire) et récupéré l'ID du post concerné, on récupère les valeurs du formulaire depuis la page et on les sauvegarde dans l'objet `postProperties`.
 
 Nous passons alors cet objet à la méthode `Collection.update()` de Meteor avec l'opérateur [`$set`](http://docs.mongodb.org/manual/reference/operator/update/set/) (qui remplace un ensemble de champs) et utilisons un callback pour afficher une erreur si la mise à jour est un échec ou renvoie l'utilisateur sur le post concerné si la mise à jour est un succès.
 
@@ -253,7 +253,7 @@ Par contre, à partir du moment où vous devez faire des choses qui ne doivent p
 
 Les méthodes Meteor sont aussi plus adaptés dans certains cas :
 
-- Quand vous devez connaitre ou renvoyer des valeurs via un callback plutôt que d'attendre que la réactivité et la synchronisation prennent effet.
+- Quand vous devez connaître ou renvoyer des valeurs via un callback plutôt que d'attendre que la réactivité et la synchronisation prennent effet.
 - Pour les fonctions opérant de grosses manipulations sur la base de données qui seraient trop lourdes à transmettre entre le client et le serveur.
 - Pour des calculs sur la base de données (exemple : count, average, sum).
 
