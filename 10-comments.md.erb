@@ -7,25 +7,25 @@ number: 10
 points: 10
 photoUrl: http://www.flickr.com/photos/ikewinski/9414222270/
 photoAuthor: Mike Lewinski
-contents: Display existing comments.|Add a comment posting form.|Learn how to load only the current post's comments.|Add a comment count property to posts.
+contents: Afficher les commentaires existants|Ajouter un formulaire de création de commentaire.|Apprendre à charger seulement les commentaires du post courant.|Ajouter aux posts le nombre de commentaires.
 paragraphs: 34
 ---
 
-////
+Le but d'un site de nouvelles sociales est de créer une communauté d'utilisateurs, et cela sera difficile à atteindre sans fournir aux gens un moyen de communiquer entre eux. Nous allons donc dans ce chapitre ajouter les commentaires !
 
-////
+Nous allons commencer par ajouter une nouvelle collection pour y enregistrer les commentaires et quelques données basiques préenregistrées.
 
 ~~~js
-Comments = new Meteor.Collection('comments');
+Comments = new Mongo.Collection('comments');
 ~~~
-<%= caption "collections/comments.js" %>
+<%= caption "lib/collections/comments.js" %>
 
 ~~~js
-// Fixture data 
+// Données préenregistrées
 if (Posts.find().count() === 0) {
   var now = new Date().getTime();
   
-  // create two users
+  // crée deux utilisateurs
   var tomId = Meteor.users.insert({
     profile: { name: 'Tom Coleman' }
   });
@@ -34,51 +34,51 @@ if (Posts.find().count() === 0) {
     profile: { name: 'Sacha Greif' }
   });
   var sacha = Meteor.users.findOne(sachaId);
-  
+	
   var telescopeId = Posts.insert({
     title: 'Introducing Telescope',
     userId: sacha._id,
     author: sacha.profile.name,
     url: 'http://sachagreif.com/introducing-telescope/',
-    submitted: now - 7 * 3600 * 1000
+    submitted: new Date(now - 7 * 3600 * 1000)
   });
-  
+
   Comments.insert({
     postId: telescopeId,
     userId: tom._id,
     author: tom.profile.name,
-    submitted: now - 5 * 3600 * 1000,
-    body: 'Interesting project Sacha, can I get involved?'
+    submitted: new Date(now - 5 * 3600 * 1000),
+    body: "C'est un projet intéressant Sacha, est-ce-que je peux y participer ?"
   });
   
   Comments.insert({
     postId: telescopeId,
     userId: sacha._id,
     author: sacha.profile.name,
-    submitted: now - 3 * 3600 * 1000,
-    body: 'You sure can Tom!'
+    submitted: new Date(now - 3 * 3600 * 1000),
+    body: 'Bien sûr Tom !'
   });
-  
+
   Posts.insert({
     title: 'Meteor',
     userId: tom._id,
     author: tom.profile.name,
     url: 'http://meteor.com',
-    submitted: now - 10 * 3600 * 1000
+    submitted: new Date(now - 10 * 3600 * 1000)
   });
-  
-  Posts.insert({
+
+   Posts.insert({
     title: 'The Meteor Book',
     userId: tom._id,
     author: tom.profile.name,
     url: 'http://themeteorbook.com',
-    submitted: now - 12 * 3600 * 1000
+    submitted: new Date(now - 12 * 3600 * 1000)
   });
 }
 ~~~
 <%= caption "server/fixtures.js" %>
 
-////
+N'oublions pas de publier dans notre nouvelle collection et d'y souscrire  :
 
 ~~~js
 Meteor.publish('posts', function() {
@@ -96,38 +96,41 @@ Meteor.publish('comments', function() {
 Router.configure({
   layoutTemplate: 'layout',
   loadingTemplate: 'loading',
-  waitOn: function() { 
+  notFoundTemplate: 'notFound',
+  waitOn: function() {
     return [Meteor.subscribe('posts'), Meteor.subscribe('comments')];
   }
 });
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "4~6" %>
+<%= highlight "5~7" %>
 
-<%= commit "10-1", "Added comments collection, pub/sub and fixtures." %>
+<%= commit "10-1", "Avec la collection de commentaires, la publication, la souscription et les données préenregistrées." %>
 
-////
+Notez que pour déclencher ce code de données préenregistrées, il faudra faire un `meteor reset` pour remettre à zéro votre base de données. Après avoir réinitialisé, n'oubliez pas de créer un nouveau compte et de vous reconnecter.
 
-////
+Nous avons tout d'abord créé un couple d'utilisateurs (factices), nous les avons enregistrés dans la base de données, et nous pourront utiliser leur `id` plus tard pour les référencer en dehors de la base de données. Ensuite nous avons ajouté un commentaire pour chaque utilisateur sur le premier post, en liant le commentaire avec le post (via `postId`) et avec l'utilisateur (via `userId`). Nous avons aussi ajouté une date de publication et un body à chaque commentaire, en plus de `author`, un champ dénormalisé.
 
-////
+Nous avons aussi amélioré notre router pour attendre un *tableau* (array) contenant à la fois les commentaires et les souscriptions aux posts.
 
-### Displaying comments
+### Afficher les commentaires
 
-////
+C'est très bien d'ajouter des commentaires à la base de données, mais nous voulons aussi les afficher sur la page de discussion. Heureusement, ce processus devrait vous être maintenant familier, et vous devriez avoir une idée des étapes à réaliser :
 
 ~~~html
 <template name="postPage">
-  {{> postItem}}
-
+  <div class="post-page page">
+    {{> postItem}}
+  
   <ul class="comments">
     {{#each comments}}
-      {{> comment}}
+      {{> commentItem}}
     {{/each}}
   </ul>
+ </div>
 </template>
 ~~~
-<%= caption "client/views/posts/post_page.html" %>
+<%= caption "client/templates/posts/post_page.html" %>
 <%= highlight "3~7" %>
 
 ~~~js
@@ -137,15 +140,15 @@ Template.postPage.helpers({
   }
 });
 ~~~
-<%= caption "client/views/posts/post_page.js" %>
+<%= caption "client/templates/posts/post_page.js" %>
 <%= highlight "2~4" %>
 
-////
+Nous insérons le bloc `{{#each comments}}` à l'intérieur du template de post, donc `this` est un post dans le helper `comments`. Pour trouver les commentaires pertinents, nous vérifions ceux qui sont liés à ce post via l'attribut `postId`.
 
-////
+Sachant ce que nous avons appris à propos des helpers et de Spacebars, représenter un commentaire est plutôt simple. Nous allons créer un nouveau dossier `comments` à l'intérieur de `templates` pour y stocker toute l'information de nos commentaires et un nouveau template `commentItem` :
 
 ~~~html
-<template name="comment">
+<template name="commentItem">
   <li>
     <h4>
       <span class="author">{{author}}</span>
@@ -155,20 +158,20 @@ Template.postPage.helpers({
   </li>
 </template>
 ~~~
-<%= caption "client/views/comments/comment.html" %>
+<%= caption "client/templates/comments/comment_item.html" %>
 
-////
+Créons donc un rapide helper de template pour représenter notre date `submitted` dans un format plus convivial :
 
 ~~~js
-Template.comment.helpers({
+Template.commentItem.helpers({
   submittedText: function() {
-    return new Date(this.submitted).toString();
+    return this.submitted.toString();
   }
 });
 ~~~
-<%= caption "client/views/comments/comment.js" %>
+<%= caption "client/templates/comments/comment_item.js" %>
 
-////
+Nous allons ensuite afficher le nombre de commentaires de chaque post :
 
 ~~~html
 <template name="postItem">
@@ -176,24 +179,24 @@ Template.comment.helpers({
     <div class="post-content">
       <h3><a href="{{url}}">{{title}}</a><span>{{domain}}</span></h3>
       <p>
-        submitted by {{author}},
-        <a href="{{pathFor 'postPage'}}">{{commentsCount}} comments</a>
+        Rédigé par {{author}},
+        <a href="{{pathFor 'postPage'}}">{{commentsCount}} commentaires</a>
         {{#if ownPost}}<a href="{{pathFor 'postEdit'}}">Edit</a>{{/if}}
       </p>
     </div>
-    <a href="{{pathFor 'postPage'}}" class="discuss btn">Discuss</a>
+    <a href="{{pathFor 'postPage'}}" class="discuss btn btn-default">Commenter</a>
   </div>
 </template>
 ~~~
-<%= caption "client/views/posts/post_item.html" %>
+<%= caption "client/templates/posts/post_item.html" %>
 <%= highlight "6,7" %>
 
-////
+Et ajouter le helper `commentsCount` à `post_item.js` :
 
 ~~~js
 Template.postItem.helpers({
   ownPost: function() {
-    return this.userId == Meteor.userId();
+    return this.userId === Meteor.userId();
   },
   domain: function() {
     var a = document.createElement('a');
@@ -205,78 +208,94 @@ Template.postItem.helpers({
   }
 });
 ~~~
-<%= caption "client/views/posts/post_item.js" %>
+<%= caption "client/templates/posts/post_item.js" %>
 <%= highlight "9,10,11" %>
 
-<%= commit "10-2", "Display comments on `postPage`." %>
+<%= commit "10-2", "Affichage des commentaires sur `postPage`." %>
 
-////
+Vous devriez maintenant être capable d'afficher nos commentaires préenregistrés et voir quelque chose comme ça :
 
 <%= screenshot "10-1", "Displaying comments" %>
 
-### Submitting Comments
+### Publier des commentaires
 
-////
+Ajoutons un moyen pour nos utilisateurs de créer de nouveaux commentaires. Le procédé que nous allons suivre est similaire à la façon dont nous avons permis à nos utilisateurs de créer de nouveaux posts :
 
-////
+Nous allons commencer par ajouter un bouton de publication en bas de chaque post :
 
 ~~~html
 <template name="postPage">
-  {{> postItem}}
-  
-  <ul class="comments">
-    {{#each comments}}
-      {{> comment}}
-    {{/each}}
-  </ul>
-  
-  {{#if currentUser}}
-    {{> commentSubmit}}
-  {{else}}
-    <p>Please log in to leave a comment.</p>
-  {{/if}}
+  <div class="post-page page">
+    {{> postItem}}
+    
+    <ul class="comments">
+      {{#each comments}}
+        {{> commentItem}}
+      {{/each}}
+    </ul>
+
+    {{#if currentUser}}
+      {{> commentSubmit}}
+    {{else}}
+      <p>Please log in to leave a comment.</p>
+    {{/if}}
+  </div>
 </template>
 ~~~
-<%= caption "client/views/posts/post_page.html" %>
-<%= highlight "11~15" %>
+<%= caption "client/templates/posts/post_page.html" %>
+<%= highlight "10~14" %>
 
-////
+En ensuite créer le template du formulaire de commentaire :
 
 ~~~html
 <template name="commentSubmit">
-  <form name="comment" class="comment-form">
-    <div class="control-group">
-        <div class="controls">
-            <label for="body">Comment on this post</label>
-            <textarea name="body"></textarea>
-        </div>
+  <form name="comment" class="comment-form form">
+    <div class="form-group {{errorClass 'body'}}">
+      <div class="controls">
+        <label for="body">Réagir à ce post</label>
+        <textarea name="body" id="body" class="form-control" rows="3"></textarea>
+        <span class="help-block">{{errorMessage 'body'}}</span>
+      </div>
     </div>
-    <div class="control-group">
-        <div class="controls">
-            <button type="submit" class="btn">Add Comment</button>
-        </div>
-    </div>
+    <button type="submit" class="btn btn-primary">Add Comment</button>
   </form>
 </template>
 ~~~
-<%= caption "client/views/comments/comment_submit.html" %>
+<%= caption "client/templates/comments/comment_submit.html" %>
 
-<%= screenshot "10-2", "The comment submit form" %>
-
-////
+Pour publier nos commentaires, nous appelons une Méthode `comment` dans `comment_submit.js` qui opère d'une manière similaire à ce que nous avons fait pour les publications de posts :
 
 ~~~js
+Template.commentSubmit.created = function() {
+  Session.set('commentSubmitErrors', {});
+}
+
+Template.commentSubmit.helpers({
+  errorMessage: function(field) {
+    return Session.get('commentSubmitErrors')[field];
+  },
+  errorClass: function (field) {
+    return !!Session.get('commentSubmitErrors')[field] ? 'has-error' : '';
+  }
+});
+
 Template.commentSubmit.events({
   'submit form': function(e, template) {
     e.preventDefault();
-    
+
     var $body = $(e.target).find('[name=body]');
     var comment = {
       body: $body.val(),
       postId: template.data._id
     };
-    
-    Meteor.call('comment', comment, function(error, commentId) {
+
+    var errors = {};
+    if (! comment.body) {
+      errors.body = "Please write some content";
+      return Session.set('commentSubmitErrors', errors);
+    }
+
+    Meteor.call('commentInsert', comment, function(error, commentId) {
       if (error){
         throwError(error.reason);
       } else {
@@ -286,154 +305,188 @@ Template.commentSubmit.events({
   }
 });
 ~~~
-<%= caption "client/views/comments/comment_submit.js" %>
+<%= caption "client/templates/comments/comment_submit.js" %>
 
-////
+Tout comme nous avons précédemment mis en place une Méthode Meteor `post` côté serveur, nous allons mettre en place une Méthode Meteor `comment` pour créer nos commentaires, s'assurer que tout est conforme, et finalement insérer le nouveau commentaire dans la collection 'comments'.
 
 ~~~js
-Comments = new Meteor.Collection('comments');
+Comments = new Mongo.Collection('comments');
 
 Meteor.methods({
-  comment: function(commentAttributes) {
+  commentInsert: function(commentAttributes) {
+    check(this.userId, String);
+    check(commentAttributes, {
+      postId: String,
+      body: String
+    });
+
     var user = Meteor.user();
     var post = Posts.findOne(commentAttributes.postId);
-    // ensure the user is logged in
-    if (!user)
-      throw new Meteor.Error(401, "You need to login to make comments");
-      
-    if (!commentAttributes.body)
-      throw new Meteor.Error(422, 'Please write some content');
-      
+
     if (!post)
-      throw new Meteor.Error(422, 'You must comment on a post');
-    
-    comment = _.extend(_.pick(commentAttributes, 'postId', 'body'), {
+      throw new Meteor.Error('invalid-comment', 'Vous devez commenter sur un post');
+
+    comment = _.extend(commentAttributes, {
       userId: user._id,
       author: user.username,
-      submitted: new Date().getTime()
+      submitted: new Date()
     });
-    
+
     return Comments.insert(comment);
   }
 });
 ~~~
-<%= caption "collections/comments.js" %>
+<%= caption "lib/collections/comments.js" %>
 <%= highlight "3~25" %>
 
-<%= commit "10-3", "Created a form to submit comments." %>
+<%= commit "10-3", "Avec le formulaire de publication de commentaires" %>
 
-////
+Cela ne fait rien de bien fantaisiste, on s'assure simplement que l'utilisateur est connecté, que le commentaire a un corps (body), et qu'il est lié au post.
 
-### Controlling the Comments Subscription
+<%= screenshot "10-2", "The comment submit form" %>
 
-////
+### Contrôle de la publication de commentaires
 
-////
+Dans l'état des choses, nous publions tous les commentaires à travers les posts à tous les clients connectés. Cela semble un peu déraisonnable. Après tout, nous n'utilisons réellement qu'une petite partie de ces données à tout moment. Améliorons donc nos publications et souscriptions pour contrôler exactement quels commentaires sont publiés.
 
-////
+Si nous y pensons, le seul moment où on a besoin de souscrire à la publication de nos `commentaires` est lorsqu'un utilisateur accède à la page individuelle d'un post, et nous avons besoin de charger uniquement les commentaires reliés à ce post particulier.
 
-////
 
-////
-
-////
-
+The first step will be changing the way we subscribe to comments. Up to now, we've been subscribing at the *router* level, which means we load all our data once when the router is initialized.
+But we now want our subscription to depend on a path parameter, and that parameter can obviously change at any point. So we'll need to move our subscription code from the *router* level to the *route* level.
+This has another consequence: instead of loading our data when we initialize our app, we'll now be loading it whenever we hit our *route*. This means that you'll now get loading times while browsing within the app, but it's an unavoidable downside unless you intend to front-load the entirety of your data set forever.
+First, we'll stop preloading all comments in the `configure` block by removing `Meteor.subscribe('comments')` (in other words, going back to what we had previously):
 ~~~js
-Router.map(function() {
-
-  //...
-
-  this.route('postPage', {
-    path: '/posts/:_id',
-    waitOn: function() {
-      return Meteor.subscribe('comments', this.params._id);
-    },
-    data: function() { return Posts.findOne(this.params._id); }
-  });
-
-  //...
-
+Router.configure({
+layoutTemplate: 'layout',
+loadingTemplate: 'loading',
+notFoundTemplate: 'notFound',
+waitOn: function() {
+return Meteor.subscribe('posts');
+}
 });
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "7~9" %>
-
-////
-
+<%= highlight "5" %>
+And we'll add a new *route*-level `waitOn` function just for the `postPage` route:
+~~~js
+//...
+Router.route('/posts/:_id', {
+name: 'postPage',
+waitOn: function() {
+return Meteor.subscribe('comments', this.params._id);
+},
+data: function() { return Posts.findOne(this.params._id); }
+});
+//...
+~~~
+<%= caption "lib/router.js" %>
+<%= highlight "5~7" %>
+We're passing `this.params._id` as an argument to the subscription. So let's use that new information to make sure we restrict our data set to comments belonging to the current post:
 ~~~js
 Meteor.publish('posts', function() {
-  return Posts.find();
+return Posts.find();
 });
-
 Meteor.publish('comments', function(postId) {
-  return Comments.find({postId: postId});
+check(postId, String);
+return Comments.find({postId: postId});
 });
 ~~~
 <%= caption "server/publications.js" %>
 <%= highlight "5~7" %>
-
 <%= commit "10-4", "Made a simple publication/subscription for comments." %>
-
-////
-
+There's only one problem: when we return to the homepage, it claims that all our posts have 0 comments:
 <%= screenshot "10-3", "Our comments are gone!" %>
-
 ### Counting Comments
-
-////
-
-////
-
-////
-
+The reason for this will quickly become clear: we only load comments on the `postPage` route, so when we call `Comments.find({postId: this._id})` in the `commentsCount` helper, Meteor can't find the necessary client-side data to provide us with a result.
+The best way to deal with this is to *denormalize* the number of comments onto the post (if you're not sure what that means don't worry, the next sidebar has got you covered!). Although as we'll see, there's a minor addition of complexity in our code, the performance benefit we gain from not having to publish _all_ the comments to display the post list is worth it.
+We'll achieve this by adding a `commentsCount` property to the `post` data structure. To begin with, we update our post fixtures (and `meteor reset` to reload them -- don't forget to recreate your user account after):
 ~~~js
+// Fixture data
+if (Posts.find().count() === 0) {
+var now = new Date().getTime();
+// create two users
+var tomId = Meteor.users.insert({
+profile: { name: 'Tom Coleman' }
+});
+var tom = Meteor.users.findOne(tomId);
+var sachaId = Meteor.users.insert({
+profile: { name: 'Sacha Greif' }
+});
+var sacha = Meteor.users.findOne(sachaId);
 var telescopeId = Posts.insert({
-  title: 'Introducing Telescope',
-  ..
-  commentsCount: 2
+title: 'Introducing Telescope',
+userId: sacha._id,
+author: sacha.profile.name,
+url: 'http://sachagreif.com/introducing-telescope/',
+submitted: new Date(now - 7 * 3600 * 1000),
+commentsCount: 2
 });
-
+Comments.insert({
+postId: telescopeId,
+userId: tom._id,
+author: tom.profile.name,
+submitted: new Date(now - 5 * 3600 * 1000),
+body: 'Interesting project Sacha, can I get involved?'
+});
+Comments.insert({
+postId: telescopeId,
+userId: sacha._id,
+author: sacha.profile.name,
+submitted: new Date(now - 3 * 3600 * 1000),
+body: 'You sure can Tom!'
+});
 Posts.insert({
-  title: 'Meteor',
-  ...
-  commentsCount: 0
+title: 'Meteor',
+userId: tom._id,
+author: tom.profile.name,
+url: 'http://meteor.com',
+submitted: new Date(now - 10 * 3600 * 1000),
+commentsCount: 0
 });
-
 Posts.insert({
-  title: 'The Meteor Book',
-  ...
-  commentsCount: 0
+title: 'The Meteor Book',
+userId: tom._id,
+author: tom.profile.name,
+url: 'http://themeteorbook.com',
+submitted: new Date(now - 12 * 3600 * 1000),
+commentsCount: 0
 });
+}
 ~~~
 <%= caption "server/fixtures.js" %>
-
-////
-
+<%= highlight "20,21,45,46,54,55" %>
+As usual when updating the fixtures file, you'll have to `meteor reset` your database to make sure it runs again.
+Then, we make sure that all new posts start with 0 comments:
 ~~~js
-// pick out the whitelisted keys
-var post = _.extend(_.pick(postAttributes, 'url', 'title', 'message'), {
-  userId: user._id, 
-  author: user.username, 
-  submitted: new Date().getTime(),
-  commentsCount: 0
+//...
+var post = _.extend(postAttributes, {
+userId: user._id,
+author: user.username,
+submitted: new Date(),
+commentsCount: 0
 });
-
 var postId = Posts.insert(post);
+//...
 ~~~
 <%= caption "collections/posts.js" %>
-
-////
-
+<%= highlight "6,7" %>
+And then we update the relevant `commentsCount` when we make a new comment using Mongo's `$inc` operator (which increments a numeric field by one):
 ~~~js
+//...
+comment = _.extend(commentAttributes, {
+userId: user._id,
+author: user.username,
+submitted: new Date()
+});
 // update the post with the number of comments
 Posts.update(comment.postId, {$inc: {commentsCount: 1}});
-
 return Comments.insert(comment);
+//...
 ~~~
 <%= caption "collections/comments.js "%>
-
-////
-
+<%= highlight "9,10" %>
+Finally, we can just simply remove the `commentsCount` helper from `client/templates/posts/post_item.js`, as the field is now directly available on the post.
 <%= commit "10-5", "Denormalized the number of comments into the post." %>
+Now that users can talk to each other, it would be a shame if they missed out on new comments. And what do you know, the next chapter will show you how to implement notifications to prevent just this!
 
-////
