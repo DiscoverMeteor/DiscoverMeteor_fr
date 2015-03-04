@@ -109,7 +109,7 @@ Router.configure({
 
 Notez que pour déclencher ce code de données préenregistrées, il faudra faire un `meteor reset` pour remettre à zéro votre base de données. Après avoir réinitialisé, n'oubliez pas de créer un nouveau compte et de vous reconnecter.
 
-Nous avons tout d'abord créé un couple d'utilisateurs (factices), nous les avons enregistrés dans la base de données, et nous pourront utiliser leur `id` plus tard pour les référencer en dehors de la base de données. Ensuite nous avons ajouté un commentaire pour chaque utilisateur sur le premier post, en liant le commentaire avec le post (via `postId`) et avec l'utilisateur (via `userId`). Nous avons aussi ajouté une date de publication et un body à chaque commentaire, en plus de `author`, un champ dénormalisé.
+Nous avons tout d'abord créé un couple d'utilisateurs (factices), nous les avons enregistrés dans la base de données, et nous pourrons utiliser leur `id` plus tard pour les référencer en dehors de la base de données. Ensuite nous avons ajouté un commentaire pour chaque utilisateur sur le premier post, en liant le commentaire avec le post (via `postId`) et avec l'utilisateur (via `userId`). Nous avons aussi ajouté une date de publication et un body à chaque commentaire, en plus de `author`, un champ dénormalisé.
 
 Nous avons aussi amélioré notre router pour attendre un *tableau* (array) contenant à la fois les commentaires et les souscriptions aux posts.
 
@@ -343,7 +343,7 @@ Meteor.methods({
 
 Cela ne fait rien de bien fantaisiste, on s'assure simplement que l'utilisateur est connecté, que le commentaire a un corps (body), et qu'il est lié au post.
 
-<%= screenshot "10-2", "The comment submit form" %>
+<%= screenshot "10-2", "Le formulaire de publication de commentaires" %>
 
 ### Contrôle de la publication de commentaires
 
@@ -351,142 +351,180 @@ Dans l'état des choses, nous publions tous les commentaires à travers les post
 
 Si nous y pensons, le seul moment où on a besoin de souscrire à la publication de nos `commentaires` est lorsqu'un utilisateur accède à la page individuelle d'un post, et nous avons besoin de charger uniquement les commentaires reliés à ce post particulier.
 
+La première étape consistera à changer la manière dont nous souscrivons à nos commentaires. Jusqu'à maintenant, nous avons souscrit au niveau du *routeur*, ce qui signifie que nous chargeons toutes nos données d'un seul coup lorsque le routeur est initialisé.
 
-The first step will be changing the way we subscribe to comments. Up to now, we've been subscribing at the *router* level, which means we load all our data once when the router is initialized.
-But we now want our subscription to depend on a path parameter, and that parameter can obviously change at any point. So we'll need to move our subscription code from the *router* level to the *route* level.
-This has another consequence: instead of loading our data when we initialize our app, we'll now be loading it whenever we hit our *route*. This means that you'll now get loading times while browsing within the app, but it's an unavoidable downside unless you intend to front-load the entirety of your data set forever.
-First, we'll stop preloading all comments in the `configure` block by removing `Meteor.subscribe('comments')` (in other words, going back to what we had previously):
+Mais nous voulons maintenant que notre souscription dépende d'un paramètre chemin, et ce paramètre doit bien sûr pouvoir changer à n'importe quel moment. Nous allons donc avoir besoin de déplacer notre code de souscription du niveau du *routeur* à celui des *routes*.
+
+Cela a une autre conséquence : au lieu de charger nos données quand nous initialisons notre appli, nous les chargerons maintenant à chaque fois que notre *route* sera atteinte. Cela veut dire que vous aurez maintenant des temps de chargement pendant l'utilisation de l'appli, mais c'est un inconvénient inévitable à moins que vous ne prévoyiez de charger définitivement l'ensemble des données au début.
+
+Premièrement, nous allons arrêter de précharger tous les commentaires dans le bloc `configure` en supprimant `Meteor.subscribe('comments')` (autrement dit revenir à ce que nous avions précédemment) :
+
 ~~~js
 Router.configure({
-layoutTemplate: 'layout',
-loadingTemplate: 'loading',
-notFoundTemplate: 'notFound',
-waitOn: function() {
-return Meteor.subscribe('posts');
-}
-});
+  layoutTemplate: 'layout',
+  loadingTemplate: 'loading',
+  notFoundTemplate: 'notFound',
+  waitOn: function() {
+    return Meteor.subscribe('posts');
+  }
+ });
 ~~~
 <%= caption "lib/router.js" %>
 <%= highlight "5" %>
-And we'll add a new *route*-level `waitOn` function just for the `postPage` route:
+
+Et nous allons ajouter une nouvelle fonction `waitOn` de niveau *route* pour la route `postPage` :
+
 ~~~js
 //...
+
 Router.route('/posts/:_id', {
-name: 'postPage',
-waitOn: function() {
-return Meteor.subscribe('comments', this.params._id);
-},
-data: function() { return Posts.findOne(this.params._id); }
+  name: 'postPage',
+  waitOn: function() {
+    return Meteor.subscribe('comments', this.params._id);
+  },
+  data: function() { return Posts.findOne(this.params._id); }
 });
+
 //...
 ~~~
 <%= caption "lib/router.js" %>
 <%= highlight "5~7" %>
-We're passing `this.params._id` as an argument to the subscription. So let's use that new information to make sure we restrict our data set to comments belonging to the current post:
+
+Nous passons `this.params._id` en tant qu'argument à la souscription. Utilisons donc cette nouvelle information pour s'assurer de restreindre notre lot de données aux commentaires appartenant au post courant :
+
 ~~~js
 Meteor.publish('posts', function() {
-return Posts.find();
+  return Posts.find();
 });
+
 Meteor.publish('comments', function(postId) {
-check(postId, String);
-return Comments.find({postId: postId});
+  check(postId, String);
+  return Comments.find({postId: postId});
 });
 ~~~
 <%= caption "server/publications.js" %>
 <%= highlight "5~7" %>
-<%= commit "10-4", "Made a simple publication/subscription for comments." %>
-There's only one problem: when we return to the homepage, it claims that all our posts have 0 comments:
-<%= screenshot "10-3", "Our comments are gone!" %>
-### Counting Comments
-The reason for this will quickly become clear: we only load comments on the `postPage` route, so when we call `Comments.find({postId: this._id})` in the `commentsCount` helper, Meteor can't find the necessary client-side data to provide us with a result.
-The best way to deal with this is to *denormalize* the number of comments onto the post (if you're not sure what that means don't worry, the next sidebar has got you covered!). Although as we'll see, there's a minor addition of complexity in our code, the performance benefit we gain from not having to publish _all_ the comments to display the post list is worth it.
-We'll achieve this by adding a `commentsCount` property to the `post` data structure. To begin with, we update our post fixtures (and `meteor reset` to reload them -- don't forget to recreate your user account after):
+
+<%= commit "10-4", "Avec une simple publication/souscription pour les commentaires." %>
+
+Il n'y a qu'un seul problème, quand nous retournons à la page d'accueil, il prétend que tous nos posts n'ont aucun commentaires :
+
+<%= screenshot "10-3", "Nos commentaires ont disparu !" %>
+
+### Compter les commentaires
+
+La raison va nous apparaître bientôt claire : nous ne chargeons les commentaires que sur la route `postPage`, donc lorsque nous appelons `Comments.find({postId: this._id})` dans le helper `commentsCount`, Meteor ne peut pas trouver les données nécessaires côté client pour nous fournir un résultat.
+
+La meilleure façon de régler cela est de *dénormaliser* le nombre de commentaires sur le post (si vous n'êtes pas sûr de savoir ce que cela veut dire, ne vous inquiétez pas, le prochain aparté s'occupe de vous !). Bien que comme nous allons le voir, notre code s'en retrouve légèrement complexifié, le bénéfice de performance que nous retirons de ne pas avoir à publier _tous_ les commentaires pour afficher le post en vaut le coup.
+
+Nous allons terminer ça en ajoutant une propriété `commentsCount` à la structure de données du `post`. Nous allons commencer par mettre à jour nos données préenregistrées de posts (et faire `meteor reset` pour les recharger -- n'oubliez pas de recréer votre compte utilisateur après) :
+
 ~~~js
 // Fixture data
 if (Posts.find().count() === 0) {
-var now = new Date().getTime();
-// create two users
-var tomId = Meteor.users.insert({
-profile: { name: 'Tom Coleman' }
-});
-var tom = Meteor.users.findOne(tomId);
-var sachaId = Meteor.users.insert({
-profile: { name: 'Sacha Greif' }
-});
-var sacha = Meteor.users.findOne(sachaId);
-var telescopeId = Posts.insert({
-title: 'Introducing Telescope',
-userId: sacha._id,
-author: sacha.profile.name,
-url: 'http://sachagreif.com/introducing-telescope/',
-submitted: new Date(now - 7 * 3600 * 1000),
-commentsCount: 2
-});
-Comments.insert({
-postId: telescopeId,
-userId: tom._id,
-author: tom.profile.name,
-submitted: new Date(now - 5 * 3600 * 1000),
-body: 'Interesting project Sacha, can I get involved?'
-});
-Comments.insert({
-postId: telescopeId,
-userId: sacha._id,
-author: sacha.profile.name,
-submitted: new Date(now - 3 * 3600 * 1000),
-body: 'You sure can Tom!'
-});
-Posts.insert({
-title: 'Meteor',
-userId: tom._id,
-author: tom.profile.name,
-url: 'http://meteor.com',
-submitted: new Date(now - 10 * 3600 * 1000),
-commentsCount: 0
-});
-Posts.insert({
-title: 'The Meteor Book',
-userId: tom._id,
-author: tom.profile.name,
-url: 'http://themeteorbook.com',
-submitted: new Date(now - 12 * 3600 * 1000),
-commentsCount: 0
-});
+  var now = new Date().getTime();
+
+  // create two users
+  var tomId = Meteor.users.insert({
+    profile: { name: 'Tom Coleman' }
+  });
+  var tom = Meteor.users.findOne(tomId);
+  var sachaId = Meteor.users.insert({
+    profile: { name: 'Sacha Greif' }
+  });
+  var sacha = Meteor.users.findOne(sachaId);
+
+  var telescopeId = Posts.insert({
+    title: 'Introducing Telescope',
+    userId: sacha._id,
+    author: sacha.profile.name,
+    url: 'http://sachagreif.com/introducing-telescope/',
+    submitted: new Date(now - 7 * 3600 * 1000),
+    commentsCount: 2
+  });
+
+  Comments.insert({
+    postId: telescopeId,
+    userId: tom._id,
+    author: tom.profile.name,
+    submitted: new Date(now - 5 * 3600 * 1000),
+    body: 'Interesting project Sacha, can I get involved?'
+  });
+
+  Comments.insert({
+    postId: telescopeId,
+    userId: sacha._id,
+    author: sacha.profile.name,
+    submitted: new Date(now - 3 * 3600 * 1000),
+    body: 'You sure can Tom!'
+  });
+
+  Posts.insert({
+    title: 'Meteor',
+    userId: tom._id,
+    author: tom.profile.name,
+    url: 'http://meteor.com',
+    submitted: new Date(now - 10 * 3600 * 1000),
+    commentsCount: 0
+  });
+
+  Posts.insert({
+    title: 'The Meteor Book',
+    userId: tom._id,
+    author: tom.profile.name,
+    url: 'http://themeteorbook.com',
+    submitted: new Date(now - 12 * 3600 * 1000),
+    commentsCount: 0
+  });
 }
 ~~~
 <%= caption "server/fixtures.js" %>
 <%= highlight "20,21,45,46,54,55" %>
-As usual when updating the fixtures file, you'll have to `meteor reset` your database to make sure it runs again.
-Then, we make sure that all new posts start with 0 comments:
+
+Comme d'habitude lorsque nous mettons à jour notre fichier fixtures, vous devez lancer `meteor reset` sur votre base de donnée pour vous assurer qu'il sera relancé.
+
+Puis, nous nous assurons que tous les nouveaux posts débutent avec 0 commentaires :
+
 ~~~js
 //...
+
 var post = _.extend(postAttributes, {
-userId: user._id,
-author: user.username,
-submitted: new Date(),
-commentsCount: 0
+    userId: user._id,
+    author: user.username,
+    submitted: new Date(),
+    commentsCount: 0
 });
+
 var postId = Posts.insert(post);
+
 //...
 ~~~
 <%= caption "collections/posts.js" %>
 <%= highlight "6,7" %>
-And then we update the relevant `commentsCount` when we make a new comment using Mongo's `$inc` operator (which increments a numeric field by one):
+
+Ensuite nous mettons à jour le `commentsCount` qui s'y rapporte lorsque nous créons un nouveau commentaire en utilisant l'opérateur Mongo `$inc` (qui incrémente un champ numérique de un) :
+
 ~~~js
 //...
+
 comment = _.extend(commentAttributes, {
-userId: user._id,
-author: user.username,
-submitted: new Date()
+  userId: user._id,
+    author: user.username,
+    submitted: new Date()
 });
+
 // update the post with the number of comments
 Posts.update(comment.postId, {$inc: {commentsCount: 1}});
+
 return Comments.insert(comment);
+
 //...
 ~~~
 <%= caption "collections/comments.js "%>
 <%= highlight "9,10" %>
-Finally, we can just simply remove the `commentsCount` helper from `client/templates/posts/post_item.js`, as the field is now directly available on the post.
-<%= commit "10-5", "Denormalized the number of comments into the post." %>
-Now that users can talk to each other, it would be a shame if they missed out on new comments. And what do you know, the next chapter will show you how to implement notifications to prevent just this!
 
+Finalement, nous pouvons simplement supprimer le helper `commentsCount` de `client/templates/posts/post_item.js`, puisque le champ est maintenant directement disponible sur le post.
+
+<%= commit "10-5", "Dénormalisation du nombre de commentaires dans le post." %>
+
+Maintenant que les utilisateurs peuvent discuter entre eux, ce serait dommage qu'ils ratent les nouveaux commentaires. Et vous savez quoi, le prochain chapitre vous montrera comment implémenter les notifications pour éviter ça !
