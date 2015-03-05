@@ -16,17 +16,26 @@ Pour ce faire, nous notifierons à l'auteur de l'article qu'il y a eu un comment
 
 C'est sur ce type de fonctionnalité que Meteor resplendit : parce que Meteor est en temps réel par défaut, nous afficherons ces notifications _instantanément_. Nous n'avons pas besoin d'attendre que l'utilisateur rafraîchisse la page ou vérifie par un quelconque moyen, nous pouvons simplement faire apparaître de nouvelles notifications sans même écrire de code spécial.
 
-### Créer des notifications
+### Créer des Notifications
 
-Nous allons créer une notification quand quelqu'un commente sur vos articles. Dans le future, les notifications pourront être étendues pour couvrir beaucoup d'autres scénarii, mais pour l'instant ce sera suffisant pour garder les utilisateurs informés de ce qu'il se passe.
+Nous allons créer une notification quand quelqu'un commente sur vos articles. Dans le future, les notifications pourront être étendues pour couvrir beaucoup d'autres scénarios, mais pour l'instant ce sera suffisant pour garder les utilisateurs informés de ce qu'il se passe.
 
-Créons notre collection `Notifications`, ainsi qu'une fonction `createCommentNotification` qui insèrera une notification correspondante pour chaque nouveau commentaire sur un de vos articles :
+Créons notre collection `Notifications`, ainsi qu'une fonction `createCommentNotification` qui insérera une notification correspondante pour chaque nouveau commentaire sur un de vos articles.
+
+Puisque nous allons mettre à jour les notifications depuis le client, nous devons nous assurer que notre appel `allow` est blindé. Nous allons donc vérifier que :
+
+- l'utilisateur qui lance l'appel `update` possède la notification qui est en train d'être modifiée.
+- l'utilisateur essaie seulement de mettre à jour un seul champ.
+- ce seul champ est la propriété `read` de nos notifications.
 
 ~~~js
-Notifications = new Meteor.Collection('notifications');
+Notifications = new Mongo.Collection('notifications');
 
 Notifications.allow({
-  update: ownsDocument
+  update: function(userId, doc, fieldNames) {
+    return ownsDocument(userId, doc) &&
+      fieldNames.length === 1 && fieldNames[0] === 'read';
+  }
 });
 
 createCommentNotification = function(comment) {
@@ -42,7 +51,7 @@ createCommentNotification = function(comment) {
   }
 };
 ~~~
-<%= caption "collections/notifications.js" %>
+<%= caption "lib/collections/notifications.js" %>
 
 Comme les articles ou commentaires, cette collection `Notifications` sera partagée côté client et serveur. Comme nous avons besoin de mettre à jour les notifications une fois que l'utilisateur les a vues, nous autorisons également les mises à jours, en s'assurant comme d'habitude de bien limiter les permissions aux propres données de l'utilisateur.
 
@@ -51,50 +60,70 @@ Nous avons également créé une simple fonction qui surveille l'article que l'u
 Nous créons déjà des commentaires dans une méthode côté serveur, donc nous pouvons juste compléter cette méthode pour appeler notre fonction. Nous remplacerons `return Comments.insert(comment);` par `comment._id = Comments.insert(comment)` afin de sauvegarder l'`_id` du commentaire nouvellement créé dans une variable, puis appelerons notre fonction `createCommentNotification` :
 
 ~~~js
-Comments = new Meteor.Collection('comments');
+Comments = new Mongo.Collection('comments');
 
 Meteor.methods({
-  comment: function(commentAttributes) {
+  commentInsert: function(commentAttributes) {
 
-    // [...]
+    //...
+  
+    comment = _.extend(commentAttributes, {
+      userId: user._id,
+      author: user.username,
+      submitted: new Date()
+    });
 
-    // create the comment, save the id
+    // met à jour le post avec le nombre de commentaires
+    Posts.update(comment.postId, {$inc: {commentsCount: 1}});
+
+    // crée le commentaire et enregistre l'id
     comment._id = Comments.insert(comment);
-    
-    // maintenant créez une notification, en informant l'utilisateur qu'il y a eu un commentaire
+
+    // créé maintenant une notification, informant l'utilisateur qu'il y a eu un commentaire
     createCommentNotification(comment);
-    
+
     return comment._id;
   }
 });
 ~~~
-<%= caption "collections/comments.js" %>
-<%= highlight "8~14" %>
+<%= caption "lib/collections/comments.js" %>
+<%= highlight "17~123" %>
 
-Publions également les notifications, et souscrivons-y coté client :
+Publions également les notifications :
 
 ~~~js
-// [...]
+Meteor.publish('posts', function() {
+  return Posts.find();
+});
+
+Meteor.publish('comments', function(postId) {
+  check(postId, String);
+  return Comments.find({postId: postId});
+});
 
 Meteor.publish('notifications', function() {
   return Notifications.find();
 });
 ~~~
 <%= caption "server/publications.js" %>
+<%= highlight "10~12" %>
+
+Et souscrivons sur le client :
 
 ~~~js
 Router.configure({
   layoutTemplate: 'layout',
   loadingTemplate: 'loading',
-  waitOn: function() { 
+  notFoundTemplate: 'notFound',
+  waitOn: function() {
     return [Meteor.subscribe('posts'), Meteor.subscribe('notifications')]
   }
 });
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "5" %>
+<%= highlight "6" %>
 
-<%= commit "11-1", "Ajout collection notifications." %>
+<%= commit "11-1", "Ajout d'une collection basique de notifications." %>
 
 ### Affichage des notifications
 
@@ -102,37 +131,40 @@ Maintenant nous pouvons continuer et ajouter une liste de notifications à l'en-
 
 ~~~html
 <template name="header">
-  <header class="navbar">
-    <div class="navbar-inner">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-      <a class="brand" href="{{pathFor 'postsList'}}">Microscope</a>
-      <div class="nav-collapse collapse">
-        <ul class="nav">
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{{pathFor 'postsList'}}">Microscope</a>
+      </div>
+      <div class="collapse navbar-collapse" id="navigation">
+        <ul class="nav navbar-nav">
           {{#if currentUser}}
             <li>
-              <a href="{{pathFor 'postSubmit'}}">Soumettre l'article</a>
+              <a href="{{pathFor 'postSubmit'}}">Submit Post</a>
             </li>
             <li class="dropdown">
               {{> notifications}}
             </li>
           {{/if}}
         </ul>
-        <ul class="nav pull-right">
-          <li>{{loginButtons}}</li>
+        <ul class="nav navbar-nav navbar-right">
+          {{> loginButtons}}
         </ul>
       </div>
     </div>
-  </header>
+  </nav>
 </template>
 ~~~
-<%= caption "client/views/includes/header.html" %>
-<%= highlight "12~19" %>
+<%= caption "client/templates/includes/header.html" %>
+<%= highlight "15~22" %>
 
-Et créer les modèles de `notifications` et `notification` (ils partageront un même fichier `notifications.html`) :
+Et créer les modèles de `notifications` et `notificationItem` (ils partageront un même fichier `notifications.html`) :
 
 ~~~html
 <template name="notifications">
@@ -146,7 +178,7 @@ Et créer les modèles de `notifications` et `notification` (ils partageront un 
   <ul class="notification dropdown-menu">
     {{#if notificationCount}}
       {{#each notifications}}
-        {{> notification}}
+        {{> notificationItem}}
       {{/each}}
     {{else}}
       <li><span>No Notifications</span></li>
@@ -154,7 +186,7 @@ Et créer les modèles de `notifications` et `notification` (ils partageront un 
   </ul>
 </template>
 
-<template name="notification">
+<template name="notificationItem">
   <li>
     <a href="{{notificationPostPath}}">
       <strong>{{commenterName}}</strong> a commenté votre article
@@ -162,11 +194,11 @@ Et créer les modèles de `notifications` et `notification` (ils partageront un 
   </li>
 </template>
 ~~~
-<%= caption "client/views/notifications/notifications.html" %>
+<%= caption "client/templates/notifications/notifications.html" %>
 
 Nous pouvons voir que l'idée est de fournir dans chaque notification un lien vers l'article qui a été commenté, et le nom de l'utilisateur qui l'a commenté.
 
-Ensuite, nous avons besoin de nous assurer que nous sélectionnons la bonne liste de notifications dans notre manager, et mettons à jour les notifications comme "lues" quand l'utilisateur clique sur le lien vers lequel elles pointent.
+Ensuite, nous avons besoin de nous assurer que nous sélectionnons la bonne liste de notifications dans notre helper, et mettons à jour les notifications comme "lues" quand l'utilisateur clique sur le lien vers lequel elles pointent.
 
 ~~~js
 Template.notifications.helpers({
@@ -178,19 +210,19 @@ Template.notifications.helpers({
   }
 });
 
-Template.notification.helpers({
+Template.notificationItem.helpers({
   notificationPostPath: function() {
     return Router.routes.postPage.path({_id: this.postId});
   }
-})
+});
 
-Template.notification.events({
+Template.notificationItem.events({
   'click a': function() {
     Notifications.update(this._id, {$set: {read: true}});
   }
-})
+});
 ~~~
-<%= caption "client/views/notifications/notifications.js" %>
+<%= caption "client/templates/notifications/notifications.js" %>
 
 <%= commit "11-2", "Afficher des notifications dans l'en-tête." %>
 
@@ -224,7 +256,7 @@ Faire cela est assez direct, puisqu' une fonction `publish` a l'`id` de l'utilis
 
 ~~~js
 Meteor.publish('notifications', function() {
-  return Notifications.find({userId: this.userId});
+  return Notifications.find({userId: this.userId, read: false});
 });
 ~~~
 <%= caption "server/publications.js" %>
