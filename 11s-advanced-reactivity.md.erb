@@ -7,7 +7,7 @@ points: 10
 sidebar: true
 photoUrl: http://www.flickr.com/photos/ikewinski/8676146109/
 photoAuthor: Mike Lewinski
-contents: Apprendre comment créer des sources de données réactives dans Meteor.|Créer un simple exemple de source de données réactives.|Voir comment Deps se compare à AngularJS.
+contents: Apprendre comment créer des sources de données réactives dans Meteor.|Créer un simple exemple de source de données réactives.|Voir comment Tracker se compare à AngularJS.
 paragraphs: 29
 ---
 
@@ -24,7 +24,7 @@ currentLikeCount = 0;
 Meteor.setInterval(function() {
   var postId;
   if (Meteor.user() && postId = Session.get('currentPostId')) {
-    getFacebookLikeCount(Meteor.user(), Posts.find(postId), 
+    getFacebookLikeCount(Meteor.user(), Posts.find(postId).url, 
       function(err, count) {
         if (!err)
           currentLikeCount = count;
@@ -47,7 +47,7 @@ Cependant, rien ne dit à notre template de se recharger quand `currentLikeCount
 
 La réactivité de Meteor est contrôlée par des *dépendances*, des structures de données qui surveillent un ensemble de calculs.
 
-Comme nous l'avons vu dans une précédente sidebar sur la réactivité, un calcul est une section de code qui utilise des données réactives. Dans notre cas, un calcul a été implicitement créé pour le template `postItem`. Chaque helper de ce gestionnaire de template travaille avec la partie calcul.
+Comme nous l'avons vu dans un précédente aparté sur la réactivité, un calcul est une section de code qui utilise des données réactives. Dans notre cas, un calcul a été implicitement créé pour le template `postItem`, chaque helper de ce gestionnaire de template a sa propre partie calculs.
 
 Vous pouvez penser au calcul comme à la section de code qui "s'occupe" de la source de données réactives. Quand la donnée change, ce sera ce calcul qui en sera informé (via `invalidate()`), et c'est le calcul qui décide si quelque chose doit être fait.
 
@@ -57,7 +57,7 @@ Pour transformer notre variable `currentLikeCount` en source de données réacti
 
 ~~~js
 var _currentLikeCount = 0;
-var _currentLikeCountListeners = new Deps.Dependency();
+var _currentLikeCountListeners = new Tracker.Dependency();
 
 currentLikeCount = function() {
   _currentLikeCountListeners.depend();
@@ -83,7 +83,35 @@ Nous avons mis en place une dépendance `_currentLikeCountListeners`, qui survei
 
 Ces calculs peuvent ensuite continuer et traiter le changement au cas par cas.
 
-### Comparer Deps à Angular
+Si cela vous semble être une approche un peu rébarbative pour une simple source de données réactive, vous avez raison, et Meteor fournit des outils intégrés pour rendre ça un peu plus simple (tout comme vous n'avez pas besoin d'utiliser des calculs directement, vous utilisez d'habitude des autoruns). Il y a un paquet plate-forme appelé `reactive-var` qui fait exactement ce que notre `currentLikeCount()` fonction fait. Si nous l'ajoutons :
+
+~~~bash
+meteor add reactive-var
+~~~
+
+Nous pouvons l'utiliser pour simplifier notre code un petit peu :
+
+~~~js
+var currentLikeCount = new ReactiveVar();
+
+Meteor.setInterval(function() {
+  var postId;
+  if (Meteor.user() && postId = Session.get('currentPostId')) {
+    getFacebookLikeCount(Meteor.user(), Posts.find(postId),
+      function(err, count) {
+        if (!err) {
+          currentLikeCount.set(count);
+        }
+      });
+  }
+}, 5 * 1000);
+~~~
+<%= highlight "1,9" %>
+
+Maintenant, pour l'utiliser, nous appellerons `currentLikeCount.get()` dans notre helper et cela fonctionnera comme avant. Il y a aussi un autre paquet plate-forme `reactive-dict`, qui fournit un entrepôt réactif clé-valeur (presque exactement comme `Session`), qui peut être aussi utile.
+
+
+### Comparer Tracker à Angular
 
 [Angular](http://angularjs.org/) est une bibliothèque de rendu réactif côté client seulement, développé par les bonnes gens de Google. Il est intéressant de comparer l'approche de surveillance de dépendance de Meteor à celle d'Angular, car celles-ci sont assez différentes.
 
@@ -91,9 +119,9 @@ Nous avons vu que le modèle de Meteor utilise des blocs de code appelés comput
 
 De plus, bien que les calculs se re-exécutent habituellement quand ils sont invalidés, vous pouvez les configurer pour se comporter comme vous le voulez. Tout ceci nous donne un haut niveau de contrôle sur la réactivité.
 
-Dans Angular, la réactivité est controlée par l'objet `scope`. Un scope peut être imaginé comme un objet JavaScript simple avec plusieurs méthodes spéciales.
+Dans Angular, la réactivité est contrôlée par l'objet `scope`. Un scope peut être imaginé comme un objet JavaScript simple avec plusieurs méthodes spéciales.
 
-Quand vous voulez dépendre réactivement d'une valeur dans un scope, vous appellez `scope.$watch`, en fournissant l'expression qui vous intéresse (c'est-à-dire la partie du scope qui vous interesse) et une fonction listener qui s'exécutera à chaque fois que la valeur de l'expression change.
+Quand vous voulez dépendre activement d'une valeur dans un scope, vous appelez `scope.$watch`, en fournissant l'expression qui vous intéresse (c'est-à-dire la partie du scope qui vous intéresse) et une fonction listener qui s'exécutera à chaque fois que la valeur de l'expression change.
 
 De retour sur notre exemple Facebook, nous écririons :
 
@@ -107,7 +135,7 @@ Bien sûr, tout comme vous ne mettez que rarement en place des calculs dans Mete
 
 Quand ce type de valeur réactive a changé, `scope.$apply()` doit être appelé. Ceci réévalue chaque watcher du scope, mais appelle seulement la fonction listener des veilleurs pour qui la valeur de l'expression a *changé*.
 
-`scope.$apply()` est similaire à `dependency.changed()`, excepté qu'il agit au niveau du scope, plutôt que vous donner le contrôle de dire précisément quels listeners doivent être réévalués. Ceci dit, ce léger manque de contrôle donne à Angular l'abilité d'être vraiment intelligent et efficace dans la manière dont il détermine précisément quels listeners doivent être réévalués.
+`scope.$apply()` est similaire à `dependency.changed()`, excepté qu'il agit au niveau du scope, plutôt que vous donner le contrôle de dire précisément quels listeners doivent être réévalués. Ceci dit, ce léger manque de contrôle donne à Angular l'habilité d'être vraiment intelligent et efficace dans la manière dont il détermine précisément quels listeners doivent être réévalués.
 
 Avec Angular, notre code de fonction `getFacebookLikeCount()` devrait ressembler à ça :
 
@@ -124,4 +152,4 @@ Meteor.setInterval(function() {
 ~~~
 <%= highlight "5~6" %>
 
-Certes, Meteor s'occupe du gros du travail pour nous et nous laisse bénéficier de la réactivité sans trop de travail de notre part. Mais heureusement, apprendre ces pratiques s'avèrera utile si vous avez besoin de pousser les choses un peu plus loin.
+Certes, Meteor s'occupe du gros du travail pour nous et nous laisse bénéficier de la réactivité sans trop de travail de notre part. Mais heureusement, apprendre ces pratiques s'avéreras utile si vous avez besoin de pousser les choses un peu plus loin.
