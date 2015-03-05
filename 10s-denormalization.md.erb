@@ -15,7 +15,7 @@ Dénormaliser des données veut dire ne pas stocker ces données sous une forme 
 
 Dans le dernier chapitre, nous avons dénormalisé le total du nombre de commentaires dans l'objet 'post' pour éviter d'avoir à constamment charger tous les commentaires. D'un point de vue de la modélisation des données, ceci est redondant puisque nous pourrions plutôt compter les commentaires adéquats à tout moment pour calculer cette valeur (en omettant les considérations de performance).
 
-Dénormaliser est souvent synonyme de travail supplémentaire pour le développeur. Dans notre exemple, chaque fois que l'on ajoute ou enlève un commentaire, il faudra également se rappeller de mettre à jour l'article concerné pour s'assurer que le champs `commentsCount` (total des commentaires) reste juste. C'est exactement pour cela que les bases de données telles que MySQL voient cette approche d'un mauvais &oelig;il. 
+Dénormaliser est souvent synonyme de travail supplémentaire pour le développeur. Dans notre exemple, chaque fois que l'on ajoute ou enlève un commentaire, il faudra également se rappeler de mettre à jour l'article concerné pour s'assurer que le champs `commentsCount` (total des commentaires) reste juste. C'est exactement pour cela que les bases de données telles que MySQL voient cette approche d'un mauvais &oelig;il. 
 
 Cependant, l'approche classique a également ses inconvénients : sans une propriété `commentsCount`, nous devrions envoyer tous les commentaires en permanence vers le serveur afin de pouvoir les compter, ce que nous faisions au départ. La dénormalisation permet de nous éviter tout cela.
 
@@ -29,7 +29,7 @@ Mais il conviendrait d'étudier si la complexité d'un tel code de publication l
 
 <% end %>
 
-Bien sûr, de telles considérations sont propre à l'application : si you écrivez du code où l'intégrité des données est d'importance capitale, alors éviter les inconsistences de données est bien plus important et de priorité bien plus élevée que des gains de performance.
+Bien sûr, de telles considérations sont propre à l'application : si vous écrivez du code où l'intégrité des données est d'importance capitale, alors éviter les inconsistances de données est bien plus important et de priorité bien plus élevée que des gains de performance.
 
 ### Intégrer des Documents ou Utiliser des Collections Multiples
 
@@ -39,7 +39,7 @@ Il s'avère que de nombreux outils que Meteor nous fournis marchent bien mieux l
 
 1. La fonction `{{#each}}` est très efficace lorsque l'on itère sur un curseur (le résultat de collection.find()). Il n'en est pas de même lorsque l'on itère sur un tableau d'objets dans un plus gros document.
 2. `allow` et `deny` fonctionnent au niveau du document, nous assurant ainsi que toute modification de commentaire individuel soit correcte, chose qui serait plus complexe si l'on opérait au niveau du 'post'.  
-3. le Protocole de Données Distribuées (DDP) opère au niveau des attributs au plus au niveau du document-- cela voudrait dire que si `comments` était une propriété d'un article, le server enverrait la liste complète des commentaires mis à jour pour cet article vers chaque client connecté.
+3. le Protocole de Données Distribuées (DDP) opère au niveau des attributs au plus au niveau du document-- cela voudrait dire que si `comments` était une propriété d'un article, le serveur enverrait la liste complète des commentaires mis à jour pour cet article vers chaque client connecté.
 4. Les publications et souscriptions sont beaucoup plus faciles à contrôler au niveau des documents. Par exemple, si l'on voulait paginer les commentaires d'un article, on trouverait cela difficile à réaliser à moins que les commentaires ne soient dans leur propre collection.
 
 Mongo suggère d'intégrer les documents dans l'ordre pour réduire le nombre de requêtes coûteuses pour les récupérer. Cependant, ceci revêt moins d'importance lorsque l'on prend en compte l'architecture de Meteor : la plupart du temps l'on recherchera les commentaires sur le client, où l'accès à la base de données est essentiellement gratuite.  
@@ -48,6 +48,6 @@ Mongo suggère d'intégrer les documents dans l'ordre pour réduire le nombre de
 
 ### Les Inconvénients de la Dénormalisation
 
-On peut facilement défendre le fait qu'il ne faille pas dénormaliser ses données. Pour examiner les arguments contre la dénormalisation, nous vous recommendons [Why You Should Never Use MongoDB](http://www.sarahmei.com/blog/2013/11/11/why-you-should-never-use-mongodb/) par Sarah Mei.
+On peut facilement défendre le fait qu'il ne faille pas dénormaliser ses données. Pour examiner les arguments contre la dénormalisation, nous vous recommandons [Why You Should Never Use MongoDB](http://www.sarahmei.com/blog/2013/11/11/why-you-should-never-use-mongodb/) par Sarah Mei.
 
 <% end %>
