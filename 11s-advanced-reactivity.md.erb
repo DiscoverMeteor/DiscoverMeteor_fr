@@ -47,7 +47,7 @@ Cependant, rien ne dit à notre template de se recharger quand `currentLikeCount
 
 La réactivité de Meteor est contrôlée par des *dépendances*, des structures de données qui surveillent un ensemble de calculs.
 
-Comme nous l'avons vu dans un précédente aparté sur la réactivité, un calcul est une section de code qui utilise des données réactives. Dans notre cas, un calcul a été implicitement créé pour le template `postItem`, chaque helper de ce gestionnaire de template a sa propre partie calculs.
+Comme nous l'avons vu dans un précédent aparté sur la réactivité, un calcul est une section de code qui utilise des données réactives. Dans notre cas, un calcul a été implicitement créé pour le template `postItem`, chaque helper de ce gestionnaire de template a sa propre partie calculs.
 
 Vous pouvez penser au calcul comme à la section de code qui "s'occupe" de la source de données réactives. Quand la donnée change, ce sera ce calcul qui en sera informé (via `invalidate()`), et c'est le calcul qui décide si quelque chose doit être fait.
 
