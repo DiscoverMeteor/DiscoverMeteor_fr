@@ -1,4 +1,4 @@
----
+------
 title: Erreurs
 slug: errors
 date: 0009/01/01
@@ -6,24 +6,21 @@ number: 9
 points: 10
 photoUrl: http://www.flickr.com/photos/ikewinski/9413892879/
 photoAuthor: Mike Lewinski
-contents: Créer un meilleur mécanisme pour afficher les erreurs et les messages.|Apprendre à utiliser `Template.rendered` pour savoir quand un utilisateur a vu une erreur.|Utiliser un filtre au niveau du routeur pour s'assurer que les erreurs ont été vues une fois.
+contents: Créer un meilleur mécanisme pour afficher les erreurs et les messages.|Implémenter une validation de formulaire plus stricte|Ajouter un rapport d'erreurs en ligne à nos formulaires
 paragraphs: 31
 ---
 
-En utilisant simplement la boite de dialogue de navigateur standard `alert()` pour avertir l'utilisateur quand il y a un problème avec l'envoi de leur formulaire n'est pas très satisfaisant, et ce n'est clairement pas fait pour une bonne UX (User Experience). Nous pouvons faire mieux.
+Simplement utiliser la boite de dialogue de navigateur standard `alert()` pour avertir l'utilisateur quand il y a un problème avec l'envoi de leur formulaire n'est pas très satisfaisant, et ce n'est clairement pas fait pour une expérience utilisateur. Nous pouvons faire mieux.
 
-A la place, construisons un mécanisme de rapport d'erreurs plus versatile
- qui fera un meilleur travail pour prévenir l'utilisateur de ce qu'il se passe sans casser son processus.
+A la place, construisons un mécanisme de rapport d'erreurs plus versatile qui préviendra mieux l'utilisateur de ce qu'il se passe sans l'interrompre.
 
-### Présenter les Collections Locales
+Nous allons implémenter un système simple qui affiche les nouvelles erreurs dans le coin supérieur droit de la fenêtre, semblable à l'application populaire Mac OS [Growl](http://growl.info/). 
 
-Nous allons implémenter un simple système qui conservera une trace de quelles erreurs un utilisateur a déjà vues et afficher les nouvelles dans une zone "flash" du site. Ce pattern UX est utile quand nous voulons informer un utilisateur que quelque chose s'est passé sans interrompre son processus de travail.
+### Présentation des Collections Locales
 
-Ce que nous allons créer est similaire aux messages flash qu'on trouve souvent dans les applications Ruby on Rails, mais c'est plus subtile car c'est implémenté côté client et que l'on sait quand un utilisateur a vu un message.
+Pour commencer, nous devons créer une collection dans laquelle nous stockerons nos erreurs. Sachant que les erreurs sont seulement pertinentes pour la session en cours et n'ont besoin d'être persistantes en aucun cas, nous allons faire quelque chose de nouveau, et créer une *collection locale*. Cela signifie que la collection `Errors` existera uniquement *dans le navigateur*, et ne fera aucune tentative de synchronisation avec le serveur.
 
-Pour commencer, nous créons une collection pour stocker nos erreurs. Etant donné que les erreurs sont seulement pertinantes pour la session courante et n'ont pas besoin d'être persistantes dans d'autres cas, nous allons faire quelque chose de nouveau, et créer une _collection locale_. Cela signifie que la collection `Errors` existera seulement dans le navigateur, et ne fera aucune tentative de synchronisation avec le serveur.
-
-Pour terminer ça, nous créons simplement l'erreur dans un fichier client-seulement, avec le nom de collection configuré à `null`. Nous créons une fonction `throwError` qui insère simplement une erreur dans notre nouvelle collection :
+Pour accomplir cela, nous créons l'erreur dans le dossier `client` (pour faire de la collection une collection cliente uniquement), avec son nom de collection MongoDB configuré à `null` (puisque les données de cette collection ne seront jamais sauvegardées dans la base de donnée côté serveur) :
 
 ~~~js
 // Collection Locale (client-seulement)
@@ -31,16 +28,16 @@ Errors = new Meteor.Collection(null);
 ~~~
 <%= caption "client/helpers/errors.js" %>
 
-Maintenant que la collection a été créé, vous pouvez ajouter une fonction `throwError` que nous appellerons pour ajouter des erreurs dedans. Nous n'avons pas besoin de nous inquiéter de `allow` ou `deny` ou autre chose de ce type, comme c'est une collection locale et qu'elle ne sera pas sauvée vers la base de données Mongo.
+Maintenant que la collection a été créée, nous pouvons ajouter une fonction `throwError` que nous appellerons pour y ajouter des erreurs. Nous n'avons pas besoin de nous préoccuper de `allow` ou `deny` ou d'autre problème de sécurité puisque cette collection est “locale” à l'utilisateur en cours.
 
 ~~~js
 throwError = function(message) {
-  Errors.insert({message: message})
-}
+  Errors.insert({message: message});
+};
 ~~~
 <%= caption "client/helpers/errors.js" %>
 
-L'avantage d'utiliser une collection locale pour stocker les erreurs est que, comme toutes les collections, c'est réactif -- ça veut dire que nous pouvons afficher les erreurs déclarativement de la même façon que nous affichons les données de n'importe quelle autre collection.
+L'avantage d'utiliser une collection locale pour stocker les erreurs est que, comme toutes les collections, elle est réactive -- cela veut dire que nous pouvons afficher les erreurs d'une manière réactive de la même façon que nous affichons les données de n'importe quelle autre collection.
 
 ### Afficher les erreurs
 
@@ -52,19 +49,19 @@ Nous allons afficher les erreurs en haut de notre layout principal :
     {{> header}}
     {{> errors}}
     <div id="main" class="row-fluid">
-      {{yield}}
+      {{> yield}}
     </div>
   </div>
 </template>
 ~~~
-<%= caption "client/views/application/layout.html" %>
+<%= caption "client/templates/application/layout.html" %>
 <%= highlight "4" %>
 
-Maintenant créons les templates `errors` et `error` dans `errors.html` :
+Maintenant, créons les templates `errors` et `error` dans `errors.html` :
 
 ~~~html
 <template name="errors">
-  <div class="errors row-fluid">
+  <div class="errors">
     {{#each errors}}
       {{> error}}
     {{/each}}
@@ -72,21 +69,21 @@ Maintenant créons les templates `errors` et `error` dans `errors.html` :
 </template>
 
 <template name="error">
-  <div class="alert alert-error">
+  <div class="alert alert-danger" role="alert">
     <button type="button" class="close" data-dismiss="alert">&times;</button>
     {{message}}
   </div>
 </template>
 ~~~
-<%= caption "client/views/includes/errors.html" %>
+<%= caption "client/templates/includes/errors.html" %>
 
 <% note do %>
 
 ### Templates jumeaux
 
-Vous noterez que nous mettons deux templates dans un fichier simple. Jusqu'à maintenant nous avons essayé d'adhérer à la convention "un fichier, un template", mais tant que Meteor est concerné, mettre tous vos templates dans un fichier simple fonctionne aussi bien (bien que ça pourrait faire un `main.html` très confus).
+Vous noterez que nous mettons deux templates dans un seul fichier. Jusqu'à maintenant, nous avons essayé d'adhérer à la convention "un fichier, un template", mais, pour Meteor, mettre tous vos templates dans un seul fichier fonctionne aussi bien (bien que cela rendrait `main.html` très confus!).
 
-Dans ce cas, vu que les templates d'erreur sont courts, nous allons faire une exception et les mettre dans le même fichier pour avoir un dépôt un peu plus clair.
+Dans ce cas, vu que les deux templates d'erreur sont plutôt courts, nous allons faire une exception et les mettre dans le même fichier pour rendre notre répertoire un peu plus clair.
 
 <% end %>
 
@@ -99,51 +96,160 @@ Template.errors.helpers({
   }
 });
 ~~~
-<%= caption "client/views/includes/errors.js" %>
+<%= caption "client/templates/includes/errors.js" %>
+
+Vous pouvez dès à présent tester nos nouveaux messages d'erreur manuellement. Ouvrez simplement la console de votre navigateur et tapez :
+
+~~~js
+throwError("I'm an error!");
+
+<%= screenshot "9-1", "Tester les messages d'erreur." %>
 
 <%= commit "9-1", "Rapport d'erreur basique." %>
 
+<% note do %>
+
+### Deux Types d'Erreur
+
+A ce stade, il est important de faire la distinction entre les erreurs au niveau de l'application (“app-level”) de celles au niveau du code (“code-level”).
+
+Les erreurs au niveau de l'application (**app-level**) sont généralement déclenchées par l'utilisateur, et l'on peut agir sur celles-ci. Ces erreurs comprennent notamment les erreurs de validation, les erreurs de permission, les erreurs de type “introuvables” et ainsi de suite. Ce sont le genre d'erreurs que l'on veut montrer à l'utilisateur pour l'aider à régler tout problème rencontré.
+
+Les erreurs au niveau du code (**code-level**), de leur côté, sont déclenchées de manière inattendue par de réels bugs dans votre code, and vous ne voulez probablement *pas* les afficher à vos utilisateurs directement, mais plutôt d'en garder une trace avec un service tiers de suivi des erreurs (tel que [Kadira](http://kadira.io)). 
+
+Dans ce chapitre, nous nous concentrerons sur le premier type d'erreur, pas sur le suivi des bugs. 
+
+<% end %>
+
 ### Créer des erreurs
 
-Nous savons comment afficher des erreurs, mais nous avons encore besoin d'en créer quelques unes avant d'en voir. Les erreurs sont la plupart du temps déclenchées par les utilisateurs entrant un nouveau contenu, donc nous allons vérifier les erreurs dans notre callback de création d'article, et afficher le message pour toutes les erreurs qui surgissent.
-
-En plus, si nous obtenons une erreur `302` (laquelle indique que l'article avec la même URL existe déjà), nous redirigerons l'utilisateur vers l'article existant. Nous obtenons l'`id` de l'article existant depuis `error.details` (souvenez-vous que nous passons l'`id` de cet article comme troisième argument `details` de notre classe `Error` dans le chapitre 7).
+Nous savons désormais comment afficher des erreurs, mais encore faut-il en déclencher une avant de voir quoi que ce soit. En fait, nous avons déjà implémenté un bon scénario pour une erreur: notre avertissement lors d'un article doublon. Nous remplaçerons simplement les `alert` dans `postSubmit` par la nouvelle fonction `throwError` que nous venons de mettre en place:
 
 ~~~js
 Template.postSubmit.events({
   'submit form': function(e) {
     e.preventDefault();
-
+    
     var post = {
       url: $(e.target).find('[name=url]').val(),
-      title: $(e.target).find('[name=title]').val(),
-      message: $(e.target).find('[name=message]').val()
-    }
-
-    Meteor.call('post', post, function(error, id) {
-      if (error) {
-        // Afficher l'erreur à l'utilisateur
-        throwError(error.reason);
-
-        if (error.error === 302)
-          Router.go('postPage', {_id: error.details})
-      } else {
-        Router.go('postPage', {_id: id});
-      }
+      title: $(e.target).find('[name=title]').val()
+    };
+    
+    Meteor.call('postInsert', post, function(error, result) {
+      // display the error to the user and abort
+      if (error)
+        return throwError(error.reason);
+      
+      // show this result but route anyway
+      if (result.postExists)
+        throwError('This link has already been posted');
+    
+      Router.go('postPage', {_id: result._id});  
     });
   }
 });
 ~~~
-<%= caption "client/views/posts/post_submit.js" %>
-<%= highlight "12~14, 16~21" %>
+<%= caption "client/templates/posts/post_submit.js" %>
+<%= highlight "13,17" %>
+
+Tant que nous y sommes, nous allons faire la même chose pour `postEdit` :
+
+~~~js
+Template.postEdit.events({
+  'submit form': function(e) {
+    e.preventDefault();
+    
+    var currentPostId = this._id;
+    
+    var postProperties = {
+      url: $(e.target).find('[name=url]').val(),
+      title: $(e.target).find('[name=title]').val()
+    }
+    
+    Posts.update(currentPostId, {$set: postProperties}, function(error) {
+      if (error) {
+        // display the error to the user
+        throwError(error.reason);
+      } else {
+        Router.go('postPage', {_id: currentPostId});
+      }
+    });
+  },
+  //...
+});
+~~~
+<%= caption "client/templates/posts/post_edit.js" %>
+<%= highlight "15" %>
 
 <%= commit "9-2", "Utilisation du rapport d'erreurs." %>
 
-Essayez : tentez de créer un article et entrez une URL `http://meteor.com`. Comme cette URL est déjà attachée à un article dans la préinstallation, vous devriez voir :
+Essayez par vous même : tentez de créer un article et entrez l'adresse `http://meteor.com`. Comme cette adresse est déjà attachée à un article dans l'installation, vous devriez voir :
 
-<%= screenshot "9-1", "Déclencher une erreur" %>
+<%= screenshot "9-2", "Déclencher une erreur" %>
 
-### Acquitter les erreurs
+### Effacer les Erreurs
+
+Vous noterez que les messages d'erreur disparaissent par eux-même après quelques secondes. Cela est en fait dû à un peu de CSS magique inclus dans la feuille de style que nous avons ajouté au tout début de ce livre :
+
+~~~css
+@keyframes fadeOut {
+  0% {opacity: 0;}
+  10% {opacity: 1;}
+  90% {opacity: 1;}
+  100% {opacity: 0;}
+}
+
+//...
+
+.alert {
+  animation: fadeOut 2700ms ease-in 0s 1 forwards;
+  //...
+}
+~~~
+<%= caption "client/stylesheets/style.css" %>
+
+Nous définissons une animation CSS `fadeOut` qui précise quatre images clé pour la propriété opacité (à 0%, 10%, 90%, et 100% de la durée totale de l'animation) et appliquons cette animation à la classe `.alert`.
+
+L'animation s'executera pendant 2700 millisecondes au total, utilisera l'équation de timing `ease-in`, s'executera avec un délai de 0 secondes, une seule fois, et finalement restera sur la dernière image clé lorsqu'elle est terminée. 
+
+<% note do %>
+
+### Animations contre Animations
+
+Vous vous demandez peut-être pourquoi nous utilisons des animations CSS (qui sont prédeterminées et en dehors du contrôle de notre application), au lieu d'animations controllées par Meteor lui-même.
+
+Bien que Meteor offre une aide à l'insertion d'animations, nous voulions que ce chapitre soit focalisé sur les erreurs. Nous utiliserons donc pour l'instant des animations CSS “bêtes” et garderons les choses plus sophistiquées pour le chapitre Animations.
+
+<% end %>
+
+Cela fonctionne bien, mais si vous déclenchez plusieurs erreurs (en soumettant le même lien trois fois par exemple) vous remarquerez qu'elles s'empilerent les unes au dessus des autres :
+
+<%= screenshot "9-3", "Débordement de pile." %>
+
+Et cela parce que alors que les élements `.alert` disparaissent *visuellement*, ils sont en fait toujours présents dans le DOM. Nous devons régler cela.
+
+C'est exactement dans ce genre de situation que Meteor brille. Puisque la collection `Errors' est réactive, tout ce que nous devons faire pour nous débarasser de ces vieilles erreurs est de les supprimer de la collection!
+
+Nous utiliserons `Meteor.setTimeout` pour spécifier une fonction callback à être exécutée à la fin du timeout (dans ce cas, 3000 millisecondes).
+
+~~~js
+Template.errors.helpers({
+  errors: function() {
+    return Errors.find();
+  }
+});
+
+Template.error.rendered = function() {
+  var error = this.data;
+  Meteor.setTimeout(function () {
+    Errors.remove(error._id);
+  }, 3000);
+};
+~~~
+<%= caption "client/templates/includes/errors.js" %>
+<%= highlight "7~12" %>
+
+<%= commit "9-3", "Effacer les erreurs après 3 secondes." %>
 
 Si vous cliquez sur le bouton fermer de l'erreur, vous verrez l'erreur disparaître, parce que ce bouton fermer déclenche le JavaScript embarqué de Twitter Bootstrap.
 
