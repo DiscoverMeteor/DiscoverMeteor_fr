@@ -10,9 +10,9 @@ contents: Créer un meilleur mécanisme pour afficher les erreurs et les message
 paragraphs: 31
 ---
 
-Simplement utiliser la boite de dialogue de navigateur standard `alert()` pour avertir l'utilisateur quand il y a un problème avec l'envoi de leur formulaire n'est pas très satisfaisant, et ce n'est clairement pas fait pour une expérience utilisateur. Nous pouvons faire mieux.
+Utiliser simplement la boite de dialogue de navigateur standard `alert()` pour avertir l'utilisateur quand il y a un problème avec l'envoi de leur formulaire n'est pas très satisfaisant, et ce n'est clairement pas fait pour une bonne expérience utilisateur. Nous pouvons faire mieux.
 
-A la place, construisons un mécanisme de rapport d'erreurs plus versatile qui préviendra mieux l'utilisateur de ce qu'il se passe sans l'interrompre.
+À la place, construisons un mécanisme de rapport d'erreurs plus versatile qui préviendra mieux l'utilisateur de ce qu'il se passe sans l'interrompre.
 
 Nous allons implémenter un système simple qui affiche les nouvelles erreurs dans le coin supérieur droit de la fenêtre, semblable à l'application populaire Mac OS [Growl](http://growl.info/). 
 
@@ -48,7 +48,7 @@ Nous allons afficher les erreurs en haut de notre layout principal :
   <div class="container">
     {{> header}}
     {{> errors}}
-    <div id="main" class="row-fluid">
+    <div id="main">
       {{> yield}}
     </div>
   </div>
@@ -61,7 +61,7 @@ Maintenant, créons les templates `errors` et `error` dans `errors.html` :
 
 ~~~html
 <template name="errors">
-  <div class="errors">
+  <div class="errors row-fluid">
     {{#each errors}}
       {{> error}}
     {{/each}}
@@ -81,7 +81,7 @@ Maintenant, créons les templates `errors` et `error` dans `errors.html` :
 
 ### Templates jumeaux
 
-Vous noterez que nous mettons deux templates dans un seul fichier. Jusqu'à maintenant, nous avons essayé d'adhérer à la convention "un fichier, un template", mais, pour Meteor, mettre tous vos templates dans un seul fichier fonctionne aussi bien (bien que cela rendrait `main.html` très confus!).
+Vous noterez que nous mettons deux templates dans un seul fichier. Jusqu'à maintenant, nous avons essayé d'adhérer à la convention "un fichier, un template", mais, pour Meteor, mettre tous vos templates dans un seul fichier fonctionne aussi bien (bien que cela rendrait `main.html` très confus !).
 
 Dans ce cas, vu que les deux templates d'erreur sont plutôt courts, nous allons faire une exception et les mettre dans le même fichier pour rendre notre répertoire un peu plus clair.
 
@@ -102,6 +102,7 @@ Vous pouvez dès à présent tester nos nouveaux messages d'erreur manuellement.
 
 ~~~js
 throwError("I'm an error!");
+~~~
 
 <%= screenshot "9-1", "Tester les messages d'erreur." %>
 
@@ -123,7 +124,7 @@ Dans ce chapitre, nous nous concentrerons sur le premier type d'erreur, pas sur 
 
 ### Créer des erreurs
 
-Nous savons désormais comment afficher des erreurs, mais encore faut-il en déclencher une avant de voir quoi que ce soit. En fait, nous avons déjà implémenté un bon scénario pour une erreur: notre avertissement lors d'un article doublon. Nous remplaçerons simplement les `alert` dans `postSubmit` par la nouvelle fonction `throwError` que nous venons de mettre en place:
+Nous savons désormais comment afficher des erreurs, mais encore faut-il en déclencher une avant de voir quoi que ce soit. En fait, nous avons déjà implémenté un bon scénario pour une erreur: notre avertissement lors d'un article doublon. Nous remplacerons simplement les `alert` dans `postSubmit` par la nouvelle fonction `throwError` que nous venons de mettre en place:
 
 ~~~js
 Template.postSubmit.events({
@@ -189,7 +190,7 @@ Essayez par vous même : tentez de créer un article et entrez l'adresse `http:/
 
 ### Effacer les Erreurs
 
-Vous noterez que les messages d'erreur disparaissent par eux-même après quelques secondes. Cela est en fait dû à un peu de CSS magique inclus dans la feuille de style que nous avons ajouté au tout début de ce livre :
+Vous noterez que les messages d'erreur disparaissent par eux-même après quelques secondes. Cela est en fait dû à un peu de magie CSS incluse dans la feuille de style que nous avons ajoutée au tout début de ce livre :
 
 ~~~css
 @keyframes fadeOut {
@@ -210,25 +211,25 @@ Vous noterez que les messages d'erreur disparaissent par eux-même après quelqu
 
 Nous définissons une animation CSS `fadeOut` qui précise quatre images clé pour la propriété opacité (à 0%, 10%, 90%, et 100% de la durée totale de l'animation) et appliquons cette animation à la classe `.alert`.
 
-L'animation s'executera pendant 2700 millisecondes au total, utilisera l'équation de timing `ease-in`, s'executera avec un délai de 0 secondes, une seule fois, et finalement restera sur la dernière image clé lorsqu'elle est terminée. 
+L'animation s'exécutera pendant 2700 millisecondes au total, utilisera l'équation de timing `ease-in`, s'exécutera avec un délai de 0 secondes, une seule fois, et finalement restera sur la dernière image clé (keyframe) une fois terminée. 
 
 <% note do %>
 
 ### Animations contre Animations
 
-Vous vous demandez peut-être pourquoi nous utilisons des animations CSS (qui sont prédeterminées et en dehors du contrôle de notre application), au lieu d'animations controllées par Meteor lui-même.
+Vous vous demandez peut-être pourquoi nous utilisons des animations CSS (qui sont prédéterminées et en dehors du contrôle de notre application), au lieu d'animations contrôlées par Meteor lui-même.
 
 Bien que Meteor offre une aide à l'insertion d'animations, nous voulions que ce chapitre soit focalisé sur les erreurs. Nous utiliserons donc pour l'instant des animations CSS “bêtes” et garderons les choses plus sophistiquées pour le chapitre Animations.
 
 <% end %>
 
-Cela fonctionne bien, mais si vous déclenchez plusieurs erreurs (en soumettant le même lien trois fois par exemple) vous remarquerez qu'elles s'empilerent les unes au dessus des autres :
+Cela fonctionne bien, mais si vous déclenchez plusieurs erreurs (en soumettant le même lien trois fois par exemple) vous remarquerez qu'elles s'empileront les unes au dessus des autres :
 
 <%= screenshot "9-3", "Débordement de pile." %>
 
 Et cela parce que alors que les élements `.alert` disparaissent *visuellement*, ils sont en fait toujours présents dans le DOM. Nous devons régler cela.
 
-C'est exactement dans ce genre de situation que Meteor brille. Puisque la collection `Errors' est réactive, tout ce que nous devons faire pour nous débarasser de ces vieilles erreurs est de les supprimer de la collection!
+C'est exactement dans ce genre de situation que Meteor brille. Puisque la collection `Errors' est réactive, tout ce que nous devons faire pour nous débarrasser de ces vieilles erreurs est de les supprimer de la collection!
 
 Nous utiliserons `Meteor.setTimeout` pour spécifier une fonction callback à être exécutée à la fin du timeout (dans ce cas, 3000 millisecondes).
 
@@ -251,69 +252,306 @@ Template.error.rendered = function() {
 
 <%= commit "9-3", "Effacer les erreurs après 3 secondes." %>
 
-Si vous cliquez sur le bouton fermer de l'erreur, vous verrez l'erreur disparaître, parce que ce bouton fermer déclenche le JavaScript embarqué de Twitter Bootstrap.
+The [`rendered`](http://docs.meteor.com/#template_rendered) callback triggers once our template has been rendered in the browser. Inside the callback, `this` refers to the current template instance, and `this.data` lets us access the data of the object that is currently being rendered (in our case, an error).
 
-Mais pendant que Bootstrap supprime le `<div>` d'erreur dans le DOM, ça ne supprime pas l'objet erreur de la collection Meteor. Donc ajoutons un moyen de nettoyer notre collection locale une fois que l'erreur a fini son travail.
+### Mettre en place une validation
 
-Premièrement, nous allons modifier la fonction `throwError` pour inclure une propriété `seen`. Ça sera utile plus tard de garder une trace pour savoir si une erreur a été vue par l'utilisateur.
+Jusqu'ici, nous n'avons pas imposé une quelconque validation de notre formulaire. Au minimum, nous voulons que les utilisateurs fournissent une URL et un titre pour leur nouveau post. Assurons-nous donc qu'ils le font.
 
-Une fois fait, nous pouvons coder une simple fonction `clearErrors` qui efface ces erreurs "vues".
+Nous allons faire deux choses pour signaler les champs non renseignés : premièrement, nous allons donner une classe spéciale CSS `has-error` au `div` parent de n'importe quel champ problématique du formulaire. Puis, nous allons afficher un message d'erreur utile juste en dessous du champ.
+
+Pour commencer, préparons notre template `postSubmit` pour qu'il accepte ces nouveaux helpers :
+
+~~~html
+<template name="postSubmit">
+  <form class="main form page">
+    <div class="form-group {{errorClass 'url'}}">
+      <label class="control-label" for="url">URL</label>
+      <div class="controls">
+        <input name="url" id="url" type="text" value="" placeholder="Your URL" class="form-control"/>
+        <span class="help-block">{{errorMessage 'url'}}</span>
+      </div>
+    </div>
+    <div class="form-group {{errorClass 'title'}}">
+      <label class="control-label" for="title">Title</label>
+      <div class="controls">
+        <input name="title" id="title" type="text" value="" placeholder="Name your post" class="form-control"/>
+        <span class="help-block">{{errorMessage 'title'}}</span>
+      </div>
+    </div>
+    <input type="submit" value="Submit" class="btn btn-primary"/>
+  </form>
+</template>
+~~~
+<%= caption "client/templates/posts/post_submit.html" %>
+<%= highlight "3,7,10,14" %>
+
+Notez que nous transmettons des paramètres (respectivement `url` et `title`) à chaque helper. Cela nous permet de réutiliser le même helper chaque fois, en modifiant son comportement selon le paramètre.
+
+Abordons maintenant la partie amusante : rendre ces helpers réellement fonctionnels.
+
+Nous utiliserons **Session** pour stocker un objet `postSubmitErrors` contenant tous les messages d'erreurs potentiels. Pendant que l'utilisateur interagit avec le formulaire, cet objet changera, ce qui, à son tour, mettra à jour activement la mise en page et le contenu du formulaire.
+
+En premier lieu, nous initialiserons l'objet à chaque fois que le template `postSubmit` est créé. Cela assure que l'utilisateur ne verra pas d'anciens messages d'erreur laissés par une précédente visite de cette page.
+
+Nous définirons ensuite nos deux helpers de template. Ils regardent tous les deux la propriété `field` de `Session.get('postSubmitErrors')` (où `field` est soit `url` ou `title` selon le lieu d'où on appelle le helper).
+
+Alors que `errorMessage` renvoie simplement lui-même le message, `errorClass` vérifie la *présence* d'un message et renvoie `has-error` s'il en existe un.
 
 ~~~js
-// Collection locale (client-seulement)
-Errors = new Meteor.Collection(null);
-
-throwError = function(message) {
-  Errors.insert({message: message, seen: false})
+Template.postSubmit.created = function() {
+  Session.set('postSubmitErrors', {});
 }
 
-clearErrors = function() {
-  Errors.remove({seen: true});
-}
-~~~
-<%= caption "client/helpers/errors.js" %>
-<%= highlight "5,8~10" %>
-
-Ensuite, nous allons nettoyer les erreurs dans le routeur pour que la navigation d'une page à l'autre fasse disparaître ces erreurs pour toujours :
-
-~~~js
-// ...
-
-Router.before(requireLogin, {only: 'postSubmit'})
-Router.before(function() { clearErrors() });
-~~~
-<%= caption "lib/router.js" %>
-<%= highlight "4" %>
-
-Afin que notre fonction `clearErrors()` fasse son travail, les erreurs ont besoin d'être marquées comme `seen` (vues). Pour faire ça proprement, il y a un cas particulier que nous devons gérer : quand nous envoyons une erreur et que nous redirigeons l'utilisateur quelque part (comme nous le faisons quand nous essayons de poster un lien dupliqué), la redirection arrive instantanément. Cela signifie que l'utilisateur n'a jamais la chance de voir l'erreur avant qu'elle soit effacée.
-
-C'est ici que notre propriété `seen` va être pratique. Nous avons besoin de nous assurer que c'est seulement mis à `true` si l'utilisateur a vu l'erreur.
-
-Pour terminer ça, nous utiliserons `Meteor.defer()`. Cette fonction dit à Meteor d'exécuter son callback "juste après" quoi qu'il arrive maintenant. Si ça aide, vous pouvez considérer que `defer()` est comme dire au navigateur d'attendre 1 milliseconde avant d'agir'.
-
-Ce que nous faisons est dire à Meteor de mettre `seen` à `true` 1 milliseconde après que le template `errors` soit rendu. Mais vous souvenez-vous comment nous avons dit que la redirection se passe instantanément ? Çela signifie que la redirection se déclenchera avant le callback `defer`, qui n'aura jamais la chance d'être exécuté.
-
-C'est exactement ce que nous voulons : si ce n'est pas exécuté notre erreur ne sera pas marqué comme `seen`, ce qui signifie qu'elle ne sera pas effacée, ce qui signifie qu'elle apparaîtra sur la page vers laquelle notre utilisateur est redirigé et c'est ce que nous voulions !
-
-~~~js
-Template.errors.helpers({
-  errors: function() {
-    return Errors.find();
+Template.postSubmit.helpers({
+  errorMessage: function(field) {
+    return Session.get('postSubmitErrors')[field];
+  },
+  errorClass: function (field) {
+    return !!Session.get('postSubmitErrors')[field] ? 'has-error' : '';
   }
 });
 
-Template.error.rendered = function() {
-  var error = this.data;
-  Meteor.defer(function() {
-    Errors.update(error._id, {$set: {seen: true}});
-  });
-};
+//...
 ~~~
-<%= caption "client/views/includes/errors.js" %>
-<%= highlight "7~12" %>
+<%= caption "client/templates/posts/post_submit.js" %>
+<%= highlight "1~12" %>
 
-<%= commit "9-3", "Monitorer quelles erreurs ont été vues, et effacer en routant." %>
+Vous pouvez teste que nos helpers fonctionnent normalement en ouvrant le navigateur et en tapant la ligne de code suivante :
 
-Le callback `rendered` se déclenche une fois que notre template a été rendu dans le navigateur. Dans ce callback, `this` refère à l'instance de template courante, et `this.data` nous laisse accéder aux données de l'objet qui est rendu (dans notre cas, une erreur).
+~~~js
+Session.set('postSubmitErrors', {title: 'Attention ! Intrusion détectée. Les robots-chiens sont lâchés.'});
+~~~
+<%= caption "Browser console" %>
 
-Whew ! C'était beaucoup de travail pour quelque chose que les utilisateurs espérons-le ne verront jamais !
+<%= screenshot "9-4", "Code rouge ! Code rouge !" %>
+
+La prochaine étape est de hooker cet objet de session `postSubmitErrors` au formulaire.
+
+Avant de faire ça, nous allons créer une nouvelle fonction `validatePost` dans `posts.js` qui regarde l'objet `post`, et renvoie un objet `errors` contenant toutes les erreurs pertinentes (à savoir, si les champs `title` ou `url` sont manquant) :
+
+~~~js
+//...
+
+validatePost = function (post) {
+  var errors = {};
+
+  if (!post.title)
+    errors.title = "Please fill in a headline";
+  
+  if (!post.url)
+    errors.url = "Please fill in a URL";
+
+  return errors;
+}
+
+//...
+~~~
+<%= caption "lib/collections/posts.js" %>
+<%= highlight "3~13" %>
+
+Nous appellerons cette fonction depuis le helper d'événement `postSubmit` :
+
+~~~js
+Template.postSubmit.events({
+  'submit form': function(e) {
+    e.preventDefault();
+
+    var post = {
+      url: $(e.target).find('[name=url]').val(),
+      title: $(e.target).find('[name=title]').val()
+    };
+
+    var errors = validatePost(post);
+    if (errors.title || errors.url)
+      return Session.set('postSubmitErrors', errors);
+
+    Meteor.call('postInsert', post, function(error, result) {
+      // affiche l'erreur à l'utilisateur et s'interrompt
+      if (error)
+        return throwError(error.reason);
+
+      // affiche ce résultat mais route quand même
+      if (result.postExists)
+        throwError('This link has already been posted');
+
+      Router.go('postPage', {_id: result._id});
+    });
+  }
+});
+~~~
+<%= caption "client/templates/posts/post_submit.js" %>
+<%= highlight "10~12" %>
+
+Notez que nous utilisons `return` pour interrompre l'exécution du helper si une erreur est présente, pas parce que nous voulons réellement renvoyer cette valeur quelque part.
+
+<%= screenshot "9-5", "Pris la main dans le sac." %>
+
+### Validation côté serveur
+
+Nous n'avons pas tout à fait fini. Nous validons la présence d'une URL et d'un titre sur le *client*, mais qu'en est-il du *serveur* ? Après tout, quelqu'un pourrait toujours essayer d'entrer un post vide manuellement en appelant la méthode `postInsert` depuis la console du navigateur.
+
+Même si nous n'avons pas besoin d'afficher de messages d'erreur sur le serveur, nous pouvons toujours utiliser la même fonction `validatePost`. Sauf que cette fois, nous l'appellerons aussi depuis l'intérieur de la *méthode*, pas seulement depuis le helper d'événement :
+
+~~~js
+Meteor.methods({
+  postInsert: function(postAttributes) {
+    check(this.userId, String);
+    check(postAttributes, {
+      title: String,
+      url: String
+    });
+
+    var errors = validatePost(postAttributes);
+    if (errors.title || errors.url)
+      throw new Meteor.Error('invalid-post', "You must set a title and URL for your post");
+
+    var postWithSameLink = Posts.findOne({url: postAttributes.url});
+    if (postWithSameLink) {
+      return {
+        postExists: true,
+        _id: postWithSameLink._id
+      }
+    }
+
+    var user = Meteor.user();
+    var post = _.extend(postAttributes, {
+      userId: user._id,
+      author: user.username,
+      submitted: new Date()
+    });
+
+    var postId = Posts.insert(post);
+    
+    return {
+      _id: postId
+    };
+  }
+});
+~~~
+<%= caption "lib/collections/posts.js" %>
+<%= highlight "9~11" %>
+
+Une fois de plus, les utilisateurs ne devraient normalement jamais voir ce message : « Vous devez définir un titre et une URL pour votre post ». Cela ne s'affichera que si quelqu'un veut contourner l'interface utilisateur que nous avons méticuleusement mise en place, et utiliser directement la console à la place.
+
+Pour tester ça, ouvrez la console du navigateur et essayez d'entrer un post sans URL :
+
+~~~js
+Meteor.call('postInsert', {url: '', title: 'No URL here!'});
+~~~
+
+Si nous avons fait notre job proprement, vous devriez voir en retour une flopée de code effrayant avec le message « Vous devez définir un titre et une URL pour votre post ».
+
+<%= commit "9-4", "Validation du contenu du post au moment de la soumission." %>
+
+### Validation des éditions
+
+Pour arrondir les choses, nous allons aussi applique la même validation pour notre formulaire d'*édition*. Le code sera plutôt similaire. D'abord le template :
+
+~~~html
+<template name="postEdit">
+  <form class="main form page">
+    <div class="form-group {{errorClass 'url'}}">
+      <label class="control-label" for="url">URL</label>
+      <div class="controls">
+        <input name="url" id="url" type="text" value="{{url}}" placeholder="Your URL" class="form-control"/>
+        <span class="help-block">{{errorMessage 'url'}}</span>
+      </div>
+    </div>
+    <div class="form-group {{errorClass 'title'}}">
+      <label class="control-label" for="title">Title</label>
+      <div class="controls">
+        <input name="title" id="title" type="text" value="{{title}}" placeholder="Name your post" class="form-control"/>
+        <span class="help-block">{{errorMessage 'title'}}</span>
+      </div>
+    </div>
+    <input type="submit" value="Submit" class="btn btn-primary submit"/>
+    <hr/>
+    <a class="btn btn-danger delete" href="#">Delete post</a>
+  </form>
+</template>
+~~~
+<%= caption "client/templates/posts/post_edit.html" %>
+<%= highlight "3,7,10,14" %>
+
+Puis les helpers du template :
+
+~~~js
+Template.postEdit.created = function() {
+  Session.set('postEditErrors', {});
+}
+
+Template.postEdit.helpers({
+  errorMessage: function(field) {
+    return Session.get('postEditErrors')[field];
+  },
+  errorClass: function (field) {
+    return !!Session.get('postEditErrors')[field] ? 'has-error' : '';
+  }
+});
+
+Template.postEdit.events({
+  'submit form': function(e) {
+    e.preventDefault();
+
+    var currentPostId = this._id;
+    
+    var postProperties = {
+      url: $(e.target).find('[name=url]').val(),
+      title: $(e.target).find('[name=title]').val()
+    }
+
+    var errors = validatePost(postProperties);
+    if (errors.title || errors.url)
+      return Session.set('postEditErrors', errors);
+    
+    Posts.update(currentPostId, {$set: postProperties}, function(error) {
+      if (error) {
+        // affiche l'erreur à l'utilisateur
+        throwError(error.reason);
+      } else {
+        Router.go('postPage', {_id: currentPostId});
+      }
+    });
+  },
+
+  'click .delete': function(e) {
+    e.preventDefault();
+    
+    if (confirm("Supprimer ce post ?")) {
+      var currentPostId = this._id;
+      Posts.remove(currentPostId);
+      Router.go('postsList');
+    }
+  }
+});
+~~~
+<%= caption "client/templates/posts/post_edit.js" %>
+<%= highlight "1~12,25~27,32" %>
+
+Tout comme nous avons fait pour le formulaire de soumission de post, nous voulons aussi valider nos posts côté serveur. À part, rappellerez-vous, que nous n'utilisons pas de méthode pour éditer les posts. mais un appel direct à `update` depuis le client.
+
+Cela signifie que nous devrons ajouter un nouveau callback `deny` à la place :
+
+~~~js
+//...
+
+Posts.deny({
+    update: function(userId, post, fieldNames, modifier) {
+      var errors = validatePost(modifier.$set);
+      return errors.title || errors.url;
+    }
+});
+
+//...
+~~~
+<%= caption "lib/collections/posts.js" %>
+<%= highlight "3~8" %>
+
+Notez que l'argument `post` se réfère au post *existant*. Dans ce cas, nous voulons valider la *mise à jour*, ce pourquoi nous appelons `validatePost` sur le contenu de la propriété `$set` de `modifier` (comme dans `Posts.update({$set: {title: ..., url: ...}})`).
+
+Cela fonctionne parce que `modifier.$set` contient les deux mêmes propriétés `title` et `url` que l'objet `post` en entier. Bien sûr, cela signifie que n'importe quelle mise à jour partielle qui concerne seulement `title` ou `url` ne fonctionnera pas, mais en pratique ça ne devrait pas être un problème.
+
+Vous remarquerez peut-être que c'est notre second callback `deny`. Lorsqu'on ajoute de multiples callbacks `deny`, l'opération échouera si l'un d'entre eux renvoie `true`. Dans ce cas, cela veut dire que `update` ne fonctionnera que s'il cible seulement les champs `title` et `url`, ou si aucun des deux n'est vide.
+
+<%= commit "9-5", "Valider le contenu des posts lors des éditions." %>
