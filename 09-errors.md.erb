@@ -252,7 +252,7 @@ Template.error.rendered = function() {
 
 <%= commit "9-3", "Effacer les erreurs après 3 secondes." %>
 
-The [`rendered`](http://docs.meteor.com/#template_rendered) callback triggers once our template has been rendered in the browser. Inside the callback, `this` refers to the current template instance, and `this.data` lets us access the data of the object that is currently being rendered (in our case, an error).
+Le callback [`rendered`](http://docs.meteor.com/#template_rendered) est déclenché une fois notre template interprété dans le navigateur. À l'intérieur du callback, `this` se réfère à l'instante courante du template, et `this.data` nous permet d'accéder aux données de l'objet en cours d'interprétation (une erreur dans notre cas).
 
 ### Mettre en place une validation
 
