@@ -11,9 +11,9 @@ contents: Découvrir comment utiliser GitHub pour suivre avec le livre.
 paragraphs: 32
 ---
 
-[GitHub](https://github.com/) est un dépôt social pour les projets open-source basé sur le système de control de version [Git](http://git-scm.com/), et sa fonction première est de partager du code facilement et de collaborer sur des projets. Mais c'est aussi un merveilleux outil d'apprentissage. Dans cette sidebar, nous allons rapidement discuter de quelques moyens pour que vous puissiez utiliser GitHub afin de suivre avec *Discover Meteor*.
+[GitHub](https://github.com/) est un dépôt social pour les projets open-source basé sur le système de contrôle de version [Git](http://git-scm.com/), et sa fonction première est de partager du code facilement et de collaborer sur des projets. Mais c'est aussi un merveilleux outil d'apprentissage. Dans cette sidebar, nous allons rapidement discuter de quelques moyens pour que vous puissiez utiliser GitHub afin de suivre avec *Discover Meteor*.
 
-Cette sidebar suppose que vous n'êtes pas familier avec Git et GitHub. Si vous êtes déjà à l'aise avec les deux, vous êtes libres de passer au chapitre suivant !
+Cet aparté suppose que vous n'êtes pas familier avec Git et GitHub. Si vous êtes déjà à l'aise avec les deux, vous êtes libres de passer au chapitre suivant !
 
 ### Etre committed
 
@@ -95,11 +95,11 @@ HEAD is now at a004b56... Added basic posts list template and static data.
 
 Git vous informe que vous êtes dans un état “detached HEAD”, ce qui signifie qu'aussi loin que Git a été utilisé, vous pouvez observer les commits passés mais vous ne pouvez les modifier. Vous pouvez imaginer ça comme un sorcier en train de consulter le passé dans sa boule de cristal.
 
-(Notez que Git a également des commandes qui vous laisse *modifier* des commits passés. Ca serait plus comme un voyageur du temps qui revient dans le passé et peut potentiellement écraser un papillon, mais c'est hors du champ de cette brève introduction.)
+(Notez que Git a également des commandes qui vous laisse *modifier* des commits passés. Ça serait plus comme un voyageur du temps qui revient dans le passé et peut potentiellement écraser un papillon, mais c'est hors du champ de cette brève introduction.)
 
 La raison pour laquelle vous avez pu simplement taper `chapter3-1` est que nous avons pre-taggé tous les commits de Microscope avec le marqueur de chapitre correcte. Si ça n'était pas le cas, vous auriez besoin de trouver le **hash** du commit, ou un identifiant unique.
 
-Une fois encore, GitHub nous simmplfie la vie. Vous pouvez trouver un hash de commit dans le coin en bas à droite du champ d'entête de commit bleu, comme ci-dessous :
+Une fois encore, GitHub nous simplifie la vie. Vous pouvez trouver un hash de commit dans le coin en bas à droite du champ d'entête de commit bleu, comme ci-dessous :
 
 <%= screenshot "s3-4", "Trouver un hash de commit." %>
 
@@ -117,7 +117,7 @@ Et finalement, si nous voulons arrêter de regarder dans notre boule de cristal 
 git checkout master
 ~~~
 
-Notez que vous pouvez lancer l'application avec la commande `meteor` à tout moment, même lorsque vous êtes dans l'état "detached HEAD". Vous aurez peut-être besoin de lancer d'abord `meteor update` si Meteor se plaint de paquets manquant, puisque le code des packages n'est pas inclu dans le repo Git de Microscope.
+Notez que vous pouvez lancer l'application avec la commande `meteor` à tout moment, même lorsque vous êtes dans l'état "detached HEAD". Vous aurez peut-être besoin de lancer d'abord `meteor update` si Meteor se plaint de paquets manquant, puisque le code des packages n'est pas inclus dans le repo Git de Microscope.
 
 ### Perspective historique
 
