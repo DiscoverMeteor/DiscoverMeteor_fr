@@ -10,6 +10,7 @@ contents: En apprendre plus sur les abonnements de Meteor, et comment nous pouvo
 paragraphs: 67
 ---
 
+
 Les choses semblent bien avec Microscope, et nous pouvons nous attendre à un succès quand il va sortir pour tout le monde.
 
 Donc nous devrions probablement réfléchir un peu à propos de la conséquence sur les performances du nombre de nouveaux articles qui vont être entrés dans le site au moment de son envol !
@@ -23,27 +24,27 @@ Nous avons précédemment parlé de comment une collection côté client peut co
 Premièrement, dans nos données de préinstallation, chargeons assez d'articles pour que cette pagination ait un sens :
 
 ~~~js
-// Fixture data 
+// Fixture data
 if (Posts.find().count() === 0) {
 
   //...
-  
+
   Posts.insert({
     title: 'The Meteor Book',
     userId: tom._id,
     author: tom.profile.name,
     url: 'http://themeteorbook.com',
-    submitted: now - 12 * 3600 * 1000,
+    submitted: new Date(now - 12 * 3600 * 1000),
     commentsCount: 0
   });
-  
+
   for (var i = 0; i < 10; i++) {
     Posts.insert({
       title: 'Test post #' + i,
       author: sacha.profile.name,
       userId: sacha._id,
       url: 'http://google.com/?q=test-' + i,
-      submitted: now - i * 3600 * 1000,
+      submitted: new Date(now - i * 3600 * 1000),
       commentsCount: 0
     });
   }
@@ -52,7 +53,7 @@ if (Posts.find().count() === 0) {
 <%= caption "server/fixtures.js" %>
 <%= highlight "15~24" %>
 
-Après avoir exécuté `meteor reset`, vous devriez obtenir quelque chose comme ça :
+Après avoir exécuté `meteor reset` et relancé votre appli, vous devriez obtenir quelque chose comme ça :
 
 <%= screenshot "12-1", "Afficher des données factices." %>
 
@@ -66,7 +67,7 @@ Maintenant nous allons avoir besoin d'un moyen d'indiquer au serveur ce paramèt
 
 La façon la plus facile de configurer cela est simplement de faire du paramètre de limitation d'articles partie intégrante du chemin, nous donnant des URLs de la forme `http://localhost:3000/25`. Un autre bon côté d'utiliser l'URL plutôt que d'autres méthodes est que si vous affichez 25 articles et que vous recharger la page dans le navigateur par erreur, vous verrez toujours 25 articles une fois la page chargée.
 
-Afin de faire ça prroprement, nous allons avoir besoin de changer la façon dont nous nous abonnons aux articles. Juste comme nous l'avons fait dans le chapitre *Commentaires*, nous allons avoir besoin de déplacer notre code de l'abonnement du niveau *routeur* au niveau *route*.
+Afin de faire ça proprement, nous allons avoir besoin de changer la façon dont nous nous abonnons aux articles. Juste comme nous l'avons fait dans le chapitre *Commentaires*, nous allons avoir besoin de déplacer notre code de l'abonnement du niveau *routeur* au niveau *route*.
 
 Tout ça est peut-être un peu beaucoup à comprendre en une seule fois, mais cela deviendra plus clair avec le code.
 
@@ -76,58 +77,64 @@ Premièrement, nous arrêterons l'abonnement à la publication `posts` dans le b
 Router.configure({
   layoutTemplate: 'layout',
   loadingTemplate: 'loading',
-  waitOn: function() { 
+  notFoundTemplate: 'notFound',
+  waitOn: function() {
     return [Meteor.subscribe('notifications')]
   }
 });
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "5" %>
+<%= highlight "6" %>
 
 Nous ajouterons un paramètre `postsLimit` au chemin de la route. Ajouter un `?` après le nom du paramètre signifie que c'est optionnel. Donc cette route ne correspondra pas seulement à `http://localhost:3000/50`, mais également au simple et ancien `http://localhost:3000`.
 
 ~~~js
-Router.map(function() {
-  //...
-  
-  this.route('postsList', {
-    path: '/:postsLimit?'
-  });
+//...
+
+Router.route('/:postsLimit?', {
+  name: 'postsList',
 });
+
+//...
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "5" %>
+<%= highlight "3" %>
 
 C'est important de noter qu'un chemin de la forme `/:parameter?` correspondra à tous les chemins possibles. Chaque route sera analysée successivement pour voir si elle correspond avec le chemin courant, nous avons besoin de nous assurer que nous organisons nos routes dans un ordre de spécificité décroissante.
 
-En d'autres mots, les routes qui ciblent des routes plus spécifiques comme `/posts/:_id` viendraient en première, et notre route `postsList` seraient déplacées en bas du fichier vu qu'elle correspond avec tout.
+En d'autres mots, les routes qui ciblent des routes plus spécifiques comme `/posts/:_id` viendraient en première, et notre route `postsList` serait déplacée **en bas** du groupe de routes vu qu'elle correspond pratiquement avec tout.
 
 Il est maintenant temps d'aborder le dur problème de s'abonner et trouver les bonnes données. Nous avons besoin de gérer le cas où le paramètre `postsLimit` n'est pas présent, donc nous l'assignerons à une valeur par défaut. Nous utiliserons "5" pour nous donner vraiment assez de place pour jouer avec les paginations.
 
 ~~~js
-Router.map(function() {
-  //..
-  
-  this.route('postsList', {
-    path: '/:postsLimit?',
-    waitOn: function() {
-      var postsLimit = parseInt(this.params.postsLimit) || 5; 
-      return Meteor.subscribe('posts', {sort: {submitted: -1}, limit: postsLimit});
-    }
-  });
+//...
+
+Router.route('/:postsLimit?', {
+  name: 'postsList',
+  waitOn: function() {
+    var limit = parseInt(this.params.postsLimit) || 5;
+    return Meteor.subscribe('posts', {sort: {submitted: -1}, limit: limit});
+  }
 });
+
+//...
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "6~9" %>
+<%= highlight "5~8" %>
 
-Vous noterez que nous passons maintenant un objet JavaScript ({limit: postsLimit}) avec le nom de notre publication `posts`. Cet objet servira au même titre que le paramètre `options` pour l'expression de `Posts.find()` côté serveur. Faisons quelques modifications dans notre code côté serveur pour immplémenter ça :
+Vous noterez que nous passons maintenant un objet JavaScript ({sort: {submitted: -1}, limit: postsLimit}) avec le nom de notre publication `posts`. Cet objet servira au même titre que le paramètre `options` pour l'expression de `Posts.find()` côté serveur. Faisons quelques modifications dans notre code côté serveur pour implémenter ça :
 
 ~~~js
 Meteor.publish('posts', function(options) {
+  check(options, {
+    sort: Object,
+    limit: Number
+  });
   return Posts.find({}, options);
 });
 
 Meteor.publish('comments', function(postId) {
+  check(postId, String);
   return Comments.find({postId: postId});
 });
 
@@ -136,19 +143,19 @@ Meteor.publish('notifications', function() {
 });
 ~~~
 <%= caption "server/publications.js" %>
-<%= highlight "1~3" %>
+<%= highlight "1~7" %>
 
 <% note do %>
 
 ### Passer des paramètres
 
-Notre code de publications est  effectivement en train de dire au serveur qu'il peut faire confiance à tout objet JavaScript envoyé par le client (dans notre cas, `{limit: postsLimit}`) pour servir comme les `options` d'expression de `find()`. Ceci rend possible pour les utilisateurs de soumettre des options qu'ils aiment via la console du navigateur.
+Notre code de publications est effectivement en train de dire au serveur qu'il peut faire confiance à tout objet JavaScript envoyé par le client (dans notre cas, `{limit: postsLimit}`) pour servir comme les `options` d'expression de `find()`. Ceci rend possible pour les utilisateurs de soumettre des options qu'ils aiment via la console du navigateur.
 
-Dans notre cas, c'est relativement anodin, vu que tout ce qu'un utilisateur peut faire est réordonner les articles différemment, ou changer la limite (ce que nous voulons mettre en place en premier lieu).
+Dans notre cas, c'est relativement anodin, vu que tout ce qu'un utilisateur peut faire est réordonner les articles différemment, ou changer la limite (ce que nous voulons mettre en place en premier lieu). En revanche une appli du monde réel devrait probablement avoir besoin de limiter les limites !
 
-Mais vous ne devriez pas utiliser ce pattern quand vous stockez des données privées sur des champs non publiés, vu que l'utilisateur pourrait manipuler l'option `fields` pour y accéder, et vous devriez probablement éviter également de l'utiliser pour l'argument de sélecteur de l'expression de `find()` pour les mêmes raisons de sécurité.
+Heureusement, en utilisant `check()` nous savons que les utilisateurs ne peuvent pas passer en douce des options supplémentaires (comme `fields`, qui pourrait dans certains cas exposer des données privées).
 
-Un pattern plus sécurisé pourrait être de passer les paramètres individuels eux-mêmes au lieu de l'objet entier, pour nous assurer que nous gardons le contrôle de nos données.
+Malgré tout, un pattern plus sécurisé pourrait être de passer les paramètres individuels eux-mêmes au lieu de l'objet entier, pour nous assurer que nous gardons le contrôle de nos données :
 
 ~~~js
 Meteor.publish('posts', function(sort, limit) {
@@ -158,33 +165,35 @@ Meteor.publish('posts', function(sort, limit) {
 
 <% end %>
 
-Maintenant que nous nous sommes abonnés au niveau de la route, cela aurait du sens de mettre le contexte de données au même endroit. Nous dévierons un peu de notre précédent pattern et feront en sorte que la fonction `data` retourne un objet JavaScript au lieu de simplement retourner un curseur. Ceci nous laisse créer un contexte de données *nommé*, que nous appelerons `posts`.
+Maintenant que nous nous sommes abonnés au niveau de la route, cela aurait du sens de mettre le contexte de données au même endroit. Nous dévierons un peu de notre précédent pattern et feront en sorte que la fonction `data` retourne un objet JavaScript au lieu de simplement retourner un curseur. Ceci nous laisse créer un contexte de données *nommé*, que nous appellerons `posts`.
 
 Ce que cela signifie est simplement qu'au lieu d'être implicitement disponible comme `this` à l'intérieur du template, notre contexte de données sera disponible à `posts`. A part ce petit élément, le code devrait être familier :
 
 ~~~js
-Router.map(function() {
-  this.route('postsList', {
-    path: '/:postsLimit?',
-    waitOn: function() {
-      var limit = parseInt(this.params.postsLimit) || 5; 
-      return Meteor.subscribe('posts', {sort: {submitted: -1}, limit: limit});
-    },
-    data: function() {
-      var limit = parseInt(this.params.postsLimit) || 5; 
-      return {
-        posts: Posts.find({}, {sort: {submitted: -1}, limit: limit})
-      };
-    }
-  });
-  
-  //..
+//...
+
+Router.route('/:postsLimit?', {
+  name: 'postsList',
+  waitOn: function() {
+    var limit = parseInt(this.params.postsLimit) || 5;
+    return Meteor.subscribe('posts', {sort: {submitted: -1}, limit: limit});
+  },
+  data: function() {
+    var limit = parseInt(this.params.postsLimit) || 5;
+    return {
+      posts: Posts.find({}, {sort: {submitted: -1}, limit: limit})
+    };
+  }
 });
+
+//...
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "8~13" %>
+<%= highlight "9~14" %>
 
-Maintenant que nous avons mis le contexte de données au niveau du routeur nous pouvons nous débarrasser sans problème du template helper `posts` dans le fichier `posts_list.js`. Et comme nous avons nommé notre contexte de données `posts` (le même nom que le helper), nous n'avons même pas besoin de toucher au template `postsList` !
+Et puisque que nous avons mis le contexte de données au niveau des routes, nous pouvons maintenant nous débarrasser sans problème du template helper `posts` dans le fichier `posts_list.js` et supprimer le contenu de ce fichier.
+
+Nous avons nommé notre contexte de données `posts` (le même nom que le helper), donc nous n'avons même pas besoin de toucher au template `postsList` !
 
 Récapitulons, Voici à quoi notre nouveau code amélioré de `router.js` ressemble :
 
@@ -192,31 +201,58 @@ Récapitulons, Voici à quoi notre nouveau code amélioré de `router.js` ressem
 Router.configure({
   layoutTemplate: 'layout',
   loadingTemplate: 'loading',
-  waitOn: function() { 
+  notFoundTemplate: 'notFound',
+  waitOn: function() {
     return [Meteor.subscribe('notifications')]
   }
 });
 
-Router.map(function() {
-  //...
-
-  this.route('postsList', {
-    path: '/:postsLimit?',
-    waitOn: function() {
-      var limit = parseInt(this.params.postsLimit) || 5; 
-      return Meteor.subscribe('posts', {sort: {submitted: -1}, limit: limit});
-    },
-    data: function() {
-      var limit = parseInt(this.params.postsLimit) || 5; 
-      return {
-        posts: Posts.find({}, {sort: {submitted: -1}, limit: limit})
-      };
-    }
-  });
+Router.route('/posts/:_id', {
+  name: 'postPage',
+  waitOn: function() {
+    return Meteor.subscribe('comments', this.params._id);
+  },
+  data: function() { return Posts.findOne(this.params._id); }
 });
+
+Router.route('/posts/:_id/edit', {
+  name: 'postEdit',
+  data: function() { return Posts.findOne(this.params._id); }
+});
+
+Router.route('/submit', {name: 'postSubmit'});
+
+Router.route('/:postsLimit?', {
+  name: 'postsList',
+  waitOn: function() {
+    var limit = parseInt(this.params.postsLimit) || 5;
+    return Meteor.subscribe('posts', {sort: {submitted: -1}, limit: limit});
+  },
+  data: function() {
+    var limit = parseInt(this.params.postsLimit) || 5;
+    return {
+      posts: Posts.find({}, {sort: {submitted: -1}, limit: limit})
+    };
+  }
+});
+
+var requireLogin = function() {
+  if (! Meteor.user()) {
+    if (Meteor.loggingIn()) {
+      this.render(this.loadingTemplate);
+    } else {
+      this.render('accessDenied');
+    }
+  } else {
+    this.next();
+  }
+}
+
+Router.onBeforeAction('dataNotFound', {only: 'postPage'});
+Router.onBeforeAction(requireLogin, {only: 'postSubmit'});
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "5, 11~21" %>
+<%= highlight "6,25~37" %>
 
 <%= commit "12-2", "Améliorer la route postsList pour avoir une limite." %>
 
@@ -248,21 +284,23 @@ Pour toutes ces raisons, la pagination traditionnelle n'a pas beaucoup de sens l
 
 <% end %>
 
-### Créer un controlleur de route
+### Créer un contrôleur de route
 
-Vous avez noté que nous répétons la ligne `var limit = parseInt(this.params.postsLimit) || 5;` deux fois. De plus, coder en dur le nombre "5" n'est pas vraiment idéal. Ce n'est pas la fin du monde, mais comme c'est toujours mieux de suivre le principe DRY (Don't Repeat Yourself) si vous le pouvez, voyons comment nous pouvons remanier un petit peu les choses.
+Vous avez noté que nous répétons la ligne `var limit = parseInt(this.params.postsLimit) || 5;` deux fois. De plus, coder en dur le nombre "5" n'est pas vraiment idéal. Ce n'est pas la fin du monde, mais comme c'est toujours mieux de suivre le principe DRY (Don't Repeat Yourself : Ne vous répétez pas) si vous le pouvez, voyons comment nous pouvons remanier un petit peu les choses.
 
-Nous allons présenter un nouvel aspect de Iron Router, les *Controlleurs de Route*. Un controlleur de route est simplement un moyen de grouper les fonctionnalités de routage ensemble dans un paquet réutilisable dont toutes les routes peuvent hériter. Maintenant nous allons l'utiliser uniquement pour une seule route, mais vous verrez dans le prochain chapitre comment cette fonctionnalité deviendra pratique.
+Nous allons présenter un nouvel aspect de Iron Router, les *Contrôleurs de Route*. Un contrôleur de route est simplement un moyen de grouper les fonctionnalités de routage ensemble dans un paquet réutilisable dont toutes les routes peuvent hériter. Maintenant nous allons l'utiliser uniquement pour une seule route, mais vous verrez dans le prochain chapitre comment cette fonctionnalité deviendra pratique.
 
 ~~~js
+//...
+
 PostsListController = RouteController.extend({
   template: 'postsList',
-  increment: 5, 
-  limit: function() { 
-    return parseInt(this.params.postsLimit) || this.increment; 
+  increment: 5,
+  postsLimit: function() {
+    return parseInt(this.params.postsLimit) || this.increment;
   },
   findOptions: function() {
-    return {sort: {submitted: -1}, limit: this.limit()};
+    return {sort: {submitted: -1}, limit: this.postsLimit()};
   },
   waitOn: function() {
     return Meteor.subscribe('posts', this.findOptions());
@@ -272,28 +310,28 @@ PostsListController = RouteController.extend({
   }
 });
 
-Router.map(function() {
-  //...
+//...
 
-  this.route('postsList', {
-    path: '/:postsLimit?',
-    controller: PostsListController
-  });
+Router.route('/:postsLimit?', {
+  name: 'postsList'
 });
+
+//...
 ~~~
 <%= caption "lib/router.js" %>
+<%= highlight "3~18, 25" %>
 
-Voyons les étapes. Premièrement, nous créons notre controlleur en étendant `RouteController`. Puis Nous mettons la propriété `template` juste comme nous l'avons fait avant, et ensuite une nouvelle propriété `increment`.
+Allons y pas à pas. Premièrement, nous créons notre contrôleur en étendant `RouteController`. Puis Nous mettons la propriété `template` juste comme nous l'avons fait avant, et ensuite une nouvelle propriété `increment`.
 
 Puis nous définissions une nouvelle fonction `limit` qui retournera la limite courante, et une fonction `findOptions` qui retournera un objet options. Cela pourrait ressembler à une étape supplémentaire, mais nous en ferons usage plus tard.
 
 Après, nous définissions des fonctions `waitOn` et `data` juste comme avant, excepté que maintenant elles vont utiliser notre nouvelle fonction `findOptions`.
 
-La dernière chose à faire est d'indiquer la route `postsList` pour router vers notre tout nouveau controlleur, avec la propriété `controller`.
+Puisque notre contrôleur est appelé `PostsListController` et notre route `postsList`, Iron Router utilisera automatiquement le contrôleur. Nous avons donc seulement besoin de supprimer `waitOn` et `data` de la définition de notre route (puisque dorénavant le contrôleur s'en occupe). Si nous avions besoin d'utiliser un contrôleur avec un autre nom, nous aurions pu utiliser l'option `controller` (nous verrons un exemple de ça dans le prochain chapitre).
 
-<%= commit "12-3", "Route postsList remaniées dans un controlleur de route." %>
+<%= commit "12-3", "Route postsList remaniées dans un contrôleur de route." %>
 
-### Ajouter un lien Charger plus
+### Ajouter un lien « Charger plus »
 
 Nous avons une pagination qui fonctionne, et notre code est bien fait. Il y a juste un problème : il n'y a aucun moyen d'utiliser actuellement cette pagination excepté en changeant l'URL manuellement. Ceci ne fait définitivement pas une bonne expérience utilisateur, donc retournons au travail pour corriger ça.
 
@@ -302,14 +340,16 @@ Ce que nous voulons faire est assez simple. Nous allons ajouter un bouton "Charg
 Comme précédemment, nous ajouterons notre logique de pagination dans notre route. Vous vous souvenez quand nous avons explicitement nommé notre contexte de données plutôt que juste utiliser un curseur anonyme ? Bien, il n'y a pas de règle qui dit que la fonction `data` peut seulement passer des curseurs, donc nous utiliserons la même technique pour générer l'URL de notre bouton "charger plus".
 
 ~~~js
+//...
+
 PostsListController = RouteController.extend({
   template: 'postsList',
-  increment: 5, 
-  limit: function() { 
-    return parseInt(this.params.postsLimit) || this.increment; 
+  increment: 5,
+  postsLimit: function() {
+    return parseInt(this.params.postsLimit) || this.increment;
   },
   findOptions: function() {
-    return {sort: {submitted: -1}, limit: this.limit()};
+    return {sort: {submitted: -1}, limit: this.postsLimit()};
   },
   waitOn: function() {
     return Meteor.subscribe('posts', this.findOptions());
@@ -318,19 +358,21 @@ PostsListController = RouteController.extend({
     return Posts.find({}, this.findOptions());
   },
   data: function() {
-    var hasMore = this.posts().fetch().length === this.limit();
-    var nextPath = this.route.path({postsLimit: this.limit() + this.increment});
+    var hasMore = this.posts().count() === this.postsLimit();
+    var nextPath = this.route.path({postsLimit: this.postsLimit() + this.increment});
     return {
       posts: this.posts(),
       nextPath: hasMore ? nextPath : null
     };
   }
 });
+
+//...
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "16~23" %>
+<%= highlight "15~25" %>
 
-Regardons plus en détail la magie du routeur. Vous vous souvenez que la route `postsList` (qui hérite du controlleur `PostsListController` sur lequel nous travaillons) prend un paramètre `postsLimit`.
+Regardons plus en détail la magie du routeur. Vous vous souvenez que la route `postsList` (qui hérite du contrôleur `PostsListController` sur lequel nous travaillons) prend un paramètre `postsLimit`.
 
 Donc quand nous alimentons `this.route.path()` avec `{postsLimit: this.limit() + this.increment}`, nous disons à la route `postsList` de construire son propre chemin en utilisant cet objet JavaScript comme contexte de données.
 
@@ -363,47 +405,82 @@ Tout ce qu'il reste à faire est d'ajouter le lien "charger plus" en bas de notr
   </div>
 </template>
 ~~~
-<%= caption "client/views/posts/posts_list.html" %>
+<%= caption "client/templates/posts/posts_list.html" %>
 <%= highlight "7~10" %>
 
 Voici à quoi votre liste d'articles devrait ressembler :
 
 <%= screenshot "12-3", "Le bouton “Charger plus“. " %>
 
-<%= commit "12-4", "nextPath() ajouté au controlleur et utilisé pour franchir les articles." %>
+<%= commit "12-4", "nextPath() ajouté au contrôleur et utilisé pour franchir les articles." %>
 
-### Une meilleure barre de chargement
+### Une meilleure expérience utilisateur
 
-Notre pagination fonctionne maintenant correctement, mais elle souffre d'une ennuyante bizarrerie : à chaque fois que nous cliquons sur “charger plus” et que le routeur demande plus d'articles, nous sommes envoyés vers le template `loading` pendant que nous attendons l'arrivée des nouvelles données. Le résultat est que nous sommes envoyés en haut de la page à chaque fois et nous avons besoin de faire défiler la page vers le bas pour continuer notre navigation.
+Notre pagination fonctionne maintenant correctement, mais elle souffre d'une ennuyeuse bizarrerie : à chaque fois que nous cliquons sur « charger plus » et que le routeur demande plus d'articles, nous sommes envoyés vers le template `loading` pendant que nous attendons l'arrivée des nouvelles données. Le résultat est que nous sommes envoyés en haut de la page à chaque fois et nous avons besoin de faire défiler la page vers le bas pour continuer notre navigation.
 
-Ça serait bien, bien mieux si on pouvait rester sur la même page tout au long de l'opération, tout en fournissant l'information que des nouvelles données sont en cours de chargement. Heureusement, c'est précisément ce que le paquet `iron-router-progress` fait.
+Donc premièrement, nous devrons dire à Iron Router de ne pas `waitOn` l'abonnement après tout. Au lieu de ça, nous définirons nos abonnements dans un hook `subscriptions`.
 
-Similaire à Safari d'IOS ou des sites comme Medium et Youtube, `iron-router-progress` ajout une petite barre de chargement en haut de l'écran. L'implémenter est aussi facile que d'ajouter le paquet dans votre application :
+Notez que nous ne *renvoyons* pas cet abonnement dans le hook. Le renvoyer (ce qui est fait normalement avec le hook `subscription`) déclencherais le hook de chargement global, et c'est exactement ce que nous voulons éviter. À la place, nous utilisons simplement le hook `subscriptions` comme un endroit pratique pour définir notre abonnement, de la même façon que pour le hook `onBeforeAction`.
 
-~~~bash
-mrt add iron-router-progress
-~~~
-<%= caption "Console bash" %>
-
-A travers la magie des paquets intelligents, notre nouvel indicateur de chargement fonctionnera parfaitement dès son installation ! La barre de chargement s'activera pour chaque route, et se complètera automatiquement une fois que les données requises pour la route seront finies de charger.
-
-Nous ferons juste une petite optimisation. Désactivons `iron-router-progress` pour la route `postSubmit` vu que nous n'avons pas besoin d'attendre des données d'abonnement (après tout, c'est juste un formulaire vide) :
+Nous passons aussi une variable `ready` qui se réfère à `this.postsSub.ready` comme un élément de notre contexte de données. Cela nous permettra de dire au template quand l'abonnement au post a terminé de charger.
 
 ~~~js
-Router.map(function() {
- 
-  //...
-  
-  this.route('postSubmit', {
-    path: '/submit',
-    disableProgress: true
-  });
+//...
+
+PostsListController = RouteController.extend({
+  template: 'postsList',
+  increment: 5,
+  postsLimit: function() {
+    return parseInt(this.params.postsLimit) || this.increment;
+  },
+  findOptions: function() {
+    return {sort: {submitted: -1}, limit: this.postsLimit()};
+  },
+  subscriptions: function() {
+    this.postsSub = Meteor.subscribe('posts', this.findOptions());
+  },
+  posts: function() {
+    return Posts.find({}, this.findOptions());
+  },
+  data: function() {
+    var hasMore = this.posts().count() === this.postsLimit();
+    var nextPath = this.route.path({postsLimit: this.postsLimit() + this.increment});
+    return {
+      posts: this.posts(),
+      ready: this.postsSub.ready,
+      nextPath: hasMore ? nextPath : null
+    };
+  }
 });
+
+//...
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "7" %>
+<%= highlight "12~14, 23" %>
 
-<%= commit "12-5", "Utiliser le paquet iron-router-progress pour rendre la pagination plus sympathique." %>
+Nous allons ensuite vérifier dans le template que cette variable `ready` affiche un spinner en bas de la liste de posts pendant que nous chargeons un nouveau lot de posts :
+
+~~~html
+<template name="postsList">
+  <div class="posts">
+    {{#each posts}}
+      {{> postItem}}
+    {{/each}}
+    
+    {{#if nextPath}}
+      <a class="load-more" href="{{nextPath}}">Load more</a>
+    {{else}}
+      {{#unless ready}}
+        {{> spinner}}
+      {{/unless}}
+    {{/if}}
+  </div>
+</template>
+~~~
+<%= caption "client/templates/posts/posts_list.html" %>
+<%= highlight "10~12" %>
+
+<%= commit "12-5", "Avec un spinner pour rendre la pagination plus agréable." %>
 
 ### Accéder à des articles
 
@@ -411,11 +488,11 @@ Nous sommes en train de charger les cinq articles les plus récents par défaut,
 
 <%= screenshot "12-4", "Un template vide." %>
 
-Si vous essayez, vous allez faire face à un template d'article vide. Cela semble normal : nous avons dit au routeur de s'abonner à la publication `posts` quand il charge la route `postsList`, mais nous ne lui avons pas dit quoi faire au sujet de la route `postPage`.
+Si vous essayez, vous allez faire face à une erreur « non trouvé ». Cela semble normal : nous avons dit au routeur de s'abonner à la publication `posts` quand il charge la route `postsList`, mais nous ne lui avons pas dit quoi faire au sujet de la route `postPage`.
 
 Mais, tout ce que nous savons faire c'est nous abonner à une liste des `n` derniers articles. Comment demande-t-on au serveur pour un seul article spécifique ? Nous allons vous donner un petit secret ici : vous pouvez avoir plus d'une publication pour chaque collection !
 
-Donc pour retrouver nos articles manquants, nous allons seulement créer une nouvelle, publication `singlePost` séparée qui publie seulement un article, identifié par son `_id`.
+Donc pour retrouver nos articles manquants, nous allons simplement créer une nouvelle publication `singlePost` séparée qui publie seulement un article, identifié par son `_id`.
 
 ~~~js
 Meteor.publish('posts', function(options) {
@@ -423,45 +500,44 @@ Meteor.publish('posts', function(options) {
 });
 
 Meteor.publish('singlePost', function(id) {
-  return id && Posts.find(id);
+  check(id, String)
+  return Posts.find(id);
 });
+
+//...
 ~~~
 <%= caption "server/publications.js" %>
 <%= highlight "5~7" %>
 
-Maintenant, abonnons-nous aux bon articles côté client. Nous nous sommes déjà abonnés à la publication `comments` sur la fonction `waitOn` de la route `postPage`, donc nous pouvons simplement ajouter l'abonnement à `singlePost` ici. Et n'oublions pas d'ajouter également notre abonnement à la route `postEdit`, vu qu'elle nécessite aussi les mêmes données :
+Maintenant, abonnons-nous aux bons articles côté client. Nous nous sommes déjà abonnés à la publication `comments` sur la fonction `waitOn` de la route `postPage`, donc nous pouvons simplement ajouter l'abonnement à `singlePost` ici. Et n'oublions pas d'ajouter également notre abonnement à la route `postEdit`, vu qu'elle nécessite aussi les mêmes données :
 
 ~~~js
-Router.map(function() {
+//...
 
-  //...
-    
-  this.route('postPage', {
-    path: '/posts/:_id',
-    waitOn: function() {
-      return [
-        Meteor.subscribe('singlePost', this.params._id),
-        Meteor.subscribe('comments', this.params._id)
-      ];
-    },
-    data: function() { return Posts.findOne(this.params._id); }
-  });
-
-  this.route('postEdit', {
-    path: '/posts/:_id/edit',
-    waitOn: function() { 
-      return Meteor.subscribe('singlePost', this.params._id);
-    },
-    data: function() { return Posts.findOne(this.params._id); }    
-  });
-  
-  /...
-
+Router.route('/posts/:_id', {
+  name: 'postPage',
+  waitOn: function() {
+    return [
+      Meteor.subscribe('singlePost', this.params._id),
+      Meteor.subscribe('comments', this.params._id)
+    ];
+  },
+  data: function() { return Posts.findOne(this.params._id); }
 });
+
+Router.route('/posts/:_id/edit', {
+  name: 'postEdit',
+  waitOn: function() {
+    return Meteor.subscribe('singlePost', this.params._id);
+  },
+  data: function() { return Posts.findOne(this.params._id); }
+});
+
+//...
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "7~12,18~20" %>
+<%= highlight "6~9,16~18" %>
 
 <%= commit "12-6","Utiliser un abonnement à un unique article pour nous assurer que nous pouvons toujours voir le bon article." %>
 
-Avec la pagination activée, notre application ne souffre plus de problèmes de montée en charge, et les utilisateurs sont sûres de contribuer avec même plus de liens qu'avant. Donc ne serait-il pas super de pouvoir d'une manière ou d'une autre classer ces liens ? C'est précisément l'objet du chapitre suivant, *Voter*.
+Avec la pagination activée, notre application ne souffre plus de problèmes de montée en charge, et les utilisateurs sont sûrs de contribuer avec même plus de liens qu'avant. Donc ne serait-il pas super de pouvoir d'une manière ou d'une autre classer ces liens ? Si vous ne le saviez pas, c'est précisément l'objet du chapitre suivant.
