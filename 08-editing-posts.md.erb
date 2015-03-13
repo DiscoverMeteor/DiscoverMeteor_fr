@@ -12,7 +12,7 @@ paragraphs: 29
 
 Maintenant que nous pouvons créer des posts, la prochaine étape est de pouvoir les modifier et les supprimer. Puisque l'interface est simple à mettre en œuvre, c'est le moment idéal de voir comment Meteor gère les permissions des utilisateurs.
 
-Voyons d'abord le *router*. Nous lui ajoutons une route afin d'accéder à la page de modification des posts et lui donnons des données :
+Voyons d'abord le *router*. Nous lui ajoutons une route afin d'accéder à la page de modification des posts et lui donnons des données :
 
 ~~~js
 Router.configure({
@@ -56,7 +56,7 @@ Router.onBeforeAction(requireLogin, {only: 'postSubmit'});
 
 ### La template de modification des posts
 
-Concentrons nous maintenant sur la template. Notre template `postEdit` reste très classique :
+Concentrons nous maintenant sur la template. Notre template `postEdit` reste très classique :
 
 ~~~html
 <template name="postEdit">
@@ -81,7 +81,7 @@ Concentrons nous maintenant sur la template. Notre template `postEdit` reste tr�
 ~~~
 <%= caption "client/templates/posts/post_edit.html" %>
 
-Et voilà le fichier `post_edit.js` qui va avec :
+Et voilà le fichier `post_edit.js` qui va avec :
 
 ~~~js
 Template.postEdit.events({
@@ -130,7 +130,7 @@ Nous passons alors cet objet à la méthode `Collection.update()` de Meteor avec
 
 ### Ajouter des liens
 
-Nous devons bien évidemment rajouter un lien pour que les utilisateurs puissent modifier leurs posts :
+Nous devons bien évidemment rajouter un lien pour que les utilisateurs puissent modifier leurs posts :
 
 ~~~html
 <template name="postItem">
@@ -149,7 +149,7 @@ Nous devons bien évidemment rajouter un lien pour que les utilisateurs puissent
 <%= caption "client/templates/posts/post_item.html" %>
 <%= highlight "5~8" %>
 
-De plus, nous ne devons pas afficher ce lien à n'importe qui. C'est pour cela que nous rajoutons un helper `ownPost` :
+De plus, nous ne devons pas afficher ce lien à n'importe qui. C'est pour cela que nous rajoutons un helper `ownPost` :
 
 ~~~js
 Template.postItem.helpers({
@@ -176,7 +176,7 @@ Notre formulaire pour modifier les posts parait correct, pourtant vous ne pourre
 
 Depuis que nous avons supprimé le paquet `insecure`, toutes les requêtes de modifications provenant du client sont catégoriquement refusées.
 
-Pour régler cela, nous devons fixer des permissions. Pour commencer, créez un nouveau fichier `permissions.js` dans le dossier `lib`. Nous serons ainsi sûr que nos permissions seront chargées en premier (et disponible dans les deux environnements) :
+Pour régler cela, nous devons fixer des permissions. Pour commencer, créez un nouveau fichier `permissions.js` dans le dossier `lib`. Nous serons ainsi sûr que nos permissions seront chargées en premier (et disponible dans les deux environnements) :
 
 ~~~js
 // check that the userId specified owns the documents
@@ -188,7 +188,7 @@ ownsDocument = function(userId, doc) {
 
 Dans le chapitre [Créer des Posts](/chapter/creating-posts), nous n'avions pas utilisé la méthode `allow()` car nous insérions les nouveaux posts via des méthodes côté serveur (qui passent outre `allow()`).
 
-Mais maintenant que nous éditons et supprimons des posts depuis le client, retournons dans le fichier `posts.js` et rajoutons la fameuse méthode `allow()` :
+Mais maintenant que nous éditons et supprimons des posts depuis le client, retournons dans le fichier `posts.js` et rajoutons la fameuse méthode `allow()` :
 
 ~~~js
 Posts = new Mongo.Collection('posts');
@@ -209,7 +209,7 @@ Posts.allow({
 
 Ce n'est pas parce que vous pouvez éditer vos propres posts que vous devez être capable d'éditer *toutes* les propriétés. Par exemple, nous ne voulons pas que l'utilisateur crée un post et l'assigne à quelqu'un d'autre.
 
-Donc nous allons utiliser le callback `deny()` pour permettre à l'utilisateur d'éditer *seulement certains* champs :
+Donc nous allons utiliser le callback `deny()` pour permettre à l'utilisateur d'éditer *seulement certains* champs :
 
 ~~~js
 Posts = new Mongo.Collection('posts');
@@ -251,7 +251,7 @@ Lorsque les choses sont relativement simple et que vous pouvez rapidement adapte
 
 Par contre, à partir du moment où vous devez faire des choses qui ne doivent pas être contrôlé par l'utilisateur (comme dater un nouveau post ou l'assigner au bon utilisateur), vous devriez utiliser une méthode Meteor `Meteor.methods`.
 
-Les méthodes Meteor sont aussi plus adaptés dans certains cas :
+Les méthodes Meteor sont aussi plus adaptés dans certains cas :
 
 - Quand vous devez connaître ou renvoyer des valeurs via un callback plutôt que d'attendre que la réactivité et la synchronisation prennent effet.
 - Pour les fonctions opérant de grosses manipulations sur la base de données qui seraient trop lourdes à transmettre entre le client et le serveur.
