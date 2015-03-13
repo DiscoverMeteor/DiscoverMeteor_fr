@@ -17,19 +17,19 @@ Dans le dernier chapitre, nous avons présenté un nouveau concept du monde Mete
 
 Une Méthode Meteor est un moyen d'exécuter une série de commandes sur le serveur d'une façon structurée. Dans notre exemple, nous avons utilisé une Méthode car nous voulions nous assurer que les nouveaux articles seraient tagués avec le nom et l'id de leur auteur ainsi que l'heure du serveur.
 
-Cependant, si Meteor exécute des Methodes dans sa plus simple façon, nous aurions un problème. Considérez la séquence suivante d'évènements (note : les horodatages sont des valeurs aléatoires choisies seulement pour l'exemple) :
+Cependant, si Meteor exécute des Methodes dans sa plus simple façon, nous aurions un problème. Considérez la séquence suivante d’événements (note : les horodatages sont des valeurs aléatoires choisies seulement pour l'exemple) :
 
 - *+0ms:* L'utilisateur clique sur un bouton et le navigateur renvoie un appel de Méthode.
 - *+200ms:* Le serveur fait des changements dans la base de données Mongo
 - *+500ms:* Le client reçoit ces changements, met à jour l'interface utilisateur.
 
-Si ceci était la façon dont Meteor opèrait, alors il y aurait un petit décalage entre effectuer de telles actions et en voir les résultats (ce décalage étant plus ou moins visible selon votre proximité avec le serveur). Nous ne pouvons nous permettre ça dans une application web moderne !
+Si Meteor opérait de cette façon, alors il y aurait un petit décalage entre la réalisation de ces actions et l'affichage des résultats (ce décalage étant plus ou moins visible selon votre proximité avec le serveur). Nous ne pouvons nous permettre ça dans une application web moderne !
 
 ### Compensation de latence
 
 <%= diagram "latency2", "Avec compensation de latence", "pull-right" %>
 
-Pour éviter ce problème, Meteor introduit un concept appelé **Compensation de latence**. Quand nous avons définit notre Méthode `post`, nous l'avons plaçée à l'intérieur d'un fichier dans le répertoire `collections/`. Ceci signifie qu'elle est disponible pour le serveur *et le client* -- et elle s'exécutera sur les deux en même temps !
+Pour éviter ce problème, Meteor introduit un concept appelé **Compensation de latence**. Quand nous avons définit notre Méthode `post`, nous l'avons placée à l'intérieur d'un fichier dans le répertoire `collections/`. Ceci signifie qu'elle est disponible pour le serveur *et le client* -- et elle s'exécutera sur les deux en même temps !
 
 Quand nous faisons un appel de Méthode, le client envoie l'appel au serveur, mais *simule* également simultanément l'action de la Méthode sur ses collections côté client. Notre workflow devient :
 
@@ -159,7 +159,7 @@ Template.postSubmit.events({
 
 <%= scommit "7-5-1", "Démonstration de l'ordre d'apparition des articles en utilisant un sleep." %>
 
-Si nous créons un article maintenant, nous voyons clairement la compensation de latence en action. Premièrement, un article est inséré avec `(client)` dans le titre (le premier article dans la liste, relié à Github) :
+Si nous créons un article maintenant, nous verrons clairement la compensation de latence en action. Premièrement, un article est inséré avec `(client)` dans le titre (le premier article dans la liste, relié à Github) :
 
 <%= screenshot "s5-1", "Notre article comme initialement stocké dans la collection côté client" %>
 
