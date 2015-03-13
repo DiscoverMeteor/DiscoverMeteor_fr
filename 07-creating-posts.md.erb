@@ -176,9 +176,9 @@ Nous avons réussi à nous assurer que l'on doit être authentifié pour créer 
 
 Cependant, nous avons encore à nous occuper de quelques problèmes :
 
- - Les utilisateurs non authentifiés peuvent toujours accéder au formulaire de création de post
+ - Les utilisateurs non authentifiés peuvent toujours accéder au formulaire de création de post.
  - Le post n'est pas lié à l'utilisateur de quelque façon que ce soit (et il n'y a pas de code côté serveur pour s'occuper de ça).
- - Plusieurs posts peuvent être créés pointant vers la même URL
+ - Plusieurs posts peuvent être créés pointant vers la même URL.
 
 Résolvons ces problèmes.
 
@@ -386,7 +386,7 @@ Notez que la méthode `_.extend()` fait partie de la librairie [Underscore](http
 
 ### Bye Bye Allow/Deny
 
-Les méthodes Meteor sont exécutées sur le serveur, et donc Meteor leur fait confiance. C'est pourquoi les méthodes Meteor ignorent n'importe quel callback allow/deny
+Les méthodes Meteor sont exécutées sur le serveur, et donc Meteor leur fait confiance. C'est pourquoi les méthodes Meteor ignorent n'importe quel callback allow/deny.
 
 Si vous voulez exécuter du code avant chaque `insert`, `update`, ou `remove` *même sur le serveur*, nous vous suggérons de jeter un œil au paquet [collection-hooks](https://github.com/matb33/meteor-collection-hooks).
 
@@ -433,7 +433,7 @@ Meteor.methods({
 
 Nous cherchons dans notre base de données un post avec la même url. Si nous en trouvons un, nous retournons (`return`) l'`_id` de ce posts avec la propriété `postExists:true` pour informer le client de ce cette situation particulière.
 
-Et puisque nous déclenchons un appel à `return`, la méthode s'interrompt à ce moment sans exécuter la déclaration `insert`, évitant ainsi avec élégance de créer des doublons
+Et puisque nous déclenchons un appel à `return`, la méthode s'interrompt à ce moment sans exécuter la déclaration `insert`, évitant ainsi avec élégance de créer des doublons.
 
 Tout ce qui nous reste à faire est d'utiliser cette nouvelle information `postExists` dans notre helper d'événement côté client pour afficher un message d'avertissement :
 
