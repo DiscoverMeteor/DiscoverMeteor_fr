@@ -20,7 +20,7 @@ Nous allons implémenter un système simple qui affiche les nouvelles erreurs da
 
 Pour commencer, nous devons créer une collection dans laquelle nous stockerons nos erreurs. Sachant que les erreurs sont seulement pertinentes pour la session en cours et n'ont besoin d'être persistantes en aucun cas, nous allons faire quelque chose de nouveau, et créer une *collection locale*. Cela signifie que la collection `Errors` existera uniquement *dans le navigateur*, et ne fera aucune tentative de synchronisation avec le serveur.
 
-Pour accomplir cela, nous créons l'erreur dans le dossier `client` (pour faire de la collection une collection cliente uniquement), avec son nom de collection MongoDB configuré à `null` (puisque les données de cette collection ne seront jamais sauvegardées dans la base de donnée côté serveur) :
+Pour accomplir cela, nous créons l'erreur dans le dossier `client` (pour faire de la collection une collection cliente uniquement), avec son nom de collection MongoDB configuré à `null` (puisque les données de cette collection ne seront jamais sauvegardées dans la base de donnée côté serveur) :
 
 ~~~js
 // Collection Locale (client-seulement)
@@ -41,7 +41,7 @@ L'avantage d'utiliser une collection locale pour stocker les erreurs est que, co
 
 ### Afficher les erreurs
 
-Nous allons afficher les erreurs en haut de notre layout principal :
+Nous allons afficher les erreurs en haut de notre layout principal :
 
 ~~~html
 <template name="layout">
@@ -57,7 +57,7 @@ Nous allons afficher les erreurs en haut de notre layout principal :
 <%= caption "client/templates/application/layout.html" %>
 <%= highlight "4" %>
 
-Maintenant, créons les templates `errors` et `error` dans `errors.html` :
+Maintenant, créons les templates `errors` et `error` dans `errors.html` :
 
 ~~~html
 <template name="errors">
@@ -81,13 +81,13 @@ Maintenant, créons les templates `errors` et `error` dans `errors.html` :
 
 ### Templates jumeaux
 
-Vous noterez que nous mettons deux templates dans un seul fichier. Jusqu'à maintenant, nous avons essayé d'adhérer à la convention "un fichier, un template", mais, pour Meteor, mettre tous vos templates dans un seul fichier fonctionne aussi bien (bien que cela rendrait `main.html` très confus !).
+Vous noterez que nous mettons deux templates dans un seul fichier. Jusqu'à maintenant, nous avons essayé d'adhérer à la convention "un fichier, un template", mais, pour Meteor, mettre tous vos templates dans un seul fichier fonctionne aussi bien (bien que cela rendrait `main.html` très confus !).
 
 Dans ce cas, vu que les deux templates d'erreur sont plutôt courts, nous allons faire une exception et les mettre dans le même fichier pour rendre notre répertoire un peu plus clair.
 
 <% end %>
 
-Nous avons juste besoin d'intégrer notre helper de template, et nous seront fin prêts !
+Nous avons juste besoin d'intégrer notre helper de template, et nous seront fin prêts !
 
 ~~~js
 Template.errors.helpers({
@@ -98,7 +98,7 @@ Template.errors.helpers({
 ~~~
 <%= caption "client/templates/includes/errors.js" %>
 
-Vous pouvez dès à présent tester nos nouveaux messages d'erreur manuellement. Ouvrez simplement la console de votre navigateur et tapez :
+Vous pouvez dès à présent tester nos nouveaux messages d'erreur manuellement. Ouvrez simplement la console de votre navigateur et tapez :
 
 ~~~js
 throwError("I'm an error!");
@@ -116,7 +116,7 @@ A ce stade, il est important de faire la distinction entre les erreurs au niveau
 
 Les erreurs au niveau de l'application (**app-level**) sont généralement déclenchées par l'utilisateur, et l'on peut agir sur celles-ci. Ces erreurs comprennent notamment les erreurs de validation, les erreurs de permission, les erreurs de type “introuvables” et ainsi de suite. Ce sont le genre d'erreurs que l'on veut montrer à l'utilisateur pour l'aider à régler tout problème rencontré.
 
-Les erreurs au niveau du code (**code-level**), de leur côté, sont déclenchées de manière inattendue par de réels bugs dans votre code, and vous ne voulez probablement *pas* les afficher à vos utilisateurs directement, mais plutôt d'en garder une trace avec un service tiers de suivi des erreurs (tel que [Kadira](http://kadira.io)). 
+Les erreurs au niveau du code (**code-level**), de leur côté, sont déclenchées de manière inattendue par de réels bugs dans votre code, et vous ne voulez probablement *pas* les afficher à vos utilisateurs directement, mais plutôt d'en garder une trace avec un service tiers de suivi des erreurs (tel que [Kadira](http://kadira.io)). 
 
 Dans ce chapitre, nous nous concentrerons sur le premier type d'erreur, pas sur le suivi des bugs. 
 
@@ -124,7 +124,7 @@ Dans ce chapitre, nous nous concentrerons sur le premier type d'erreur, pas sur 
 
 ### Créer des erreurs
 
-Nous savons désormais comment afficher des erreurs, mais encore faut-il en déclencher une avant de voir quoi que ce soit. En fait, nous avons déjà implémenté un bon scénario pour une erreur: notre avertissement lors d'un article doublon. Nous remplacerons simplement les `alert` dans `postSubmit` par la nouvelle fonction `throwError` que nous venons de mettre en place:
+Nous savons désormais comment afficher des erreurs, mais encore faut-il en déclencher une avant de voir quoi que ce soit. En fait, nous avons déjà implémenté un bon scénario pour une erreur: notre avertissement lors d'un article doublon. Nous remplacerons simplement les `alert` dans `postSubmit` par la nouvelle fonction `throwError` que nous venons de mettre en place :
 
 ~~~js
 Template.postSubmit.events({
@@ -153,7 +153,7 @@ Template.postSubmit.events({
 <%= caption "client/templates/posts/post_submit.js" %>
 <%= highlight "13,17" %>
 
-Tant que nous y sommes, nous allons faire la même chose pour `postEdit` :
+Tant que nous y sommes, nous allons faire la même chose pour `postEdit` :
 
 ~~~js
 Template.postEdit.events({
@@ -184,13 +184,13 @@ Template.postEdit.events({
 
 <%= commit "9-2", "Utilisation du rapport d'erreurs." %>
 
-Essayez par vous même : tentez de créer un article et entrez l'adresse `http://meteor.com`. Comme cette adresse est déjà attachée à un article dans l'installation, vous devriez voir :
+Essayez par vous même : tentez de créer un article et entrez l'adresse `http://meteor.com`. Comme cette adresse est déjà attachée à un article dans l'installation, vous devriez voir :
 
 <%= screenshot "9-2", "Déclencher une erreur" %>
 
 ### Effacer les Erreurs
 
-Vous noterez que les messages d'erreur disparaissent par eux-même après quelques secondes. Cela est en fait dû à un peu de magie CSS incluse dans la feuille de style que nous avons ajoutée au tout début de ce livre :
+Vous noterez que les messages d'erreur disparaissent par eux-même après quelques secondes. Cela est en fait dû à un peu de magie CSS incluse dans la feuille de style que nous avons ajoutée au tout début de ce livre :
 
 ~~~css
 @keyframes fadeOut {
@@ -227,7 +227,7 @@ Cela fonctionne bien, mais si vous déclenchez plusieurs erreurs (en soumettant 
 
 <%= screenshot "9-3", "Débordement de pile." %>
 
-Et cela parce que alors que les élements `.alert` disparaissent *visuellement*, ils sont en fait toujours présents dans le DOM. Nous devons régler cela.
+Et cela parce que alors que les éléments `.alert` disparaissent *visuellement*, ils sont en fait toujours présents dans le DOM. Nous devons régler cela.
 
 C'est exactement dans ce genre de situation que Meteor brille. Puisque la collection `Errors' est réactive, tout ce que nous devons faire pour nous débarrasser de ces vieilles erreurs est de les supprimer de la collection!
 
@@ -260,7 +260,7 @@ Jusqu'ici, nous n'avons pas imposé une quelconque validation de notre formulair
 
 Nous allons faire deux choses pour signaler les champs non renseignés : premièrement, nous allons donner une classe spéciale CSS `has-error` au `div` parent de n'importe quel champ problématique du formulaire. Puis, nous allons afficher un message d'erreur utile juste en dessous du champ.
 
-Pour commencer, préparons notre template `postSubmit` pour qu'il accepte ces nouveaux helpers :
+Pour commencer, préparons notre template `postSubmit` pour qu'il accepte ces nouveaux helpers :
 
 ~~~html
 <template name="postSubmit">
@@ -317,7 +317,7 @@ Template.postSubmit.helpers({
 <%= caption "client/templates/posts/post_submit.js" %>
 <%= highlight "1~12" %>
 
-Vous pouvez teste que nos helpers fonctionnent normalement en ouvrant le navigateur et en tapant la ligne de code suivante :
+Vous pouvez tester que nos helpers fonctionnent normalement en ouvrant le navigateur et en tapant la ligne de code suivante :
 
 ~~~js
 Session.set('postSubmitErrors', {title: 'Attention ! Intrusion détectée. Les robots-chiens sont lâchés.'});
@@ -328,7 +328,7 @@ Session.set('postSubmitErrors', {title: 'Attention ! Intrusion détectée. Les r
 
 La prochaine étape est de hooker cet objet de session `postSubmitErrors` au formulaire.
 
-Avant de faire ça, nous allons créer une nouvelle fonction `validatePost` dans `posts.js` qui regarde l'objet `post`, et renvoie un objet `errors` contenant toutes les erreurs pertinentes (à savoir, si les champs `title` ou `url` sont manquant) :
+Avant de faire ça, nous allons créer une nouvelle fonction `validatePost` dans `posts.js` qui regarde l'objet `post`, et renvoie un objet `errors` contenant toutes les erreurs pertinentes (à savoir, si les champs `title` ou `url` sont manquant) :
 
 ~~~js
 //...
@@ -350,7 +350,7 @@ validatePost = function (post) {
 <%= caption "lib/collections/posts.js" %>
 <%= highlight "3~13" %>
 
-Nous appellerons cette fonction depuis le helper d'événement `postSubmit` :
+Nous appellerons cette fonction depuis le helper d'événement `postSubmit` :
 
 ~~~js
 Template.postSubmit.events({
@@ -391,7 +391,7 @@ Notez que nous utilisons `return` pour interrompre l'exécution du helper si une
 
 Nous n'avons pas tout à fait fini. Nous validons la présence d'une URL et d'un titre sur le *client*, mais qu'en est-il du *serveur* ? Après tout, quelqu'un pourrait toujours essayer d'entrer un post vide manuellement en appelant la méthode `postInsert` depuis la console du navigateur.
 
-Même si nous n'avons pas besoin d'afficher de messages d'erreur sur le serveur, nous pouvons toujours utiliser la même fonction `validatePost`. Sauf que cette fois, nous l'appellerons aussi depuis l'intérieur de la *méthode*, pas seulement depuis le helper d'événement :
+Même si nous n'avons pas besoin d'afficher de messages d'erreur sur le serveur, nous pouvons toujours utiliser la même fonction `validatePost`. Sauf que cette fois, nous l'appellerons aussi depuis l'intérieur de la *méthode*, pas seulement depuis le helper d'événement :
 
 ~~~js
 Meteor.methods({
@@ -440,13 +440,13 @@ Pour tester ça, ouvrez la console du navigateur et essayez d'entrer un post san
 Meteor.call('postInsert', {url: '', title: 'No URL here!'});
 ~~~
 
-Si nous avons fait notre job proprement, vous devriez voir en retour une flopée de code effrayant avec le message « Vous devez définir un titre et une URL pour votre post ».
+Si nous avons fait notre travail proprement, vous devriez voir en retour une flopée de code effrayant avec le message « Vous devez définir un titre et une URL pour votre post ».
 
 <%= commit "9-4", "Validation du contenu du post au moment de la soumission." %>
 
 ### Validation des éditions
 
-Pour arrondir les choses, nous allons aussi applique la même validation pour notre formulaire d'*édition*. Le code sera plutôt similaire. D'abord le template :
+Pour arrondir les angles, nous allons aussi appliquer la même validation pour notre formulaire d'*édition*. Le code sera plutôt similaire. D'abord le template :
 
 ~~~html
 <template name="postEdit">
@@ -474,7 +474,7 @@ Pour arrondir les choses, nous allons aussi applique la même validation pour no
 <%= caption "client/templates/posts/post_edit.html" %>
 <%= highlight "3,7,10,14" %>
 
-Puis les helpers du template :
+Puis les helpers du template :
 
 ~~~js
 Template.postEdit.created = function() {
@@ -529,9 +529,9 @@ Template.postEdit.events({
 <%= caption "client/templates/posts/post_edit.js" %>
 <%= highlight "1~12,25~27,32" %>
 
-Tout comme nous avons fait pour le formulaire de soumission de post, nous voulons aussi valider nos posts côté serveur. À part, rappellerez-vous, que nous n'utilisons pas de méthode pour éditer les posts. mais un appel direct à `update` depuis le client.
+Tout comme nous avons fait pour le formulaire de soumission de post, nous voulons aussi valider nos posts côté serveur. À part, rappelez-vous, que nous n'utilisons pas de méthode pour éditer les posts. mais un appel direct à `update` depuis le client.
 
-Cela signifie que nous devrons ajouter un nouveau callback `deny` à la place :
+Cela signifie que nous devrons ajouter un nouveau callback `deny` à la place :
 
 ~~~js
 //...
