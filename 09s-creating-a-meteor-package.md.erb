@@ -11,7 +11,7 @@ contents: Écrire un paquet in-app local.|Écrire des tests pour vos paquets.|D�
 paragraphs: 22
 ---
 
-Nous avons construit un pattern réutilisable avec notre travail sur les erreurs, donc pourquoi ne pas l'empaqueter dans un paquet intelligent et le partager avec le reste de la communauté Meteor ?
+Nous avons construit un pattern réutilisable avec notre travail sur les erreurs, donc pourquoi ne pas l'empaqueter dans un paquet intelligent et le partager avec le reste de la communauté Meteor ?
 
 Pour être prêts, nous devons nous assurer d'avoir un compte développeur Meteor. Vous pouvez revendiquer le votre sur [meteor.com](meteor.com), mais il est fort probable que vous l'ayez déjà fait quand vous vous êtes inscrits pour le livre ! Dans tous les cas, vous devez connaître votre nom d'utilisateur car nous allons l'utiliser intensivement dans ce chapitre.
 
@@ -41,7 +41,7 @@ Package.onUse(function (api, where) {
 
 Quand on développe un paquet pour un usage destiné au monde réel, c'est une bonne pratique de remplir la section `git` du bloc `Package.describe` avec les URL Git de votre repo (comme `https://github.com/tmeasday/meteor-errors.git`). De cette manière, les utilisateurs peuvent lire le code source, et (en supposant que vous utilisez GitHub) le lisez-moi (readme) de votre paquet apparaîtra sur Atmosphere.
 
-Ajoutons trois fichiers au paquet. Nous pouvons récupérer ces trois fichiers de Microscope sans trop de changements à part pour certains espaces de noms propres et une API légèrement plus claire :
+Ajoutons trois fichiers au paquet. Nous pouvons récupérer ces trois fichiers de Microscope sans trop de changements à part pour certains espaces de noms propres et une API légèrement plus claire :
 
 ~~~js
 Errors = {
@@ -95,7 +95,7 @@ Template.meteorError.rendered = function() {
 
 ### Tester le paquer avec Microscope
 
-Nous allons tester maintenant les choses localement avec Microscope pour nous assurer que notre code modifié fonctionne. Pour relier le paquet dans notre projet, nous exécutons `meteor add tmeasday:errors`. Ensuite, nous avons besoin de supprimer les fichiers existants qui ont été rendu redondants par le nouveau paquet :
+Nous allons tester maintenant les choses localement avec Microscope pour nous assurer que notre code modifié fonctionne. Pour relier le paquet dans notre projet, nous exécutons `meteor add tmeasday:errors`. Ensuite, nous avons besoin de supprimer les fichiers existants qui ont été rendu redondants par le nouveau paquet :
 
 ~~~bash
 rm client/helpers/errors.js
@@ -104,7 +104,7 @@ rm client/templates/includes/errors.js
 ~~~
 <%= caption "Suppression des vieux fichiers via la console bash" %>
 
-Une autre chose que nous avons besoin de faire est d'effectuer quelques mises à jour mineures pour utiliser l'API correctement :
+Une autre chose que nous avons besoin de faire est d'effectuer quelques mises à jour mineures pour utiliser l'API correctement :
 
 ~~~html
   {{> header}}
@@ -132,7 +132,7 @@ Posts.update(currentPostId, {$set: postProperties}, function(error) {
       Errors.throw('Ce lien à déjà été utilisé');   
 ~~~
 <%= caption "client/templates/posts/post_edit.js" %>
-+<%= highlight "4,8" %>
+<%= highlight "4,8" %>
 
 <%= scommit "9-5-1", "Créer des erreurs basiques et les relier." %>
 
@@ -142,7 +142,7 @@ Une fois que ces changements ont été faits, nous devrions récupérer notre co
 
 La première étape quand on développe un paquet est de le tester dans une application, mais la suivante est d'écrire une suite de test qui teste proprement le comportement du paquet. Meteor propose Tinytest (un testeur de paquet intégré), qui rend facile l'exécution de ce type de tests et permet de rester serein quand on partage notre paquet avec les autres.
 
-Créons un fichier de test qui utilise Tinytest pour exécuter des tests sur le code du paquet errors :
+Créons un fichier de test qui utilise Tinytest pour exécuter des tests sur le code du paquet errors :
 
 ~~~js
 Tinytest.add("Errors - collection", function(test) {
@@ -174,7 +174,7 @@ Dans ces tests nous vérifions que les fonctions basiques `Meteor.Errors` foncti
 
 Nous ne couvrirons pas les spécificités d'écriture des tests de paquets Meteor ici (comme l'API n'est pas encore finalisée et hautement changeante), mais heureusement son fonctionnement est assez bien expliqué.
 
-Pour dire à Meteor comment exécuter les tests dans `package.js`, utilisez le code suivant :
+Pour dire à Meteor comment exécuter les tests dans `package.js`, utilisez le code suivant :
 
 ~~~js
 Package.onTest(function(api) {
@@ -188,7 +188,7 @@ Package.onTest(function(api) {
 
 <%= scommit "9-5-2", "Ajout des tests du paquet." %>
 
-Puis nous pouvons exécuter les tests avec :
+Puis nous pouvons exécuter les tests avec :
 
 ~~~bash
 meteor test-packages tmeasday:errors
@@ -201,7 +201,7 @@ meteor test-packages tmeasday:errors
 
 Maintenant, nous voulons délivrer le paquet et le rendre disponible à tout le monde. Nous faisons ça en le mettant sur le serveur de paquets de Meteor, et en le déployant sur Atmopshere.
 
-Heureusement, c'est très facile. Il suffit de se rendre dans le dossier du paquet (via `cd`), et de lancer `meteor publish --create` :
+Heureusement, c'est très facile. Il suffit de se rendre dans le dossier du paquet (via `cd`), et de lancer `meteor publish --create` :
 
 ~~~bash
 cd packages/tmeasday:errors
@@ -209,7 +209,7 @@ meteor publish --create
 ~~~
 <%= caption "Terminal" %>
 
-Maintenant que le paquet est déployé, nous pouvons le supprimer du projet puis le rajouter directement :
+Maintenant que le paquet est déployé, nous pouvons le supprimer du projet puis le rajouter directement :
 
 ~~~bash
 rm -r packages/errors
@@ -219,6 +219,6 @@ meteor add tmeasday:errors
 
 <%= scommit "9-5-4", "Paquet supprimé du dossier de développement" %>
 
-Maintenant nous devrions voir Meteor télécharger notre paquet pour la toute première fois. Bien joué !
+Maintenant nous devrions voir Meteor télécharger notre paquet pour la toute première fois. Bien joué !
 
 Comme d'habitude avec les apartés, assurez-vous d'annuler les changements avant de continuer (ou sinon assurez-vous d'en tenir compte en suivant le reste du livre).
