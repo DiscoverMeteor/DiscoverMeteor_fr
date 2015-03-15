@@ -17,7 +17,7 @@ Imaginez que nous voulions tracer combien d'amis Facebook de l'utilisateur coura
 
 La chose importante à retenir au sujet d'une telle fonction est qu'elle est vraiment *non réactive* et *non temps réel*. Elle fera une requête HTTP vers Facebook, récupérera des données, et les rendra disponible à l'application via un rappel asynchrone, mais la fonction ne s'exécutera pas une nouvelle fois par elle-même quand le compte changera chez Facebook, et notre UI ne changera pas quand les données sous-jacentes le feront.
 
-Pour corriger cela, nous pouvons démarrer en utilisant `setInterval` pour appeler notre fonction toutes les quelques secondes :
+Pour corriger cela, nous pouvons démarrer en utilisant `setInterval` pour appeler notre fonction toutes les quelques secondes :
 
 ~~~js
 currentLikeCount = 0;
@@ -33,7 +33,7 @@ Meteor.setInterval(function() {
 }, 5 * 1000);
 ~~~
 
-Quel que soit le moment où nous vérifions cette variable `currentLikeCount`, nous pouvons nous attendre à avoir un nombre correct avec une marge d'erreur de cinq secondes. Nous pouvons utiliser cette variable dans un helper comme suit :
+Quel que soit le moment où nous vérifions cette variable `currentLikeCount`, nous pouvons nous attendre à avoir un nombre correct avec une marge d'erreur de cinq secondes. Nous pouvons utiliser cette variable dans un helper comme suit :
 
 ~~~js
 Template.postItem.likeCount = function() {
@@ -43,7 +43,7 @@ Template.postItem.likeCount = function() {
 
 Cependant, rien ne dit à notre template de se recharger quand `currentLikeCount` change. Bien que la variable soit maintenant pseudo temps réel du fait qu'elle change par elle-même, elle n'est pas *réactive* donc elle ne peut pas tout à fait communiquer proprement avec le reste de l'écosystème Meteor.
 
-### Réactivité de la surveillance : Computations (Calculs)
+### Réactivité de la surveillance : Computations (Calculs)
 
 La réactivité de Meteor est contrôlée par des *dépendances*, des structures de données qui surveillent un ensemble de calculs.
 
@@ -53,7 +53,7 @@ Vous pouvez penser au calcul comme à la section de code qui "s'occupe" de la so
 
 ### Transformer une Variable en une Fonction Réactive
 
-Pour transformer notre variable `currentLikeCount` en source de données réactives, nous avons besoin de surveiller tous les calculs qui l'utilisent dans une dépendance. Cela requiert de la transformer de variable à fonction (qui retourne une valeur) :
+Pour transformer notre variable `currentLikeCount` en source de données réactives, nous avons besoin de surveiller tous les calculs qui l'utilisent dans une dépendance. Cela requiert de la transformer de variable à fonction (qui retourne une valeur) :
 
 ~~~js
 var _currentLikeCount = 0;
@@ -83,13 +83,13 @@ Nous avons mis en place une dépendance `_currentLikeCountListeners`, qui survei
 
 Ces calculs peuvent ensuite continuer et traiter le changement au cas par cas.
 
-Si cela vous semble être une approche un peu rébarbative pour une simple source de données réactive, vous avez raison, et Meteor fournit des outils intégrés pour rendre ça un peu plus simple (tout comme vous n'avez pas besoin d'utiliser des calculs directement, vous utilisez d'habitude des autoruns). Il y a un paquet plate-forme appelé `reactive-var` qui fait exactement ce que notre `currentLikeCount()` fonction fait. Si nous l'ajoutons :
+Si cela vous semble être une approche un peu rébarbative pour une simple source de données réactive, vous avez raison, et Meteor fournit des outils intégrés pour rendre ça un peu plus simple (tout comme vous n'avez pas besoin d'utiliser des calculs directement, vous utilisez d'habitude des autoruns). Il y a un paquet plate-forme appelé `reactive-var` qui fait exactement ce que notre `currentLikeCount()` fonction fait. Si nous l'ajoutons :
 
 ~~~bash
 meteor add reactive-var
 ~~~
 
-Nous pouvons l'utiliser pour simplifier notre code un petit peu :
+Nous pouvons l'utiliser pour simplifier notre code un petit peu :
 
 ~~~js
 var currentLikeCount = new ReactiveVar();
@@ -123,7 +123,7 @@ Dans Angular, la réactivité est contrôlée par l'objet `scope`. Un scope peut
 
 Quand vous voulez dépendre activement d'une valeur dans un scope, vous appelez `scope.$watch`, en fournissant l'expression qui vous intéresse (c'est-à-dire la partie du scope qui vous intéresse) et une fonction listener qui s'exécutera à chaque fois que la valeur de l'expression change.
 
-De retour sur notre exemple Facebook, nous écririons :
+De retour sur notre exemple Facebook, nous écririons :
 
 ~~~js
 $rootScope.$watch('currentLikeCount', function(likeCount) {
@@ -137,7 +137,7 @@ Quand ce type de valeur réactive a changé, `scope.$apply()` doit être appelé
 
 `scope.$apply()` est similaire à `dependency.changed()`, excepté qu'il agit au niveau du scope, plutôt que vous donner le contrôle de dire précisément quels listeners doivent être réévalués. Ceci dit, ce léger manque de contrôle donne à Angular l'habilité d'être vraiment intelligent et efficace dans la manière dont il détermine précisément quels listeners doivent être réévalués.
 
-Avec Angular, notre code de fonction `getFacebookLikeCount()` devrait ressembler à ça :
+Avec Angular, notre code de fonction `getFacebookLikeCount()` devrait ressembler à ça :
 
 ~~~js
 Meteor.setInterval(function() {
@@ -152,4 +152,4 @@ Meteor.setInterval(function() {
 ~~~
 <%= highlight "5~6" %>
 
-Certes, Meteor s'occupe du gros du travail pour nous et nous laisse bénéficier de la réactivité sans trop de travail de notre part. Mais heureusement, apprendre ces pratiques s'avéreras utile si vous avez besoin de pousser les choses un peu plus loin.
+Certes, Meteor s'occupe du gros du travail pour nous et nous laisse bénéficier de la réactivité sans trop de travail de notre part. Mais heureusement, apprendre ces pratiques s’avérera utile si vous avez besoin de pousser les choses un peu plus loin.
