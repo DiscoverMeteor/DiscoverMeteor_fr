@@ -2,89 +2,85 @@
 title: Vocabulaire
 slug: meteor-vocabulary
 date: 0014/01/02
-number: 14.5
-sidebar: true
-contents: Definitions de quelques mots. 
+number: 99
+points: 1
+appendix: true
+contents: Définitions de quelques mots. 
 paragraphs: 24
 ---
 
-Dans ce livre vous allez surement rencontrer des mots nouveaux ou étant utilisés dans un context propre à Meteor.
-
 #### Client
 
-Lorsque nous parlons de client, nous faisons référence au code qui tourne dans le navigateur web des utilisateurs, que ce soit un navigateur traditionel comme Firefox ou Safari, ou bien quelque chose aussi complexe que UIWebView dans une application native pour iPhone.
+Lorsque nous parlons de client, nous faisons référence au code qui tourne dans le navigateur web des utilisateurs, que ce soit un navigateur traditionnel comme Firefox ou Safari, ou bien quelque chose d'aussi complexe que UIWebView dans une application native pour iPhone.
 
 #### Collection
 
-Une Collection Meteor est le data store (données) qui est automatiquement synchronisé entre le client et le serveur. Les Collections ont un nom (ex. `posts`), et existent généralement sur le client et sur le serveur. Même si ils se comportent différement, ils ont une API commune basée sur l'API de Mongo.
+Une collection Meteor est l'entrepôt de données (datastore) qui est automatiquement synchronisé entre le client et le serveur. Les collections ont un nom (ex. `posts`), et existent généralement sur le client et sur le serveur. Même si elles se comportent différemment, elles ont une API commune basée sur l'API de Mongo.
 
 #### Computation
 
-La "computation" est un block de code qui tourne à chaque fois qu'il y a un changement dans les sources de donnée réactives. Si vous avez une source de donnée réactive (par exemple une variable de session) et que vous voulez une réponse réactive de sa part, il faudra lui définir une computation.
+Une "computation" est un bloc de code qui tourne à chaque fois qu'il y a un changement dans les sources de données versatiles dont il dépend. Si vous avez une source de données versatiles (par exemple une variable de session) et que vous voulez interagir avec elle, il faudra lui définir une computation.
 
-#### Curseur
+#### Curseur (Cursor)
 
-Un curseur est le produit d'une requête sur une collection Mongo. Au niveau du client, un curseur n'est pas qu'un tableau de résultats, mais un object *réactif* qui peut être observé lorsque des objets dans la collection en question sont ajoutés, enlevés et modifiés.
+Un curseur est le produit d'une requête sur une collection Mongo. Au niveau du client, un curseur n'est pas qu'un tableau de résultats, mais un objet *réactif* qui peut être observé lorsque des objets dans la collection en question sont ajoutés, enlevés et modifiés.
  
 #### DDP
 
-DDP, protocole de donnée distribué de Meteor (Distributed Data Protocol), est le protocole utilisé pour synchroniser les collections et faire les appels de Method. DDP est supposé être un protocole générique qui prend la place du HTTP pour les applications en temps réel lourdes en données.
+DDP, protocole de distribution de données de Meteor, est le protocole utilisé pour synchroniser les collections et faire les appels de méthodes. DDP est supposé être un protocole générique qui prend la place du HTTP pour les applications en temps réel lourdes en données.
 
-#### Deps
+#### Tracker
 
-Deps est le système réactif de Meteor. Deps agit dans les coulisses pour garder le HTML automatiquement synchronisé avec le modèle de donnée choisi.
+Tracker est le système réactif de Meteor. Tracker agit dans les coulisses pour garder le HTML automatiquement synchronisé avec le modèle de données choisi.
 
 #### Document
 
-Mongo utilise les "documents" pour stocker les données et donc les objets appartenants aux collections sont appelés "documents". Ce sont des objets JavaScript de base (même s'ils ne peuvent pas contenir de fonctions) avec une propriété spéciale `_id` qui permet à Meteor de suivre les données sur DDP.
+Mongo utilise les "documents" pour stocker les données et donc les objets appartenant aux collections sont appelés "documents". Ce sont des objets JavaScript de base (même s'ils ne peuvent pas contenir de fonctions) avec une propriété spéciale `_id` qui permet à Meteor de suivre les données sur DDP.
 
 #### Helpers
 
 Quand un template a besoin de générer quelque chose de plus complexe qu'une propriété de document, il peut faire appel à un helper, une fonction qui aide pour le rendu.
 
-#### Latency Compensation
+#### Compensation de latence (Latency compensation)
 
-C'est une technique qui permet de simuler des appels de method du coté client pour éviter les délais en attentant la réponse du serveur.
+C'est une technique qui permet de simuler des appels de méthodes du coté client pour éviter les délais en attentant la réponse du serveur.
 
-#### Method
+#### Le groupe de développement de Meteor (Meteor Development Group, MDG)
 
-Une method Meteor est un appel de procedure du client vers le serveur. Les methods ont une logique speciale pour détecter les changements dans les collections ainsi que des méchanismes de compensation de delai (Latency Compensation).
+L'entreprise développant actuellement Meteor, par opposition avec le framework lui-même.
+
+#### Méthode (Method)
+
+Une méthode Meteor est un appel de procédure du client vers le serveur. Les méthodes ont une logique spéciale pour détecter les changements dans les collections ainsi que des mécanismes de compensation de délai.
 
 #### MiniMongo
 
-La collection du coté client est stockée dans un data-store qui offre une API comparable a Mongo. La librairie qui supporte cette API est appelée "MiniMongo" pour indiquer que c'est une version simplifiée de Mongo qui opère entierment dans la mémoire.
+La collection coté client est stockée dans un datastore qui offre une API comparable à Mongo. La librairie qui supporte cette API est appelée "MiniMongo" pour indiquer que c'est une version simplifiée de Mongo qui opère entièrement dans la mémoire.
 
-#### Package
+#### Paquet (Package)
 
-Un package Meteor peut être:
-
-  1. Du code JavaScript qui tourne sur le serveur.
-  2. Du code JavaScript qui tourne sur le client.
-  3. Des instructions sur la gestion des ressources (comme par exemple SASS vers CSS).
-  4. Ressources à traiter.
-
-Un package est comme une bibliothèque surpuissante. Non seulement Meteor est-il livré avec une liste complète de packages de base, mais il y a aussi [Atmosphere](https://atmosphere.meteor.com/) qui est une collection de packages offerts par la communauté.
+Un paquet Meteor peut être du code JavaScript destiné à tourner sur le serveur, du code JavaScript destiné à tourner sur le client, des instructions sur la gestion des ressources (comme par exemple SASS vers CSS), ou des ressources à traiter. <br/>Un paquet est comme une bibliothèque surpuissante. Non seulement Meteor est livré avec une liste complète de paquets de base, mais il y a aussi [Atmosphere](https://atmosphere.meteor.com/) qui est une collection de paquets offerts par la communauté.
 
 #### Publication
 
 Une publication est un jeu de données qui a un nom et qui est personnalisé pour chaque utilisateur qui s'y abonne. Vous créez une publication sur le serveur.
 
-#### Server
+#### Serveur (Server)
 
-Le serveur Meteor est un serveur HTTP et DDP via node.js. Il est constitué de toutes les bibliothèques Meteor ainsi que le code JavaScript que vous avez créé du coté du serveur. Quand le serveur Meteor démarre, il se connecte à la base de donnée Mongo (qui démarre automatiquement).
+Le serveur Meteor est un serveur HTTP et DDP via Node.js. Il est constitué de toutes les bibliothèques Meteor ainsi que du code JavaScript que vous avez créé du coté du serveur. Quand le serveur Meteor démarre, il se connecte à la base de donnée Mongo (qui démarre automatiquement).
 
 #### Session
 
-La Session dans Meteor correspond à une source de donnée réactive du coté client, qui peut être utilisée par votre application pour garder l'état dans lequel se trouve l'utilisateur.
+La session dans Meteor correspond à une source de données versatile du coté client, qui peut être utilisée par votre application pour garder l'état dans lequel se trouve l'utilisateur.
 
 #### Abonnement (Subscription)
 
-Un abonnement est une connection à une publication pour un client particulier. L'abonnement est du code qui s'execute dans le navigateur et qui garde les données synchronisées avec la publication du serveur.
+Un abonnement est une connexion à une publication pour un client particulier. L'abonnement est du code qui s’exécute dans le navigateur et qui garde les données synchronisées avec la publication du serveur.
 
-#### Template
+#### Patron (Template)
 
-Un template permet de générer de l'HTML en Javascript. Par défaut, Meteor utilise Handlebars, un système de template logic-less, qui pourrait être étendu dans le futur.
+Un patron permet de générer de l'HTML en Javascript. Par défaut, Meteor utilise Spacebars, un système de template sans logique (logic-less), qui pourrait être étendu dans le futur.
 
-#### Context des données du template (Template Data Context)
+#### Contexte des données du patron (Template Data Context)
 
-Lorsqu'un template est généré, il correspond à un objet JavaScript qui livre des données spécifiques à ses besoins. Généralement ce sont des objets JavaScript basics, souvent des documents appartenant à une collection, mais ils peuvent être beaucoup plus élaborés avec leur propres fonctions.
+Lorsqu'un patron génère un rendu, il se réfère à un objet JavaScript qui livre des données spécifiques à ses besoins. Généralement ce sont de bons vieux objets JavaScript (plain-old-JavaScript-objects, POJOs), souvent des documents appartenant à une collection, même s'ils peuvent être beaucoup plus élaborés et posséder leur propres fonctions.
