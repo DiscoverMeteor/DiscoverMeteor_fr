@@ -78,7 +78,7 @@ if (Posts.find().count() === 0) {
 ~~~
 <%= caption "server/fixtures.js" %>
 
-N'oublions pas de publier dans notre nouvelle collection et d'y souscrire  :
+N'oublions pas de publier dans notre nouvelle collection et d'y souscrire  :
 
 ~~~js
 Meteor.publish('posts', function() {
@@ -115,7 +115,7 @@ Nous avons aussi amélioré notre router pour attendre un *tableau* (array) cont
 
 ### Afficher les commentaires
 
-C'est très bien d'ajouter des commentaires à la base de données, mais nous voulons aussi les afficher sur la page de discussion. Heureusement, ce processus devrait vous être maintenant familier, et vous devriez avoir une idée des étapes à réaliser :
+C'est très bien d'ajouter des commentaires à la base de données, mais nous voulons aussi les afficher sur la page de discussion. Heureusement, ce processus devrait vous être maintenant familier, et vous devriez avoir une idée des étapes à réaliser :
 
 ~~~html
 <template name="postPage">
@@ -145,7 +145,7 @@ Template.postPage.helpers({
 
 Nous insérons le bloc `{{#each comments}}` à l'intérieur du template de post, donc `this` est un post dans le helper `comments`. Pour trouver les commentaires pertinents, nous vérifions ceux qui sont liés à ce post via l'attribut `postId`.
 
-Sachant ce que nous avons appris à propos des helpers et de Spacebars, représenter un commentaire est plutôt simple. Nous allons créer un nouveau dossier `comments` à l'intérieur de `templates` pour y stocker toute l'information de nos commentaires et un nouveau template `commentItem` :
+Sachant ce que nous avons appris à propos des helpers et de Spacebars, représenter un commentaire est plutôt simple. Nous allons créer un nouveau dossier `comments` à l'intérieur de `templates` pour y stocker toute l'information de nos commentaires et un nouveau template `commentItem` :
 
 ~~~html
 <template name="commentItem">
@@ -160,7 +160,7 @@ Sachant ce que nous avons appris à propos des helpers et de Spacebars, représe
 ~~~
 <%= caption "client/templates/comments/comment_item.html" %>
 
-Créons donc un rapide helper de template pour représenter notre date `submitted` dans un format plus convivial :
+Créons donc un rapide helper de template pour représenter notre date `submitted` dans un format plus convivial :
 
 ~~~js
 Template.commentItem.helpers({
@@ -171,7 +171,7 @@ Template.commentItem.helpers({
 ~~~
 <%= caption "client/templates/comments/comment_item.js" %>
 
-Nous allons ensuite afficher le nombre de commentaires de chaque post :
+Nous allons ensuite afficher le nombre de commentaires de chaque post :
 
 ~~~html
 <template name="postItem">
@@ -191,7 +191,7 @@ Nous allons ensuite afficher le nombre de commentaires de chaque post :
 <%= caption "client/templates/posts/post_item.html" %>
 <%= highlight "6,7" %>
 
-Et ajouter le helper `commentsCount` à `post_item.js` :
+Et ajouter le helper `commentsCount` à `post_item.js` :
 
 ~~~js
 Template.postItem.helpers({
@@ -213,15 +213,15 @@ Template.postItem.helpers({
 
 <%= commit "10-2", "Affichage des commentaires sur `postPage`." %>
 
-Vous devriez maintenant être capable d'afficher nos commentaires préenregistrés et voir quelque chose comme ça :
+Vous devriez maintenant être capable d'afficher nos commentaires préenregistrés et voir quelque chose comme ça :
 
-<%= screenshot "10-1", "Displaying comments" %>
+<%= screenshot "10-1", "Affichage des commentaires" %>
 
 ### Publier des commentaires
 
-Ajoutons un moyen pour nos utilisateurs de créer de nouveaux commentaires. Le procédé que nous allons suivre est similaire à la façon dont nous avons permis à nos utilisateurs de créer de nouveaux posts :
+Ajoutons un moyen pour nos utilisateurs de créer de nouveaux commentaires. Le procédé que nous allons suivre est similaire à la façon dont nous avons permis à nos utilisateurs de créer de nouveaux posts.
 
-Nous allons commencer par ajouter un bouton de publication en bas de chaque post :
+Nous allons commencer par ajouter un bouton de publication en bas de chaque post :
 
 ~~~html
 <template name="postPage">
@@ -245,7 +245,7 @@ Nous allons commencer par ajouter un bouton de publication en bas de chaque post
 <%= caption "client/templates/posts/post_page.html" %>
 <%= highlight "10~14" %>
 
-En ensuite créer le template du formulaire de commentaire :
+En ensuite créer le template du formulaire de commentaire :
 
 ~~~html
 <template name="commentSubmit">
@@ -263,7 +263,7 @@ En ensuite créer le template du formulaire de commentaire :
 ~~~
 <%= caption "client/templates/comments/comment_submit.html" %>
 
-Pour publier nos commentaires, nous appelons une Méthode `comment` dans `comment_submit.js` qui opère d'une manière similaire à ce que nous avons fait pour les publications de posts :
+Pour publier nos commentaires, nous appelons une Méthode `comment` dans `comment_submit.js` qui opère d'une manière similaire à ce que nous avons fait pour les publications de posts :
 
 ~~~js
 Template.commentSubmit.created = function() {
@@ -355,9 +355,9 @@ La première étape consistera à changer la manière dont nous souscrivons à n
 
 Mais nous voulons maintenant que notre souscription dépende d'un paramètre chemin, et ce paramètre doit bien sûr pouvoir changer à n'importe quel moment. Nous allons donc avoir besoin de déplacer notre code de souscription du niveau du *routeur* à celui des *routes*.
 
-Cela a une autre conséquence : au lieu de charger nos données quand nous initialisons notre appli, nous les chargerons maintenant à chaque fois que notre *route* sera atteinte. Cela veut dire que vous aurez maintenant des temps de chargement pendant l'utilisation de l'appli, mais c'est un inconvénient inévitable à moins que vous ne prévoyiez de charger définitivement l'ensemble des données au début.
+Cela a une autre conséquence : au lieu de charger nos données quand nous initialisons notre appli, nous les chargerons maintenant à chaque fois que notre *route* sera atteinte. Cela veut dire que vous aurez maintenant des temps de chargement pendant l'utilisation de l'appli, mais c'est un inconvénient inévitable à moins que vous ne prévoyiez de charger définitivement l'ensemble des données au début.
 
-Premièrement, nous allons arrêter de précharger tous les commentaires dans le bloc `configure` en supprimant `Meteor.subscribe('comments')` (autrement dit revenir à ce que nous avions précédemment) :
+Premièrement, nous allons arrêter de précharger tous les commentaires dans le bloc `configure` en supprimant `Meteor.subscribe('comments')` (autrement dit revenir à ce que nous avions précédemment) :
 
 ~~~js
 Router.configure({
@@ -372,7 +372,7 @@ Router.configure({
 <%= caption "lib/router.js" %>
 <%= highlight "5" %>
 
-Et nous allons ajouter une nouvelle fonction `waitOn` de niveau *route* pour la route `postPage` :
+Et nous allons ajouter une nouvelle fonction `waitOn` de niveau *route* pour la route `postPage` :
 
 ~~~js
 //...
@@ -390,7 +390,7 @@ Router.route('/posts/:_id', {
 <%= caption "lib/router.js" %>
 <%= highlight "5~7" %>
 
-Nous passons `this.params._id` en tant qu'argument à la souscription. Utilisons donc cette nouvelle information pour s'assurer de restreindre notre lot de données aux commentaires appartenant au post courant :
+Nous passons `this.params._id` en tant qu'argument à la souscription. Utilisons donc cette nouvelle information pour s'assurer de restreindre notre lot de données aux commentaires appartenant au post courant :
 
 ~~~js
 Meteor.publish('posts', function() {
@@ -407,7 +407,7 @@ Meteor.publish('comments', function(postId) {
 
 <%= commit "10-4", "Avec une simple publication/souscription pour les commentaires." %>
 
-Il n'y a qu'un seul problème, quand nous retournons à la page d'accueil, il prétend que tous nos posts n'ont aucun commentaires :
+Il n'y a qu'un seul problème, quand nous retournons à la page d'accueil, il prétend que tous nos posts n'ont aucun commentaires :
 
 <%= screenshot "10-3", "Nos commentaires ont disparu !" %>
 
@@ -417,7 +417,7 @@ La raison va nous apparaître bientôt claire : nous ne chargeons les commentai
 
 La meilleure façon de régler cela est de *dénormaliser* le nombre de commentaires sur le post (si vous n'êtes pas sûr de savoir ce que cela veut dire, ne vous inquiétez pas, le prochain aparté s'occupe de vous !). Bien que comme nous allons le voir, notre code s'en retrouve légèrement complexifié, le bénéfice de performance que nous retirons de ne pas avoir à publier _tous_ les commentaires pour afficher le post en vaut le coup.
 
-Nous allons terminer ça en ajoutant une propriété `commentsCount` à la structure de données du `post`. Nous allons commencer par mettre à jour nos données préenregistrées de posts (et faire `meteor reset` pour les recharger -- n'oubliez pas de recréer votre compte utilisateur après) :
+Nous allons terminer ça en ajoutant une propriété `commentsCount` à la structure de données du `post`. Nous allons commencer par mettre à jour nos données préenregistrées de posts (et faire `meteor reset` pour les recharger -- n'oubliez pas de recréer votre compte utilisateur après) :
 
 ~~~js
 // Fixture data
@@ -483,7 +483,7 @@ if (Posts.find().count() === 0) {
 
 Comme d'habitude lorsque nous mettons à jour notre fichier fixtures, vous devez lancer `meteor reset` sur votre base de donnée pour vous assurer qu'il sera relancé.
 
-Puis, nous nous assurons que tous les nouveaux posts débutent avec 0 commentaire :
+Puis, nous nous assurons que tous les nouveaux posts débutent avec 0 commentaire :
 
 ~~~js
 //...
@@ -502,7 +502,7 @@ var postId = Posts.insert(post);
 <%= caption "collections/posts.js" %>
 <%= highlight "6,7" %>
 
-Ensuite nous mettons à jour le `commentsCount` qui s'y rapporte lorsque nous créons un nouveau commentaire en utilisant l'opérateur Mongo `$inc` (qui incrémente un champ numérique de un) :
+Ensuite nous mettons à jour le `commentsCount` qui s'y rapporte lorsque nous créons un nouveau commentaire en utilisant l'opérateur Mongo `$inc` (qui incrémente un champ numérique de un) :
 
 ~~~js
 //...
@@ -527,4 +527,4 @@ Finalement, nous pouvons simplement supprimer le helper `commentsCount` de `clie
 
 <%= commit "10-5", "Dénormalisation du nombre de commentaires dans le post." %>
 
-Maintenant que les utilisateurs peuvent discuter entre eux, ce serait dommage qu'ils ratent les nouveaux commentaires. Et vous savez quoi, le prochain chapitre vous montrera comment implémenter les notifications pour éviter ça !
+Maintenant que les utilisateurs peuvent discuter entre eux, ce serait dommage qu'ils ratent les nouveaux commentaires. Et vous savez quoi, le prochain chapitre vous montrera comment implémenter les notifications pour éviter ça !
