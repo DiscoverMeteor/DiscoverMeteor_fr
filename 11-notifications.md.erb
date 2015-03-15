@@ -14,7 +14,7 @@ Maintenant que les utilisateurs peuvent commenter les articles de chacun, il ser
 
 Pour ce faire, nous notifierons à l'auteur de l'article qu'il y a eu un commentaire, et nous lui fournirons un lien pour voir le commentaire.
 
-C'est sur ce type de fonctionnalité que Meteor resplendit : parce que Meteor est en temps réel par défaut, nous afficherons ces notifications _instantanément_. Nous n'avons pas besoin d'attendre que l'utilisateur rafraîchisse la page ou vérifie par un quelconque moyen, nous pouvons simplement faire apparaître de nouvelles notifications sans même écrire de code spécial.
+C'est sur ce type de fonctionnalité que Meteor resplendit : parce que Meteor est en temps réel par défaut, nous afficherons ces notifications _instantanément_. Nous n'avons pas besoin d'attendre que l'utilisateur rafraîchisse la page ou vérifie par un quelconque moyen, nous pouvons simplement faire apparaître de nouvelles notifications sans même écrire de code spécial.
 
 ### Créer des Notifications
 
@@ -22,7 +22,7 @@ Nous allons créer une notification quand quelqu'un commente sur vos articles. D
 
 Créons notre collection `Notifications`, ainsi qu'une fonction `createCommentNotification` qui insérera une notification correspondante pour chaque nouveau commentaire sur un de vos articles.
 
-Puisque nous allons mettre à jour les notifications depuis le client, nous devons nous assurer que notre appel `allow` est blindé. Nous allons donc vérifier que :
+Puisque nous allons mettre à jour les notifications depuis le client, nous devons nous assurer que notre appel `allow` est blindé. Nous allons donc vérifier que :
 
 - l'utilisateur qui lance l'appel `update` possède la notification qui est en train d'être modifiée.
 - l'utilisateur essaie seulement de mettre à jour un seul champ.
@@ -57,7 +57,7 @@ Comme les articles ou commentaires, cette collection `Notifications` sera partag
 
 Nous avons également créé une simple fonction qui surveille l'article que l'utilisateur commente, détermine qui devrait être notifié à ce moment, et insère une nouvelle notification.
 
-Nous créons déjà des commentaires dans une méthode côté serveur, donc nous pouvons juste compléter cette méthode pour appeler notre fonction. Nous remplacerons `return Comments.insert(comment);` par `comment._id = Comments.insert(comment)` afin de sauvegarder l'`_id` du commentaire nouvellement créé dans une variable, puis appelerons notre fonction `createCommentNotification` :
+Nous créons déjà des commentaires dans une méthode côté serveur, donc nous pouvons juste compléter cette méthode pour appeler notre fonction. Nous remplacerons `return Comments.insert(comment);` par `comment._id = Comments.insert(comment)` afin de sauvegarder l'`_id` du commentaire nouvellement créé dans une variable, puis appellerons notre fonction `createCommentNotification` :
 
 ~~~js
 Comments = new Mongo.Collection('comments');
@@ -79,7 +79,7 @@ Meteor.methods({
     // crée le commentaire et enregistre l'id
     comment._id = Comments.insert(comment);
 
-    // créé maintenant une notification, informant l'utilisateur qu'il y a eu un commentaire
+    // crée maintenant une notification, informant l'utilisateur qu'il y a eu un commentaire
     createCommentNotification(comment);
 
     return comment._id;
@@ -89,7 +89,7 @@ Meteor.methods({
 <%= caption "lib/collections/comments.js" %>
 <%= highlight "17~123" %>
 
-Publions également les notifications :
+Publions également les notifications :
 
 ~~~js
 Meteor.publish('posts', function() {
@@ -108,7 +108,7 @@ Meteor.publish('notifications', function() {
 <%= caption "server/publications.js" %>
 <%= highlight "10~12" %>
 
-Et souscrivons sur le client :
+Et souscrivons sur le client :
 
 ~~~js
 Router.configure({
@@ -164,7 +164,7 @@ Maintenant nous pouvons continuer et ajouter une liste de notifications à l'en-
 <%= caption "client/templates/includes/header.html" %>
 <%= highlight "15~22" %>
 
-Et créer les modèles de `notifications` et `notificationItem` (ils partageront un même fichier `notifications.html`) :
+Et créer les modèles de `notifications` et `notificationItem` (ils partageront un même fichier `notifications.html`) :
 
 ~~~html
 <template name="notifications">
@@ -226,17 +226,17 @@ Template.notificationItem.events({
 
 <%= commit "11-2", "Afficher des notifications dans l'en-tête." %>
 
-Vous pouvez penser que les notifications ne sont pas si différentes des erreurs, et c'est vrai que leur structure est très similaire. Il y a néanmoins une différence clé: nous avons créé une collection client / serveur synchronisée. Cela signifie que nos notifications sont *persistantes* et, tant que nous gardons le même compte utilisateur, survivront au rafraîchissement des navigateurs et des différents appareils.
+Vous pouvez penser que les notifications ne sont pas si différentes des erreurs, et c'est vrai que leur structure est très similaire. Il y a néanmoins une différence clé : nous avons créé une collection client / serveur synchronisée. Cela signifie que nos notifications sont *persistantes* et, tant que nous gardons le même compte utilisateur, survivront au rafraîchissement des navigateurs et des différents appareils.
 
-Essayez-le : ouvrez un deuxième navigateur (disons Firefox), créez un nouveau compte utilisateur, et commentez sur un article que vous avez créé avec votre compte utilisateur principal (que vous avez laissé ouvert dans Chrome). Vous devriez voir apparaître quelque chose comme ça :
+Essayez-le : ouvrez un deuxième navigateur (disons Firefox), créez un nouveau compte utilisateur, et commentez sur un article que vous avez créé avec votre compte utilisateur principal (que vous avez laissé ouvert dans Chrome). Vous devriez voir apparaître quelque chose comme ça :
 
 <%= screenshot "11-1", "Afficher des notifications." %>
 
-### Controller l'accès aux notifications
+### Contrôler l'accès aux notifications
 
 Les notifications fonctionnent bien. Cependant, il y a un petit problème : nos notifications sont publiques.
 
-Si vous avez encore votre deuxième navigateur ouvert, essayez d’exécuter le code suivant dans une console navigateur :
+Si vous avez encore votre deuxième navigateur ouvert, essayez d’exécuter le code suivant dans une console navigateur :
 
 ~~~js
 ❯ Notifications.find().count();
@@ -252,7 +252,7 @@ Nous corrigeons ce problème avec les **publications**. Nous pouvons utiliser no
 
 Pour accomplir cela, nous avons besoin de retourner un curseur différent dans notre publication de `Notifications.find()`. Plus exactement, nous voulons retourner un curseur qui correspond aux notifications de l'utilisateur courant. 
 
-Faire cela est assez direct, puisqu' une fonction `publish` a l'`id` de l'utilisateur courant disponible via `this.userdId` :
+Faire cela est assez direct, puisqu' une fonction `publish` a l'`id` de l'utilisateur courant disponible via `this.userdId` :
 
 ~~~js
 Meteor.publish('notifications', function() {
@@ -261,9 +261,9 @@ Meteor.publish('notifications', function() {
 ~~~
 <%= caption "server/publications.js" %>
 
-<%= commit "11-3", "Synchroniser uniquement les notifications pertinantes pour l'utilisateur courant." %>
+<%= commit "11-3", "Synchroniser uniquement les notifications pertinentes pour l'utilisateur courant." %>
 
-Maintenant, si nous vérifions dans nos deux fenêtres de navigateur, nous devrions voir deux collections de notifications différentes :
+Maintenant, si nous vérifions dans nos deux fenêtres de navigateur, nous devrions voir deux collections de notifications différentes :
 
 ~~~js
 ❯ Notifications.find().count();
@@ -277,6 +277,6 @@ Maintenant, si nous vérifions dans nos deux fenêtres de navigateur, nous devri
 ~~~
 <%= caption "Console du navigateur (utilisateur 2)" %>
 
-En fait, la liste de Notifications devrait même changer selon que vous authentifiez et vous déconnectiez de votre application. Tout cela parce que les publications sont re-publiées automatiquement quand le compte utilisateur change.
+En fait, la liste de Notifications devrait même changer selon que vous vous authentifiez et vous déconnectiez de votre application. Tout cela parce que les publications sont republiées automatiquement quand le compte utilisateur change.
 
 Notre application devient de plus en plus fonctionnelle, et à mesure que des utilisateurs s'inscrivent et ajoutent des liens nous courons le risque de finir avec une page d'accueil sans fin. Nous allons nous occuper de ça dans le prochain chapitre en implémentant une pagination.
