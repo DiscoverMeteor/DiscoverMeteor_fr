@@ -13,7 +13,7 @@ paragraphs: 67
 
 Les choses semblent bien avec Microscope, et nous pouvons nous attendre à un succès quand il va sortir pour tout le monde.
 
-Donc nous devrions probablement réfléchir un peu à propos de la conséquence sur les performances du nombre de nouveaux articles qui vont être entrés dans le site au moment de son envol !
+Donc nous devrions probablement réfléchir un peu à propos de la conséquence sur les performances du nombre de nouveaux articles qui vont être entrés dans le site au moment de son envol !
 
 Nous avons précédemment parlé de comment une collection côté client peut contenir un sous-ensemble des données du serveur, et nous avons même appris à réaliser cela pour nos collections de notifications et de commentaires.
 
@@ -21,7 +21,7 @@ Nous avons précédemment parlé de comment une collection côté client peut co
 
 ### Ajouter plus d'articles
 
-Premièrement, dans nos données de préinstallation, chargeons assez d'articles pour que cette pagination ait un sens :
+Premièrement, dans nos données de pré-installation, chargeons assez d'articles pour que cette pagination ait un sens :
 
 ~~~js
 // Fixture data
@@ -53,7 +53,7 @@ if (Posts.find().count() === 0) {
 <%= caption "server/fixtures.js" %>
 <%= highlight "15~24" %>
 
-Après avoir exécuté `meteor reset` et relancé votre appli, vous devriez obtenir quelque chose comme ça :
+Après avoir exécuté `meteor reset` et relancé votre appli, vous devriez obtenir quelque chose comme ça :
 
 <%= screenshot "12-1", "Afficher des données factices." %>
 
@@ -71,7 +71,7 @@ Afin de faire ça proprement, nous allons avoir besoin de changer la façon dont
 
 Tout ça est peut-être un peu beaucoup à comprendre en une seule fois, mais cela deviendra plus clair avec le code.
 
-Premièrement, nous arrêterons l'abonnement à la publication `posts` dans le bloc `Routeur.configure()`. Supprimez juste `Meteor.suscribe('posts')`, en laissant seulement l'abonnement aux `notifications` :
+Premièrement, nous arrêterons l'abonnement à la publication `posts` dans le bloc `Routeur.configure()`. Supprimez juste `Meteor.suscribe('posts')`, en laissant seulement l'abonnement aux `notifications` :
 
 ~~~js
 Router.configure({
@@ -122,7 +122,7 @@ Router.route('/:postsLimit?', {
 <%= caption "lib/router.js" %>
 <%= highlight "5~8" %>
 
-Vous noterez que nous passons maintenant un objet JavaScript ({sort: {submitted: -1}, limit: postsLimit}) avec le nom de notre publication `posts`. Cet objet servira au même titre que le paramètre `options` pour l'expression de `Posts.find()` côté serveur. Faisons quelques modifications dans notre code côté serveur pour implémenter ça :
+Vous noterez que nous passons maintenant un objet JavaScript ({sort: {submitted: -1}, limit: postsLimit}) avec le nom de notre publication `posts`. Cet objet servira au même titre que le paramètre `options` pour l'expression de `Posts.find()` côté serveur. Faisons quelques modifications dans notre code côté serveur pour implémenter ça :
 
 ~~~js
 Meteor.publish('posts', function(options) {
@@ -151,11 +151,11 @@ Meteor.publish('notifications', function() {
 
 Notre code de publications est effectivement en train de dire au serveur qu'il peut faire confiance à tout objet JavaScript envoyé par le client (dans notre cas, `{limit: postsLimit}`) pour servir comme les `options` d'expression de `find()`. Ceci rend possible pour les utilisateurs de soumettre des options qu'ils aiment via la console du navigateur.
 
-Dans notre cas, c'est relativement anodin, vu que tout ce qu'un utilisateur peut faire est réordonner les articles différemment, ou changer la limite (ce que nous voulons mettre en place en premier lieu). En revanche une appli du monde réel devrait probablement avoir besoin de limiter les limites !
+Dans notre cas, c'est relativement anodin, vu que tout ce qu'un utilisateur peut faire est réordonner les articles différemment, ou changer la limite (ce que nous voulons mettre en place en premier lieu). En revanche une appli du monde réel devrait probablement avoir besoin de limiter les limites !
 
 Heureusement, en utilisant `check()` nous savons que les utilisateurs ne peuvent pas passer en douce des options supplémentaires (comme `fields`, qui pourrait dans certains cas exposer des données privées).
 
-Malgré tout, un pattern plus sécurisé pourrait être de passer les paramètres individuels eux-mêmes au lieu de l'objet entier, pour nous assurer que nous gardons le contrôle de nos données :
+Malgré tout, un pattern plus sécurisé pourrait être de passer les paramètres individuels eux-mêmes au lieu de l'objet entier, pour nous assurer que nous gardons le contrôle de nos données :
 
 ~~~js
 Meteor.publish('posts', function(sort, limit) {
@@ -167,7 +167,7 @@ Meteor.publish('posts', function(sort, limit) {
 
 Maintenant que nous nous sommes abonnés au niveau de la route, cela aurait du sens de mettre le contexte de données au même endroit. Nous dévierons un peu de notre précédent pattern et feront en sorte que la fonction `data` retourne un objet JavaScript au lieu de simplement retourner un curseur. Ceci nous laisse créer un contexte de données *nommé*, que nous appellerons `posts`.
 
-Ce que cela signifie est simplement qu'au lieu d'être implicitement disponible comme `this` à l'intérieur du template, notre contexte de données sera disponible à `posts`. A part ce petit élément, le code devrait être familier :
+Ce que cela signifie est simplement qu'au lieu d'être implicitement disponible comme `this` à l'intérieur du template, notre contexte de données sera disponible à `posts`. A part ce petit élément, le code devrait être familier :
 
 ~~~js
 //...
@@ -193,9 +193,9 @@ Router.route('/:postsLimit?', {
 
 Et puisque que nous avons mis le contexte de données au niveau des routes, nous pouvons maintenant nous débarrasser sans problème du template helper `posts` dans le fichier `posts_list.js` et supprimer le contenu de ce fichier.
 
-Nous avons nommé notre contexte de données `posts` (le même nom que le helper), donc nous n'avons même pas besoin de toucher au template `postsList` !
+Nous avons nommé notre contexte de données `posts` (le même nom que le helper), donc nous n'avons même pas besoin de toucher au template `postsList` !
 
-Récapitulons, Voici à quoi notre nouveau code amélioré de `router.js` ressemble :
+Récapitulons, Voici à quoi notre nouveau code amélioré de `router.js` ressemble :
 
 ~~~js
 Router.configure({
@@ -256,7 +256,7 @@ Router.onBeforeAction(requireLogin, {only: 'postSubmit'});
 
 <%= commit "12-2", "Améliorer la route postsList pour avoir une limite." %>
 
-Essayons notre tout nouveau système de pagination. Nous avons maintenant la possibilité d'afficher un nombre arbitraire d'articles sur la page d'accueil simplement en changeant le paramètre dans l'URL. Par exemple, essayez d'accéder à `http://localhost:3000/3`. Vous verrez maintenant quelque chose comme ça :
+Essayons notre tout nouveau système de pagination. Nous avons maintenant la possibilité d'afficher un nombre arbitraire d'articles sur la page d'accueil simplement en changeant le paramètre dans l'URL. Par exemple, essayez d'accéder à `http://localhost:3000/3`. Vous verrez maintenant quelque chose comme ça :
 
 <%= screenshot "12-2", "Contrôler le nombre d'articles sur la page d'accueil. " %>
 
@@ -390,7 +390,7 @@ Ceci étant dit, notre système échoue dans un cas ; quand le nombre d'items da
 
 C'est triste, il n'y a pas de contournements simples à ce problème, donc pour l'instant nous devrons nous contenter de cette implémentation moins-que-parfaite.
 
-Tout ce qu'il reste à faire est d'ajouter le lien "charger plus" en bas de notre liste d'articles, en nous assurant de l'afficher seulement si nous avons encore des articles à charger :
+Tout ce qu'il reste à faire est d'ajouter le lien "charger plus" en bas de notre liste d'articles, en nous assurant de l'afficher seulement si nous avons encore des articles à charger :
 
 ~~~html
 <template name="postsList">
@@ -458,7 +458,7 @@ PostsListController = RouteController.extend({
 <%= caption "lib/router.js" %>
 <%= highlight "12~14, 23" %>
 
-Nous allons ensuite vérifier dans le template que cette variable `ready` affiche un spinner en bas de la liste de posts pendant que nous chargeons un nouveau lot de posts :
+Nous allons ensuite vérifier dans le template que cette variable `ready` affiche un spinner en bas de la liste de posts pendant que nous chargeons un nouveau lot de posts :
 
 ~~~html
 <template name="postsList">
@@ -484,13 +484,13 @@ Nous allons ensuite vérifier dans le template que cette variable `ready` affich
 
 ### Accéder à des articles
 
-Nous sommes en train de charger les cinq articles les plus récents par défaut, mais que se passe-t-il quand quelqu'un explore une page d'article individuelle ?
+Nous sommes en train de charger les cinq articles les plus récents par défaut, mais que se passe-t-il quand quelqu'un explore une page d'article individuelle ?
 
 <%= screenshot "12-4", "Un template vide." %>
 
-Si vous essayez, vous allez faire face à une erreur « non trouvé ». Cela semble normal : nous avons dit au routeur de s'abonner à la publication `posts` quand il charge la route `postsList`, mais nous ne lui avons pas dit quoi faire au sujet de la route `postPage`.
+Si vous essayez, vous allez faire face à une erreur « non trouvé ». Cela semble normal : nous avons dit au routeur de s'abonner à la publication `posts` quand il charge la route `postsList`, mais nous ne lui avons pas dit quoi faire au sujet de la route `postPage`.
 
-Mais, tout ce que nous savons faire c'est nous abonner à une liste des `n` derniers articles. Comment demande-t-on au serveur pour un seul article spécifique ? Nous allons vous donner un petit secret ici : vous pouvez avoir plus d'une publication pour chaque collection !
+Mais, tout ce que nous savons faire c'est nous abonner à une liste des `n` derniers articles. Comment demande-t-on au serveur pour un seul article spécifique ? Nous allons vous donner un petit secret ici : vous pouvez avoir plus d'une publication pour chaque collection !
 
 Donc pour retrouver nos articles manquants, nous allons simplement créer une nouvelle publication `singlePost` séparée qui publie seulement un article, identifié par son `_id`.
 
@@ -509,7 +509,7 @@ Meteor.publish('singlePost', function(id) {
 <%= caption "server/publications.js" %>
 <%= highlight "5~7" %>
 
-Maintenant, abonnons-nous aux bons articles côté client. Nous nous sommes déjà abonnés à la publication `comments` sur la fonction `waitOn` de la route `postPage`, donc nous pouvons simplement ajouter l'abonnement à `singlePost` ici. Et n'oublions pas d'ajouter également notre abonnement à la route `postEdit`, vu qu'elle nécessite aussi les mêmes données :
+Maintenant, abonnons-nous aux bons articles côté client. Nous nous sommes déjà abonnés à la publication `comments` sur la fonction `waitOn` de la route `postPage`, donc nous pouvons simplement ajouter l'abonnement à `singlePost` ici. Et n'oublions pas d'ajouter également notre abonnement à la route `postEdit`, vu qu'elle nécessite aussi les mêmes données :
 
 ~~~js
 //...
@@ -540,4 +540,4 @@ Router.route('/posts/:_id/edit', {
 
 <%= commit "12-6","Utiliser un abonnement à un unique article pour nous assurer que nous pouvons toujours voir le bon article." %>
 
-Avec la pagination activée, notre application ne souffre plus de problèmes de montée en charge, et les utilisateurs sont sûrs de contribuer avec même plus de liens qu'avant. Donc ne serait-il pas super de pouvoir d'une manière ou d'une autre classer ces liens ? Si vous ne le saviez pas, c'est précisément l'objet du chapitre suivant.
+Avec la pagination activée, notre application ne souffre plus de problèmes de montée en charge, et les utilisateurs sont sûrs de contribuer avec même plus de liens qu'avant. Donc ne serait-il pas super de pouvoir d'une manière ou d'une autre classer ces liens ? Si vous ne le saviez pas, c'est précisément l'objet du chapitre suivant.
