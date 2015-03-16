@@ -441,19 +441,18 @@ Router.map(function() {
 });
 ~~~
 <%= caption "lib/router.js" %>
-<%= highlight "8,16,21~34,36~49" %>
+<%= highlight "10,23,27~55" %>
 
 Notez que maintenant que nous avons plus d'une route, nous prenons la logique `nextPath` hors de `PostListController` et la plaçons dans `NewPostsListController` et `BestPostsListController`, à partir du moment où le chemin sera différent dans les deux cas.
 
 De plus, quand nous trions par `votes`, nous avons un tri secondaire par la date (submitted) pour nous assurer que l'ordre est correct.
 
-Avec nos nouveaux controlleurs en place, nous pouvons maintenantsans problème nous débarasser de la route `postList` précédente. Supprimez juste le code suivant :
+Avec nos nouveaux controlleurs en place, nous pouvons maintenant sans problème nous débarasser de la route `postList` précédente. Supprimez juste le code suivant :
 
 ```
- this.route('postsList', {
-  path: '/:postsLimit?',
-  controller: PostsListController
- })
+Router.route('/:postsLimit?', {
+name: 'postsList'
+})
 ```
 <%= caption "lib/router.js" %>
 
@@ -494,8 +493,8 @@ Nous ajouterons également des liens dans l'en-tête :
   </header>
 </template>
 ~~~
-<%= caption "client/views/include/header.html" %>
-<%= highlight "9, 15~21" %>
+<%= caption "client/templates/includes/header.html" %>
+<%= highlight "11, 15~20" %>
 
 Nous avons également besoin de mettre à jour notre gestionnaire de suppression d'article.
 
