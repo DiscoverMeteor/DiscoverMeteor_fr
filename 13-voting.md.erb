@@ -400,7 +400,7 @@ PostsListController = RouteController.extend({
     return Posts.find({}, this.findOptions());
   },
   data: function() {
-    var hasMore = this.posts().fetch().length === this.limit();
+    var hasMore = this.posts().count() === this.limit();
     return {
       posts: this.posts(),
       nextPath: hasMore ? this.nextPath() : null
@@ -496,7 +496,7 @@ Nous ajouterons également des liens dans l'en-tête :
 <%= caption "client/templates/includes/header.html" %>
 <%= highlight "11, 15~20" %>
 
-Nous avons également besoin de mettre à jour notre gestionnaire de suppression d'article.
+Et finallement, nous avons également besoin de mettre à jour notre gestionnaire de suppression d'article :
 
 ~~~html
   'click .delete': function(e) {
@@ -509,11 +509,10 @@ Nous avons également besoin de mettre à jour notre gestionnaire de suppression
     }
   }
 ~~~
-<%= caption "client/views/posts_edit.js" %>
+<%= caption "client/templates/posts_edit.js" %>
 <%= highlight "7" %>
 
-
-With all this done, we now gain a best posts list:
+Avec tout cela de fait, nous avons maintenant une liste des meilleurs posts.
 
 <%= screenshot "13-4", "Classer par points" %>
 
