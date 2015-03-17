@@ -10,7 +10,7 @@ contents: Construire un système de vote d'utilisateurs sur les articles.|Classe
 paragraphs: 49
 ---
 
-Maintenant que notre site est en train de devnir populaire, trouver les meilleurs liens va rapidement devenir délicat. Ce que nous avons besoin est un système de classement pour ordonner nos articles.
+Maintenant que notre site est en train de devenir populaire, trouver les meilleurs liens va rapidement devenir délicat. Ce que nous avons besoin est un système de classement pour ordonner nos articles.
 
 Nous pourrions construire un système de classement complexe avec karma, basé sur une perte de points dans le temps, et plein d'autres choses (la plupart sont implémentés dans [Telescope](http://telesc.pe), le grand frère de Microscope). Mais pour notre application, nous garderons les choses simples et nous noterons juste les articles par le nombre de votes qu'ils ont reçus.
 
@@ -28,11 +28,9 @@ Nous publierons ces listes de votants à tous les utilisateurs, ce qui rendra au
 
 C'est le type de problème sur la confidentialité des données qui peut subvenir de la façon dont les collections fonctionnent. Par exemple, voulons-nous que les personnes soient capables de trouver qui a voté pour leurs articles ? Dans notre cas, rendre cette information disponible publiquement n'aura pas réellement de conséquences, mais il est important de reconnaître au minimum le problème.
 
-Notez également que si nous *voulions* limiter certaines de ces informations, nous devrions nous assurer que le client ne puisse pas trifouiller avec les options `fields` de notre publication, en supprimant cette propriété côté serveur, ou en ne passant pas toutes l'objet options entièrement du client vers le serveur.
-
 <% end %>
 
-Nous allons également dénormaliser le nombre total de votants sur un article pour rendre plus facile la récupération de ce chiffre. Donc nous ajouterons deux attributs à nos articles, `upvoters` et `votes`. Commençons par les ajouter à notre fichier de préinstallation :
+Nous allons également dénormaliser le nombre total de votants sur un article pour rendre plus facile la récupération de ce chiffre. Donc nous ajouterons deux attributs à nos articles, `upvoters` et `votes`. Commençons par les ajouter à notre fichier de pré-installation :
 
 ~~~js
 // Données de préinstallation
@@ -149,7 +147,6 @@ _id: postId
 <%= caption "collections/posts.js" %>
 <%= highlight "17~18" %>
 
-
 ### Templates de vote
 
 Premièrement, nous allons ajouter un bouton de vote à notre article partiel et afficher le nombre de votes dans les métadonnées de l'article :
@@ -188,7 +185,7 @@ Template.postItem.events({
   }
 });
 ~~~
-<%= caption "client/views/posts/post_item.js" %>
+<%= caption "client/templates/posts/post_item.js" %>
 <%= highlight "3~8" %>
 
 Finalement, nous allons revenir à notre fichier `lib/collections/posts.js` et ajouter une méthode Meteor côté serveur qui votera pour les articles :
@@ -228,11 +225,11 @@ Meteor.methods({
 
 Cette méthode est assez directe. Nous faisons quelques vérifications de sécurité pour nous assurer que l'utilisateur est authentifié et que l'article existe réellement. Puis nous vérifions doublement que l'utilisateur n'a pas déjà voté pour cet article, et si c'est le cas nous incrémentons le score total de vote et ajoutons l'utilisateur à l'ensemble des votants.
 
-L'étape finale est interessante, comme nous avons utilisé deux opérateurs Mongo spéciaux. Il y en a beaucoup plus à apprendre, mais ces deux sont extrêmement pratique : `$addToSet` ajoute un item à une propriété de tableau tant qu'elle n'existe pas déjà, et `$inc` incrémente simplement un entier.
+L'étape finale est intéressante, comme nous avons utilisé deux opérateurs Mongo spéciaux. Il y en a beaucoup plus à apprendre, mais ces deux sont extrêmement pratique : `$addToSet` ajoute un item à une propriété de tableau tant qu'elle n'existe pas déjà, et `$inc` incrémente simplement un entier.
 
 ### Optimisations de l'interface utilisateur
 
-Si l'utilisateur n'est pas authentifié, ou a déjà voté un article, il ne sera pas authorisé à voter. Pour refléter ça dans notre UI, nous utiliserons un helper pour ajouter de façon conditionnelle une class CSS `disabled` au bouton de vote.
+Si l'utilisateur n'est pas authentifié, ou a déjà voté un article, il ne sera pas autorisé à voter. Pour refléter ça dans notre UI, nous utiliserons un helper pour ajouter de façon conditionnelle une classe CSS `disabled` au bouton de vote.
 
 ~~~html
 <template name="postItem">
@@ -243,7 +240,7 @@ Si l'utilisateur n'est pas authentifié, ou a déjà voté un article, il ne ser
   </div>
 </template>
 ~~~
-<%= caption "client/views/posts/post_item.html" %>
+<%= caption "client/templates/posts/post_item.html" %>
 <%= highlight "3" %>
 
 ~~~js
@@ -271,10 +268,10 @@ Template.postItem.events({
   }
 });
 ~~~
-<%= caption "client/views/posts/post_item.js" %>
+<%= caption "client/templates/posts/post_item.js" %>
 <%= highlight "8~15, 19" %>
 
-Nous changeons notre class `.upvote` en `.upvotable`, donc n'oubliez pas de changer l'évènement click également.
+Nous changeons notre classe `.upvote` en `.upvotable`, donc n'oubliez pas de changer l'événement click également.
 
 <%= screenshot "13-2", "Griser les boutons vote." %>
 
@@ -366,11 +363,9 @@ Meteor.methods({
 
 Ce que nous sommes en train de dire c'est "trouve tous les articles avec cet `id` pour lesquels cet utilisateur n'a pas déjà voté, et mets les à jour dans ce sens". Si l'utilisateur *n'a pas* déjà voté, il trouvera bien entendu l'article avec cet `id`. D'un autre côté si l'utilisateur *a* voté, alors la requête correspondra à aucun documents, et par conséquent rien ne se passera.
 
-Le seul inconvénient est que maintenant nous ne pouvons pas dire explicitement à l'utilisateur qu'il a déjà voté pour cet article (à partir du moment où nous nous débarrassons de l'appel de la base de données pour vérifier ça). Mais ils devraient le comprendre en voyant le bouton "vote" grisé dans l'interface utilisateur.
-
 <% note do %>
 
-### Compensation de la Latence
+### Compensation de la latence
 
 Disons que vous avez essayé de tricher et envoyé un de vos articles en haut de la lise en bidouillant son nombre de votes :
 
@@ -457,11 +452,11 @@ Router.route('/best/:postsLimit?', {name: 'bestPosts'});
 <%= caption "lib/router.js" %>
 <%= highlight "10,23,27~55" %>
 
-Notez que maintenant que nous avons plus d'une route, nous prenons la logique `nextPath` hors de `PostListController` et la plaçons dans `NewPostsListController` et `BestPostsListController`, à partir du moment où le chemin sera différent dans les deux cas.
+Notez que maintenant que nous avons plus d'une route, nous prenons la logique `nextPath` hors de `PostListController` et la plaçons dans `NewPostsController` et `BestPostsController`, à partir du moment où le chemin sera différent dans les deux cas.
 
-De plus, quand nous trions par `votes`, nous avons un tri secondaire par la date (submitted) pour nous assurer que l'ordre est correct.
+De plus, quand nous trions par `votes`, nous avons des tris ultérieurs par horodatage d'envoi puis par `_id` pour nous assurer que l'ordre est entièrement spécifié.
 
-Avec nos nouveaux controlleurs en place, nous pouvons maintenant sans problème nous débarasser de la route `postList` précédente. Supprimez juste le code suivant :
+Avec nos nouveaux contrôleurs en place, nous pouvons maintenant sans problème nous débarrasser de la route `postList` précédente. Supprimez simplement le code suivant :
 
 ```
 Router.route('/:postsLimit?', {
@@ -589,14 +584,14 @@ Template.header.helpers({
     args.pop();
     
     var active = _.any(args, function(name) {
-      return Router.current() && Router.current().route.name === name
+      return Router.current() && Router.current().route.getName() === name
     });
     
     return active && 'active';
   }
 });
 ~~~
-<%= caption "client/views/includes/header.js" %>
+<%= caption "client/templates/includes/header.js" %>
 
 <%= screenshot "13-5", "Montrer la page active" %>
 
@@ -604,11 +599,11 @@ Template.header.helpers({
 
 ### Arguments des helpers
 
-Nous n'avons pas utilisé ce patron spécifique jusqu'à maintenant, mais just comme d'autres tags Spacebars, les tags de template helper peuvent prendre des arguments.
+Nous n'avons pas utilisé ce patron spécifique jusqu'à maintenant, mais tout comme d'autres tags Spacebars, les tags de template helper peuvent prendre des arguments.
 
 Et pendant que vous pouvez bien entendu passer des arguments nommés spécifiques dans votre fonction, vous pouvez également passer un nombre non spécifié de paramètres anonymes et les récupérer en appelant l'objet `arguments` dans la fonction.
 
-Dans ce dernier cas, vous voudrez probablement convertir l'objet `arguments` en tableau Javascript classique et ensuite appeler `pop()` dessus pour vous débarasser du hash ajouté à la fin par Spacebars.
+Dans ce dernier cas, vous voudrez probablement convertir l'objet `arguments` en tableau Javascript classique et ensuite appeler `pop()` dessus pour vous débarrasser du hash ajouté à la fin par Spacebars.
 
 <% end %>
 
@@ -618,4 +613,4 @@ Si une de ces routes correspond avec le chemin courant, `any()` retournera `true
 
 <%= commit "13-6", "Classes active ajoutées à l'en-tête." %>
 
-Maintenant que les utilisateurs peuvent voter sur les artices en temps réel, vous verrez les items monter et descendre la page d'accueil en fonction de leur classement. Mais ne serait-il pas joli s'il y avait un moyen d'affiner tout ça avec quelques animations bien temporisées ?
+Maintenant que les utilisateurs peuvent voter sur les articles en temps réel, vous verrez les items monter et descendre la page d'accueil en fonction de leur classement. Mais ne serait-il pas joli s'il y avait un moyen d'affiner tout ça avec quelques animations bien temporisées ?
