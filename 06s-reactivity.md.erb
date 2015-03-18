@@ -15,9 +15,9 @@ Si les collections sont la fonctionnalité principale de Meteor, la **Réactivit
 
 Les Collections transforment radicalement la façon dont votre application traite les modifications de données. Plutôt que d'avoir à vérifier les modifications de données manuellement (par un appel AJAX, par exemple) et de les mettre à jour dans votre page HTML, Meteor applique automatiquement ces modifications à votre interface utilisateur de façon transparente.
 
-Prenez un moment pour y penser : dans les coulisses, Meteor est capable de changer *toute* partie de votre interface utilisateur chaque fois qu'une collection sous-jacente est mise à jour.
+Prenez un moment pour y penser : dans les coulisses, Meteor est capable de changer *toute* partie de votre interface utilisateur chaque fois qu'une collection sous-jacente est mise à jour.
 
-La *meilleure* façon de parvenir à celà serait d'utiliser `.observe()`, une fonction de curseur qui déclenche des callbacks lorsque des documents correspondant à ce curseur changent. Nous pourrions alors faire des changements dans le DOM (le rendu HTML de notre page Web) à travers ces callbacks. Le code résultant ressemblerait à quelque chose comme ceci :
+La *meilleure* façon de parvenir à celà serait d'utiliser `.observe()`, une fonction de curseur qui déclenche des callbacks lorsque des documents correspondant à ce curseur changent. Nous pourrions alors faire des changements dans le DOM (le rendu HTML de notre page Web) à travers ces callbacks. Le code résultant ressemblerait à quelque chose comme ceci :
 
 ~~~js
 Posts.find().observe({
@@ -50,11 +50,11 @@ Dans certains cas, vous aurez besoin d'utiliser des callbacks `observe()` afin d
 
 ### Une approche déclarative
 
-Meteor nous fournit un meilleur outil : la réactivité, qui est dans sa structure une approche **déclarative**. Être déclaratif nous laisse définir la relation entre les objets une fois et savoir qu'ils resteront synchronisés, au lieu de devoir spécifier les comportements pour tous les changements potentiels.
+Meteor nous fournit un meilleur outil : la réactivité, qui est dans sa structure une approche **déclarative**. Être déclaratif nous laisse définir la relation entre les objets une fois et savoir qu'ils resteront synchronisés, au lieu de devoir spécifier les comportements pour tous les changements potentiels.
 
 Ceci est un concept puissant, parce qu'un système temps réel a beaucoup d'entrées qui peuvent changer à de façon imprévisible. En exposant déclarativement la façon dont nous affichons le HTML basé sur les sources de données réactives que nous observons, Meteor peut surveiller ces sources et accomplir de manière transparente ce travail de mise à jour permanente de l'interface utilisateur.
 
-Tout ceci pour dire qu'au lieu de réfléchir sur des callbacks `observe()`, Meteor nous permet d'écrire :
+Tout ceci pour dire qu'au lieu de réfléchir sur des callbacks `observe()`, Meteor nous permet d'écrire :
 
 ~~~html
 <template name="postsList">
@@ -66,7 +66,7 @@ Tout ceci pour dire qu'au lieu de réfléchir sur des callbacks `observe()`, Met
 </template>
 ~~~
 
-Et ensuite récupérer notre liste d'articles avec :
+Et ensuite récupérer notre liste d'articles avec :
 
 ~~~js
 Template.postsList.helpers({
@@ -92,7 +92,7 @@ Les calculs sont généralement mis en place pour réévaluer simplement leurs c
 
 ### Mettre en place un Calcul
 
-Maintenant que nous comprenons la théorie derrière les calculs, en mettre un en place semble beaucoup plus sensé. Nous pouvons utiliser la fonction `Tracker.autorun` pour enfermer un bloc de code dans un calcul et le rendre réactif :
+Maintenant que nous comprenons la théorie derrière les calculs, en mettre un en place semble beaucoup plus sensé. Nous pouvons utiliser la fonction `Tracker.autorun` pour enfermer un bloc de code dans un calcul et le rendre réactif :
 
 ~~~js
 Meteor.startup(function() {

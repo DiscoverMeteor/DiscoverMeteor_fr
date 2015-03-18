@@ -23,11 +23,11 @@ Actuellement dans Microscope, l'état courant de l'application utilisateur est c
 
 Mais dans de nombreux cas, vous allez avoir besoin de stocker des états éphémères qui sont seulement pertinants pour la version courante de l'utilisateur de l'application (par exemple, qu'un élément soit affiché ou caché). La session est un moyen idéal pour faire ça.
 
-La session est une zone de stockage de données réactive. C'est global dans le sens d'un objet singleton global : il y a une session, et c'est accessible partout. Les variables globales sont habituellement vues comme des mauvaises choses, mais dans ce cas la session peut être utilisée comme un bus de communications central entre les différentes parties de l'application.
+La session est une zone de stockage de données réactive. C'est global dans le sens d'un objet singleton global : il y a une session, et c'est accessible partout. Les variables globales sont habituellement vues comme des mauvaises choses, mais dans ce cas la session peut être utilisée comme un bus de communications central entre les différentes parties de l'application.
 
 ### Changer la Session
 
-La Session est disponible partout sur le client en tant que l'objet `Session`. Pour insérer une valeur de sessions, vous pouvez appeler :
+La Session est disponible partout sur le client en tant que l'objet `Session`. Pour insérer une valeur de sessions, vous pouvez appeler :
 
 ~~~js
 ❯ Session.set('pageTitle', 'A different title');
@@ -36,7 +36,7 @@ La Session est disponible partout sur le client en tant que l'objet `Session`. P
 
 Vous pouvez ensuite lire les données avec `Session.get('mySessionProperty');`. C'est une source de données réactive, et ça signifie que si vous la mettez dans un helper, vous pouvez changer ce qu'affiche le helper de manière réactive en changeant la valeur de Session.
 
-Pour essayer ça, ajoutez le code qui suit au template layout :
+Pour essayer ça, ajoutez le code qui suit au template layout :
 
 ~~~html
 <header class="navbar navbar-default" role="navigation">
@@ -64,7 +64,7 @@ Notez que le code présenté dans les chapitres apartés ne fait pas partie du c
 
 Le rechargement automatique de Meteor (connu comme “hot code reload” ou HCR) préserve les variables de Session, donc nous devrions voir maintenant "A different title" affiché dans la navbar. Sinon, retapez juste la précédente commande `Session.set()` une nouvelle fois.
 
-De plus, si nous changeons la valeur une fois de plus (via la console du navigateur), nous devrions voir le titre affiché changer une nouvelle fois :
+De plus, si nous changeons la valeur une fois de plus (via la console du navigateur), nous devrions voir le titre affiché changer une nouvelle fois :
 
 ~~~js
 ❯ Session.set('pageTitle', 'A brand new title');
@@ -87,7 +87,7 @@ Si vous modifiez une variable de Session avec `Session.set()` mais que vous l'in
 
 Nous avons regardé un exemple d'une source de données réactive, et nous l'avons observé en action à l'intérieur d'un helper de template. Mais là où les contextes dans Meteor (tels que les template helpers) sont réactifs de manière inhérentes, la majorité du code de l'application Meteor est encore plein de JavaScript non réactif.
 
-Supposons que nous avons le petit bout de code suivant quelque part dans notre application :
+Supposons que nous avons le petit bout de code suivant quelque part dans notre application :
 
 ~~~js
 helloWorld = function() {
@@ -99,7 +99,7 @@ Quand bien même nous appelons une variable de Session, le *contexte* dans leque
 
 C'est là que [Autorun](http://docs.meteor.com/#Tracker_autorun) intervient. Comme son nom l'indique, le code à l'intérieur d'un bloc `autorun` s'exécutera et restera en cours d'exécution chaque fois que les sources de données réactives utilisées à l'intérieur changeront.
 
-Essayer de taper ça dans la console de votre navigateur :
+Essayer de taper ça dans la console de votre navigateur :
 
 ~~~js
 ❯ Tracker.autorun( function() { console.log('Value is : ' + Session.get('pageTitle')); } );
@@ -107,7 +107,7 @@ Value is : A brand new title
 ~~~
 <%= caption "Console du navigateur" %>
 
-Comme vous pouviez vous y attendre, le bloc de code fourni à l'intérieur du `autorun` s'éxécute une fois, retournant ses données à la console. Maintenant, essayons de changer le titre :
+Comme vous pouviez vous y attendre, le bloc de code fourni à l'intérieur du `autorun` s'éxécute une fois, retournant ses données à la console. Maintenant, essayons de changer le titre :
 
 ~~~js
 ❯ Session.set('pageTitle', 'Yet another value');
@@ -117,7 +117,7 @@ Value is : Yet another value
 
 C'est magique ! Comme la valeur de session a changé, `autorun` a su qu'il devait executer son contenu une nouvelle fois, renvoyant la nouvelle valeur à la console.
 
-Revenons à notre précédent exemple, si nous voulons déclencher une nouvelle alerte à chaque fois que la variable change, tout ce dont nous avons besoin est d'envelopper notre code d'un bloc `autorun` :
+Revenons à notre précédent exemple, si nous voulons déclencher une nouvelle alerte à chaque fois que la variable change, tout ce dont nous avons besoin est d'envelopper notre code d'un bloc `autorun` :
 
 ~~~js
 Tracker.autorun(function() {
@@ -129,11 +129,11 @@ Comme nous venons de le voir, `autorun` peut être vraiment utile pour traquer l
 
 ### Hot Code Reload
 
-Durant notre développement de Microscope, nous avons profité d'une fonctionnalité de Meteor qui fait gagner du temps : hot code reload (HCR). Quand nous sauvegardons un de nos fichiers de code, Meteor détecte les changements et redémarre de façon transparente le serveur meteor en cours d'exécution, en informant chaque client de recharger la page.
+Durant notre développement de Microscope, nous avons profité d'une fonctionnalité de Meteor qui fait gagner du temps : hot code reload (HCR). Quand nous sauvegardons un de nos fichiers de code, Meteor détecte les changements et redémarre de façon transparente le serveur meteor en cours d'exécution, en informant chaque client de recharger la page.
 
 C'est identique à un rechargement automatique de la page, mais avec une différence importante.
 
-Pour trouver ce que c'est, commencer par réinitialiser la variable de session que nous avons utilisée :
+Pour trouver ce que c'est, commencer par réinitialiser la variable de session que nous avons utilisée :
 
 ~~~js
 ❯ Session.set('pageTitle', 'A brand new title');
@@ -154,7 +154,7 @@ Donc si nous utilisons des variables de session pour tracer exactement ce que l'
 
 Considérez ceci pour le moment. Si nous pouvons gérer de garder tous les états dans l'URL et la session, nous pouvons changer le code source en cours d'exécution de chaque client de l'application de manière transparente et avec un impact minimal.
 
-Vérifions maintenant ce qu'il se passe quand nous rafraîchissons la page manuellement :
+Vérifions maintenant ce qu'il se passe quand nous rafraîchissons la page manuellement :
 
 ~~~js
 ❯ Session.get('pageTitle');
@@ -162,9 +162,9 @@ null
 ~~~
 <%= caption "Console du navigateur" %>
 
-Quand nous rechargeons la page, nous perdons la session. Dans un HCR, Meteor sauvegarde la session en local dans le navigateur et la recharge après le rechargement de la page. Cependant, le comportement alternatif d'un rechargement a du sens : si un utilisateur recharge la page, c'est comme s'il avait encore exploré la même URL, et il devrait être réinitialisé à l'état de départ que n'importe quel utilisateur devrait voir en visitant l'URL.
+Quand nous rechargeons la page, nous perdons la session. Dans un HCR, Meteor sauvegarde la session en local dans le navigateur et la recharge après le rechargement de la page. Cependant, le comportement alternatif d'un rechargement a du sens : si un utilisateur recharge la page, c'est comme s'il avait encore exploré la même URL, et il devrait être réinitialisé à l'état de départ que n'importe quel utilisateur devrait voir en visitant l'URL.
 
-Les leçons importantes dans tout ça sont :
+Les leçons importantes dans tout ça sont :
 
 1. Toujours stocker l'état utilisateur dans la Session ou dans l'URL afin que les utilisateurs ne soient pas dérangés lors du Hot Code Reload.
 2. Stockez chaque état que vous souhaitez mettre en commun entre les utilisateurs *à l'intérieur de l'URL elle-même*.

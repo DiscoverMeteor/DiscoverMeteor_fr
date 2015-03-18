@@ -286,7 +286,7 @@ Pour toutes ces raisons, la pagination traditionnelle n'a pas beaucoup de sens l
 
 ### Créer un contrôleur de route
 
-Vous avez noté que nous répétons la ligne `var limit = parseInt(this.params.postsLimit) || 5;` deux fois. De plus, coder en dur le nombre "5" n'est pas vraiment idéal. Ce n'est pas la fin du monde, mais comme c'est toujours mieux de suivre le principe DRY (Don't Repeat Yourself : Ne vous répétez pas) si vous le pouvez, voyons comment nous pouvons remanier un petit peu les choses.
+Vous avez noté que nous répétons la ligne `var limit = parseInt(this.params.postsLimit) || 5;` deux fois. De plus, coder en dur le nombre "5" n'est pas vraiment idéal. Ce n'est pas la fin du monde, mais comme c'est toujours mieux de suivre le principe DRY (Don't Repeat Yourself : Ne vous répétez pas) si vous le pouvez, voyons comment nous pouvons remanier un petit peu les choses.
 
 Nous allons présenter un nouvel aspect de Iron Router, les *Contrôleurs de Route*. Un contrôleur de route est simplement un moyen de grouper les fonctionnalités de routage ensemble dans un paquet réutilisable dont toutes les routes peuvent hériter. Maintenant nous allons l'utiliser uniquement pour une seule route, mais vous verrez dans le prochain chapitre comment cette fonctionnalité deviendra pratique.
 
@@ -333,7 +333,7 @@ Puisque notre contrôleur est appelé `PostsListController` et notre route `post
 
 ### Ajouter un lien « Charger plus »
 
-Nous avons une pagination qui fonctionne, et notre code est bien fait. Il y a juste un problème : il n'y a aucun moyen d'utiliser actuellement cette pagination excepté en changeant l'URL manuellement. Ceci ne fait définitivement pas une bonne expérience utilisateur, donc retournons au travail pour corriger ça.
+Nous avons une pagination qui fonctionne, et notre code est bien fait. Il y a juste un problème : il n'y a aucun moyen d'utiliser actuellement cette pagination excepté en changeant l'URL manuellement. Ceci ne fait définitivement pas une bonne expérience utilisateur, donc retournons au travail pour corriger ça.
 
 Ce que nous voulons faire est assez simple. Nous allons ajouter un bouton "Charger plus" en bas de notre liste d'articles, qui incrémentera le nombre d'articles affichés par 5 chaque fois qu'on clique dessus. Donc si je suis actuellement sur l'URL `http://localhost:3000/5`, cliquer sur "Charger plus" nous amène à `http://localhost:3000/10`. Si vous êtes arrivé aussi loin dans le livre, nous pensons que vous pouvez supporter un peu d'arithmétique.
 
@@ -408,7 +408,7 @@ Tout ce qu'il reste à faire est d'ajouter le lien "charger plus" en bas de notr
 <%= caption "client/templates/posts/posts_list.html" %>
 <%= highlight "7~10" %>
 
-Voici à quoi votre liste d'articles devrait ressembler :
+Voici à quoi votre liste d'articles devrait ressembler :
 
 <%= screenshot "12-3", "Le bouton “Charger plus“. " %>
 
@@ -416,7 +416,7 @@ Voici à quoi votre liste d'articles devrait ressembler :
 
 ### Une meilleure expérience utilisateur
 
-Notre pagination fonctionne maintenant correctement, mais elle souffre d'une ennuyeuse bizarrerie : à chaque fois que nous cliquons sur « charger plus » et que le routeur demande plus d'articles, nous sommes envoyés vers le template `loading` pendant que nous attendons l'arrivée des nouvelles données. Le résultat est que nous sommes envoyés en haut de la page à chaque fois et nous avons besoin de faire défiler la page vers le bas pour continuer notre navigation.
+Notre pagination fonctionne maintenant correctement, mais elle souffre d'une ennuyeuse bizarrerie : à chaque fois que nous cliquons sur « charger plus » et que le routeur demande plus d'articles, nous sommes envoyés vers le template `loading` pendant que nous attendons l'arrivée des nouvelles données. Le résultat est que nous sommes envoyés en haut de la page à chaque fois et nous avons besoin de faire défiler la page vers le bas pour continuer notre navigation.
 
 Donc premièrement, nous devrons dire à Iron Router de ne pas `waitOn` l'abonnement après tout. Au lieu de ça, nous définirons nos abonnements dans un hook `subscriptions`.
 

@@ -12,7 +12,7 @@ paragraphs: 49
 
 La première impression est importante, l'installation de Meteor devrait se faire sans difficulté. Vous serez en selle en moins de cinq minutes dans la plupart des cas.
 
-Pour commencer, installons Meteor ; ouvrez un terminal, saisissez et exécutez ce qui suit sur la ligne de commande :
+Pour commencer, installons Meteor ; ouvrez un terminal, saisissez et exécutez ce qui suit sur la ligne de commande :
 
 ~~~bash
 curl https://install.meteor.com | sh
@@ -34,13 +34,13 @@ Suivez simplement ce guide jusqu'à la section "Installing Meteor" comprise, pui
 
 ### Créer une application basique
 
-Maintenant que Meteor est installé, créons une application. Pour ce faire, on utilise l'outil en ligne de commande `meteor` :
+Maintenant que Meteor est installé, créons une application. Pour ce faire, on utilise l'outil en ligne de commande `meteor` :
 
 ~~~bash
 meteor create microscope
 ~~~
 
-Cette commande téléchargera Meteor, puis établira un projet Meteor élémentaire, prêt à l'emploi. Lorsqu'elle aura abouti, vous devriez trouver un dossier `microscope/` avec le contenu suivant :
+Cette commande téléchargera Meteor, puis établira un projet Meteor élémentaire, prêt à l'emploi. Lorsqu'elle aura abouti, vous devriez trouver un dossier `microscope/` avec le contenu suivant :
 
 ~~~bash
 .meteor
@@ -58,7 +58,7 @@ cd microscope
 meteor
 ~~~
 
-Ouvrez une fenêtre de navigateur à l'adresse `http://localhost:3000/` (ou à l'adresse `http://0.0.0.0:3000/`, ce qui est équivalent) et vous devriez voir quelque chose qui ressemble à :
+Ouvrez une fenêtre de navigateur à l'adresse `http://localhost:3000/` (ou à l'adresse `http://0.0.0.0:3000/`, ce qui est équivalent) et vous devriez voir quelque chose qui ressemble à :
 
 <%= screenshot "2-1", "Le ‹ Hello World › de Meteor." %>
 
@@ -97,7 +97,7 @@ Notez que nous ajoutons Bootstrap **3**. Certaines captures d'écran de ce livre
 
 <%= commit "2-2", "Avec les paquets Bootstrap et Underscore." %>
 
-Vous devriez voir dès maintenant quelques changements dans votre application suite à l'ajout de Bootstrap :
+Vous devriez voir dès maintenant quelques changements dans votre application suite à l'ajout de Bootstrap :
 
 <%= screenshot "2-1b", "Avec Bootstrap." %>
 
@@ -121,18 +121,18 @@ Lorsque nous parlons de paquets (_packages_) dans le contexte de Meteor, il est 
 
 Avant de plonger dans le code, il convient de configurer notre projet correctement. Afin que l'assemblage (_build_) ne contienne que l'essentiel, ouvrez le dossier `microscope` et supprimez-en les fichiers `microscope.html`, `microscope.js` et `microscope.css`.
 
-Puis créez quatre dossiers dans `/microscope` : `/client`, `/server`, `/public`, et `/lib`.
+Puis créez quatre dossiers dans `/microscope` : `/client`, `/server`, `/public`, et `/lib`.
 
 Enfin, créez `main.html` et `main.js` dans `/client`. Ne vous inquiétez pas si votre application ne fonctionne plus pour le moment, nous allons remplir ces fichiers dans les chapitres suivants.
 
-Certains de ces sous-dossiers sont particuliers. Meteor traite les fichiers des dossiers selon les conventions suivantes :
+Certains de ces sous-dossiers sont particuliers. Meteor traite les fichiers des dossiers selon les conventions suivantes :
 
 - Le code dans le dossier `/server` n'est exécuté que par le serveur.
 - Le code dans le dossier `/client` n'est exécuté que par le client.
 - Tout le reste est exécuté à la fois par le client et le serveur.
 - Vos ressources statiques (polices, images, etc) vont dans le dossier `/public`.
 
-Il est également très utile de connaître dans quel ordre Meteor charge vos fichiers :
+Il est également très utile de connaître dans quel ordre Meteor charge vos fichiers :
 
 - Les fichiers dans `/lib` sont chargés *avant* tous les autres.
 - Tous fichiers `main.*` sont chargés *après* les autres.
@@ -174,7 +174,7 @@ Les noms de fichiers font exception à cette règle, qui utilisent des tirets ba
 
 Ce livre ne traite pas de CSS. Ainsi, pour ne pas vous ralentir avec des considérations de style, nous avons préféré vous mettre à disposition la feuille de style complète dès le départ. Vous n'aurez, dès lors, plus à vous en préoccuper.
 
-Les feuilles de style CSS sont automatiquement chargées et comprimées à la volée par Meteor, de sorte qu'elles doivent être placées dans le dossier `/client`, plutôt que `/public` comme le seraient les autres ressources statiques. Allez-y, créez-y maintenant un sous-dossier `/client/stylesheets/`, puis placez-y un fichier `style.css` avec le contenu suivant :
+Les feuilles de style CSS sont automatiquement chargées et comprimées à la volée par Meteor, de sorte qu'elles doivent être placées dans le dossier `/client`, plutôt que `/public` comme le seraient les autres ressources statiques. Allez-y, créez-y maintenant un sous-dossier `/client/stylesheets/`, puis placez-y un fichier `style.css` avec le contenu suivant :
 
 ~~~css
 .grid-block, .main, .post, .comments li, .comment-form {

@@ -39,7 +39,7 @@ C'est comme un marchand qui non seulement vous trouve le livre, mais aussi vous 
 
 Cette architecture laisse Meteor faire des choses sympathiques, parmi lesquelles la principale que Meteor appelle [database everywhere](http://docs.meteor.com/#sevenprinciples). Simplement, Meteor va prendre un sous-ensemble de votre base de données et le *copier sur le client*.
 
-Cela implique deux idées importantes : premièrement, au lieu d'envoyer du code HTML au client, une application Meteor va envoyer **la donnée brute, véritablement**, et laisser le client se débrouiller avec ça ([data on the wire](http://docs.meteor.com/#sevenprinciples)). Deuxièmement, vous allez pouvoir **accéder aux données instantanément et même les modifier** sans avoir à attendre un autre aller-retour vers le serveur ([latency compensation](http://docs.meteor.com/#sevenprinciples)).
+Cela implique deux idées importantes : premièrement, au lieu d'envoyer du code HTML au client, une application Meteor va envoyer **la donnée brute, véritablement**, et laisser le client se débrouiller avec ça ([data on the wire](http://docs.meteor.com/#sevenprinciples)). Deuxièmement, vous allez pouvoir **accéder aux données instantanément et même les modifier** sans avoir à attendre un autre aller-retour vers le serveur ([latency compensation](http://docs.meteor.com/#sevenprinciples)).
 
 ### Publier
 
@@ -47,17 +47,17 @@ Une base de données d'application peut contenir des dizaines de milliers de doc
 
 Par conséquent nous allons avoir besoin d'une méthode pour dire à Meteor quel **sous-ensemble** de données peut être envoyé au client, et nous l'effectuerons à l'aide d'une **publication**.
 
-Revenons à Microscope. Nous avons ici tous les articles de l'application dans notre base de données :
+Revenons à Microscope. Nous avons ici tous les articles de l'application dans notre base de données :
 
 <%= diagram "collections-1", "Tous les articles contenus dans la base de données.", "pull-center" %>
 
 Bien que cette fonctionnalité n'est pas encore présente dans Microscope, nous allons imaginer que certains articles ont été signalés pour langage abusif. Bien que nous voulons les garder dans notre base de données, ils ne devront pas être rendus disponibles aux utilisateurs (i.e. envoyés au client).
 
-Notre première tâche sera de dire à Meteor quelles données nous voulons *réellement* envoyer au client. Nous allons dire à Meteor que nous voulons seulement **publier** les articles non signalés :
+Notre première tâche sera de dire à Meteor quelles données nous voulons *réellement* envoyer au client. Nous allons dire à Meteor que nous voulons seulement **publier** les articles non signalés :
 
 <%= diagram "collections-2", "Exclure les articles signalés.", "pull-center" %>
 
-Voici le code correspondant, qui résidera sur le serveur :
+Voici le code correspondant, qui résidera sur le serveur :
 
 ~~~js
 // on the server
@@ -66,7 +66,7 @@ Meteor.publish('posts', function() {
 });
 ~~~
 
-Cela assure qu'il n'y a **aucun moyen possible** qu'un client soit capable d'accéder à un article signalé. C'est exactement comme ça que vous allez sécuriser une application Meteor : assurez-vous juste que vous publiez seulement les données que vous voulez fournir au client.
+Cela assure qu'il n'y a **aucun moyen possible** qu'un client soit capable d'accéder à un article signalé. C'est exactement comme ça que vous allez sécuriser une application Meteor : assurez-vous juste que vous publiez seulement les données que vous voulez fournir au client.
 
 <% note do %>
 
@@ -88,7 +88,7 @@ Par exemple, disons que nous sommes en train de naviguer sur la page de profil d
 
 <%= diagram "collections-3", "Souscrire aux articles de Bob les copiera sur le client.", "pull-center" %>
 
-Premièrement, nous modifierons notre publication pour prendre un paramètre :
+Premièrement, nous modifierons notre publication pour prendre un paramètre :
 
 ~~~js
 // on the server
@@ -97,14 +97,14 @@ Meteor.publish('posts', function(author) {
 });
 ~~~
 
-Et nous définirons ensuite ce paramètre au moment de la souscription à cette publication dans le code côté client de notre application :
+Et nous définirons ensuite ce paramètre au moment de la souscription à cette publication dans le code côté client de notre application :
 
 ~~~js
 // on the client
 Meteor.subscribe('posts', 'bob-smith');
 ~~~
 
-C'est de cette façon qu'on rend une application Meteor adaptable côté client : au lieu de souscrire à *toutes* les données disponibles, on choisit les parties dont nous avons actuellement besoin. De cette façon, vous allez éviter les surcharges mémoire du navigateur quelle que soit la taille de la base de données côté serveur.
+C'est de cette façon qu'on rend une application Meteor adaptable côté client : au lieu de souscrire à *toutes* les données disponibles, on choisit les parties dont nous avons actuellement besoin. De cette façon, vous allez éviter les surcharges mémoire du navigateur quelle que soit la taille de la base de données côté serveur.
 
 ### Trouver
 
@@ -141,7 +141,7 @@ Pour cette raison, autopublish est seulement approprié quand vous démarrez, et
 
 ### Publier des collections complètes
 
-Une fois que vous avez supprimé `autopublish`, vous allez rapidement vous rendre compte que toutes vos données ont disparues du client. Une façon simple de revenir et simplement de copier ce que autopublish fait, et de publier une collection dans sa totalité. Par exemple :
+Une fois que vous avez supprimé `autopublish`, vous allez rapidement vous rendre compte que toutes vos données ont disparues du client. Une façon simple de revenir et simplement de copier ce que autopublish fait, et de publier une collection dans sa totalité. Par exemple :
 
 ~~~js
 Meteor.publish('allPosts', function(){
@@ -155,7 +155,7 @@ Nous publions encore des collections complètes, mais au moins nous avons mainte
 
 ### Publier des collections partielles
 
-Le niveau de contrôle suivant est de publier seulement une _partie_ d'une collection. Par exemple seuls les articles qui appartiennent à un certain auteur :
+Le niveau de contrôle suivant est de publier seulement une _partie_ d'une collection. Par exemple seuls les articles qui appartiennent à un certain auteur :
 
 ~~~js
 Meteor.publish('somePosts', function(){
@@ -171,11 +171,11 @@ Meteor.publish('somePosts', function(){
 
 Si vous avez lu la [documentation de publication Meteor](http://docs.meteor.com/#publishandsubscribe), vous avez peut-être été dépassé par l'utilisation de `added()` et `ready()` pour appliquer les attributs des enregistrements sur le client, et pour recoller ça avec les applications Meteor que vous avez déjà vu et qui n'utilise pas ces méthodes.
 
-La raison est que Meteor fournit une méthodes vraiment très pratique : `_publishCursor()`. Vous n'avez jamais vu ça utilisé ? Peut-être pas directement, mais si vous retournez un [curseur](/chapter/meteor-vocabulary/)(i.e. `Posts.find({'author':'Tom'})`) dans une fonction de publication, c'est exactement ce qu'utilise Meteor.
+La raison est que Meteor fournit une méthodes vraiment très pratique : `_publishCursor()`. Vous n'avez jamais vu ça utilisé ? Peut-être pas directement, mais si vous retournez un [curseur](/chapter/meteor-vocabulary/)(i.e. `Posts.find({'author':'Tom'})`) dans une fonction de publication, c'est exactement ce qu'utilise Meteor.
 
 Quand Meteor voit que la publication `somePosts` a retourné un curseur, il appelle `_publishCursor()` pour -- vous l'avez deviné -- publier ce curseur automatiquement.
 
-Voici ce que `_publishCursor()` fait :
+Voici ce que `_publishCursor()` fait :
 
 - Il vérifie le nom de la collection côté serveur.
 - Il prend tous les documents correspondants du curseur et envoie celui-ci dans une collection côté client *du même nom*. (Il utilise `.added()` pour faire ça).
@@ -189,7 +189,7 @@ Dans l'exemple au-dessus, nous sommes pouvons nous assurer que l'utilisateur a s
 
 Nous avons vu comment publiquer seulement certains articles, mais vous pouvons continuer à affiner! Voyons comment publier seulement certaines *propriétés* spécifiques.
 
-Juste comme avant, nous allons utiliser `find()` pour retourner un curseur, mais cette fois nous allons exclure certains champs :
+Juste comme avant, nous allons utiliser `find()` pour retourner un curseur, mais cette fois nous allons exclure certains champs :
 
 ~~~js
 Meteor.publish('allPosts', function(){
@@ -201,7 +201,7 @@ Meteor.publish('allPosts', function(){
 
 <%= diagram "partialproperties", "Publier des propriétés partiellement", "pull-center" %>
 
-Bien sûr, nous pouvons également combiner deux techniques. Par exemple, si nous voulions retourner tous les articles de Tom en laissant de côté leurs dates, nous écririons :
+Bien sûr, nous pouvons également combiner deux techniques. Par exemple, si nous voulions retourner tous les articles de Tom en laissant de côté leurs dates, nous écririons :
 
 ~~~js
 Meteor.publish('allPosts', function(){

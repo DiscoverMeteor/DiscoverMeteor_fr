@@ -11,13 +11,13 @@ contents: Comprendre la compensation de latence.|Ralentissez votre application e
 paragraphs: 28
 ---
 
-Dans le dernier chapitre, nous avons présenté un nouveau concept du monde Meteor : les **Méthodes**.
+Dans le dernier chapitre, nous avons présenté un nouveau concept du monde Meteor : les **Méthodes**.
 
 <%= diagram "latency1", "Sans compensation de latence", "pull-right" %>
 
 Une Méthode Meteor est un moyen d'exécuter une série de commandes sur le serveur d'une façon structurée. Dans notre exemple, nous avons utilisé une Méthode car nous voulions nous assurer que les nouveaux articles seraient tagués avec le nom et l'id de leur auteur ainsi que l'heure du serveur.
 
-Cependant, si Meteor exécute des Methodes dans sa plus simple façon, nous aurions un problème. Considérez la séquence suivante d’événements (note : les horodatages sont des valeurs aléatoires choisies seulement pour l'exemple) :
+Cependant, si Meteor exécute des Methodes dans sa plus simple façon, nous aurions un problème. Considérez la séquence suivante d’événements (note : les horodatages sont des valeurs aléatoires choisies seulement pour l'exemple) :
 
 - *+0ms:* L'utilisateur clique sur un bouton et le navigateur renvoie un appel de Méthode.
 - *+200ms:* Le serveur fait des changements dans la base de données Mongo
@@ -31,7 +31,7 @@ Si Meteor opérait de cette façon, il y aurait alors un petit décalage entre l
 
 Pour éviter ce problème, Meteor introduit un concept appelé **Compensation de latence**. Quand nous avons définit notre Méthode `post`, nous l'avons placée à l'intérieur d'un fichier dans le répertoire `collections/`. Ceci signifie qu'elle est disponible pour le serveur *et le client* -- et elle s'exécutera sur les deux en même temps !
 
-Quand nous faisons un appel de Méthode, le client envoie l'appel au serveur, mais *simule* également simultanément l'action de la Méthode sur ses collections côté client. Notre workflow devient :
+Quand nous faisons un appel de Méthode, le client envoie l'appel au serveur, mais *simule* également simultanément l'action de la Méthode sur ses collections côté client. Notre workflow devient :
 
 - *+0ms:* L'utilisateur clique sur un bouton et le navigateur renvoie un appel de Méthode.
 - *+0ms:* Le client simule l'action de l'appel de Méthode sur les collections côté client et met à jour l'interface utilisateur pour refléter ceci.
@@ -46,7 +46,7 @@ Nous pouvons faire un petit changement à l'appel de la méthode `post` pour voi
 
 Nous utiliserons `isServer` pour demander à Meteor si la Méthode est actuellement invoquée sur le client (comme une "ébauche") ou sur le serveur. Une [ébauche](http://docs.meteor.com/#methods_header) est la simulation d'une Méthode que Meteor exécute sur le client en parallèle, pendant que la "vraie" Méthode est en cours d'exécution sur le serveur.
 
-Nous allons donc demander à Meteor si le code est en cours d'exécution sur le serveur. Si c'est le cas, nous allons retarder l'avancement des choses de 5 secondes et ajouter la chaîne de caractère `(server)` à la fin du titre de notre article. Sinon, nous ajouterons la chaîne de caractère `(client)` :
+Nous allons donc demander à Meteor si le code est en cours d'exécution sur le serveur. Si c'est le cas, nous allons retarder l'avancement des choses de 5 secondes et ajouter la chaîne de caractère `(server)` à la fin du titre de notre article. Sinon, nous ajouterons la chaîne de caractère `(client)` :
 
 ~~~js
 Posts = new Mongo.Collection('posts');
@@ -127,7 +127,7 @@ Nous avons placé notre appel de routeur `Router.go()` à l'intérieur du callba
 
 C'est normalement la bonne manière de faire les choses. Après tout, vous ne pouvez pas rediriger l'utilisateur avant de savoir si la soumission de son post est valide ou pas, parce que ce serait extrêmement déroutant d'être redirigé une première fois et ensuite d'être redirigé une nouvelle fois, en arrière, vers la page de soumission de post pour corriger vos données, tout cela en quelques secondes.
 
-Mais pour le bien de cet exemple, nous voulons voir les résultats de nos actions immédiatement. Ainsi, nous allons changer l'appel du routeur pour rediriger vers la route `postsList` (nous ne pouvons pas diriger vers le post car nous ne connaissons pas son `_id` en dehors de la méthode), pour ensuite l'extraire du callback, et voir ce qui se passe :
+Mais pour le bien de cet exemple, nous voulons voir les résultats de nos actions immédiatement. Ainsi, nous allons changer l'appel du routeur pour rediriger vers la route `postsList` (nous ne pouvons pas diriger vers le post car nous ne connaissons pas son `_id` en dehors de la méthode), pour ensuite l'extraire du callback, et voir ce qui se passe :
 
 ~~~js
 Template.postSubmit.events({
@@ -159,19 +159,19 @@ Template.postSubmit.events({
 
 <%= scommit "7-5-1", "Démonstration de l'ordre d'apparition des articles en utilisant un sleep." %>
 
-Si nous créons un article maintenant, nous verrons clairement la compensation de latence en action. Premièrement, un article est inséré avec `(client)` dans le titre (le premier article dans la liste, relié à Github) :
+Si nous créons un article maintenant, nous verrons clairement la compensation de latence en action. Premièrement, un article est inséré avec `(client)` dans le titre (le premier article dans la liste, relié à Github) :
 
 <%= screenshot "s5-1", "Notre article comme initialement stocké dans la collection côté client" %>
 
-Ensuite, cinq secondes plus tard, il est proprement remplacé avec le vrai document qui a été inséré par le serveur :
+Ensuite, cinq secondes plus tard, il est proprement remplacé avec le vrai document qui a été inséré par le serveur :
 
 <%= screenshot "s5-2", "Notre article une fois que le client reçoit la mise à jour de la collection côté serveur" %>
 
 ### Méthodes des collections sur le client
 
-Vous pourriez penser que les Méthodes sont compliquées après cela, mais en fait elles peuvent être plutôt simples. En fait, nous avons déjà vu trois méthodes très simples : les Méthodes de mutation de collection, `insert`, `update` et `remove`.
+Vous pourriez penser que les Méthodes sont compliquées après cela, mais en fait elles peuvent être plutôt simples. En fait, nous avons déjà vu trois méthodes très simples : les Méthodes de mutation de collection, `insert`, `update` et `remove`.
 
-Quand vous définissez une collection serveur appelée `'posts'`, vous êtes implicitement en train de définir trois Méthodes : `posts/insert`, `posts/update` et `posts/delete`. En d'autres mots, quand vous appelez `Posts.insert()` sur votre collection client, vous appelez une Méthode de compensation de latence qui fait deux choses :
+Quand vous définissez une collection serveur appelée `'posts'`, vous êtes implicitement en train de définir trois Méthodes : `posts/insert`, `posts/update` et `posts/delete`. En d'autres mots, quand vous appelez `Posts.insert()` sur votre collection client, vous appelez une Méthode de compensation de latence qui fait deux choses :
 
 1. Des vérifications pour voir si vous faites la mutation en appelant des callbacks `allow` et `deny` (cependant il n'est pas nécessaire que cela arrive dans la simulation).
 2. La modification vers le stockage de données sous-jacent.

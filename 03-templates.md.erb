@@ -14,7 +14,7 @@ Pour faciliter le développement dans Meteor, nous allons adopter une approche d
 
 Ce qui veut dire que dans ce chapitre nous nous occuperons de ce qu'il se passe dans le répertoire `/client`.
 
-Si vous ne l'avez pas déjà fait, créez un nouveau fichier appelé `main.html` dans votre répertoire `/client` et insérez le code suivant :
+Si vous ne l'avez pas déjà fait, créez un nouveau fichier appelé `main.html` dans votre répertoire `/client` et insérez le code suivant :
 
 ~~~html
 <head>
@@ -53,7 +53,7 @@ Meteor est génial pour trouver les fichiers. Peu importe où vous mettez votre 
 
 <% end %>
 
-Nous sommes finalement prêt pour créer notre second template. Dans `client/templates/posts`, créez `posts_list.html` :
+Nous sommes finalement prêt pour créer notre second template. Dans `client/templates/posts`, créez `posts_list.html` :
 
 ~~~html
 <template name="postsList">
@@ -66,7 +66,7 @@ Nous sommes finalement prêt pour créer notre second template. Dans `client/tem
 ~~~
 <%= caption "client/templates/posts/posts_list.html" %>
 
-Et `post_item.html` :
+Et `post_item.html` :
 
 ~~~html
 <template name="postItem">
@@ -81,7 +81,7 @@ Et `post_item.html` :
 
 Notez l'attribut `name="postsList"` de la balise template. C'est le nom qui sera utilisé par Meteor pour garder la trace de quel template va où (le nom du fichier n'est pas important).
 
-Il est temps de présenter le système de templating de Meteor, **Spacebars**. Spacebars est du html simple, avec trois choses en plus : *inclusions* (parfois désignée sous le nom de "partials"), *expressions* et *block helpers*.
+Il est temps de présenter le système de templating de Meteor, **Spacebars**. Spacebars est du html simple, avec trois choses en plus : *inclusions* (parfois désignée sous le nom de "partials"), *expressions* et *block helpers*.
 
 Les *Inclusions* utilisent la syntaxe `{{> templateName}}`, et indiquent simplement à Meteor de remplacer le champ par le template du même nom (dans notre cas `postItem`).
 
@@ -103,7 +103,7 @@ Premièrement, dans le template `postsList`, nous faisons des itérations sur un
 
 D'où vient cet objet `posts` ? Bonne question. C'est un **template helper** ; vous pouvez vous l'imaginer comme un substitut à un contenu dynamique.
 
-Le template `postItem` lui-même est assez simple. Il utilise trois expression : `{{url}}` et `{{title}}` retournent des propriétés du document, et `{{domain}}` appelle un template helper.
+Le template `postItem` lui-même est assez simple. Il utilise trois expression : `{{url}}` et `{{title}}` retournent des propriétés du document, et `{{domain}}` appelle un template helper.
 
 ### Template Managers
 
@@ -123,7 +123,7 @@ Nous avons donc décidé de ne pas utiliser cette terminologie et de nous réfé
 
 <% end %>
 
-Pour garder les choses simples, nous allons nommer les fichiers contenant les helpers comme le template, mais avec une extension **.js**. Créons donc directement `posts_list.js` dans `/client/templates/posts` et commençons à construire notre premier helper :
+Pour garder les choses simples, nous allons nommer les fichiers contenant les helpers comme le template, mais avec une extension **.js**. Créons donc directement `posts_list.js` dans `/client/templates/posts` et commençons à construire notre premier helper :
 
 ~~~js
 var postsData = [
@@ -146,7 +146,7 @@ Template.postsList.helpers({
 ~~~
 <%= caption "client/templates/posts/posts_list.js" %>
 
-Si vous l'avez fait correctement, vous devriez avoir quelque choses de similaire à ça dans votre navigateur :
+Si vous l'avez fait correctement, vous devriez avoir quelque choses de similaire à ça dans votre navigateur :
 
 <%= screenshot "3-1", "Nos premiers templates avec données statiques" %>
 
@@ -154,7 +154,7 @@ Nous faisons deux choses ici. Premièrement, nous insérons des données prototy
 
 Deuxièmement, nous utilisons la fonction `Template.myTemplate.helpers()` pour définir un template helper appelé `posts` qui retourne le tableau `postsData` défini auparavant.
 
-Si vous vous souvenez, nous utilisons ce helper de `posts` dans notre template `postsList` :
+Si vous vous souvenez, nous utilisons ce helper de `posts` dans notre template `postsList` :
 
 ~~~html
 <template name="postsList">
@@ -173,7 +173,7 @@ Définir le helper de `posts` implique qu'il est maintenant disponible pour notr
 
 ### Le helper `domain`
 
-De même, nous allons créer `post_item.js` pour y renseigner la logique du template de `postItem` :
+De même, nous allons créer `post_item.js` pour y renseigner la logique du template de `postItem` :
 
 ~~~js
 Template.postItem.helpers({
