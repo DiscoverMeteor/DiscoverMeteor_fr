@@ -120,9 +120,9 @@ Template.postEdit.events({
 
 Normalement la majeure partie de ce code devrait vous être familier à présent.
 
-Deux événements sont présents dans notre template : l'un pour l'événement `submit` du formulaire et l'autre pour l'événement `click` du lien de suppression du post.
+Deux événements sont présents dans notre template : l'un pour l'événement `submit` du formulaire et l'autre pour l'événement `click` du lien de suppression du post.
 
-L'événement de suppression est très simple : on empêche l'activation des événements par défaut et on demande une confirmation à l'utilisateur. Enfin si on l'obtient, on récupère l'ID du post actuel depuis les informations de la template, on supprime le post et on redirige l'utilisateur sur l'accueil.
+L'événement de suppression est très simple : on empêche l'activation des événements par défaut et on demande une confirmation à l'utilisateur. Enfin si on l'obtient, on récupère l'ID du post actuel depuis les informations de la template, on supprime le post et on redirige l'utilisateur sur l'accueil.
 
 L'événement de mise à jour du post est un peu plus long, mais pas plus compliqué. Après avoir, une fois de plus, empêché l'activation des événements classiques (lors de la soumission du formulaire) et récupéré l'ID du post concerné, on récupère les valeurs du formulaire depuis la page et on les sauvegarde dans l'objet `postProperties`.
 
@@ -255,7 +255,7 @@ Les méthodes Meteor sont aussi plus adaptés dans certains cas :
 
 - Quand vous devez connaître ou renvoyer des valeurs via un callback plutôt que d'attendre que la réactivité et la synchronisation prennent effet.
 - Pour les fonctions opérant de grosses manipulations sur la base de données qui seraient trop lourdes à transmettre entre le client et le serveur.
-- Pour des calculs sur la base de données (exemple : count, average, sum).
+- Pour des calculs sur la base de données (exemple : count, average, sum).
 
 [Jetez un œil à notre blog](https://www.discovermeteor.com/blog/meteor-methods-client-side-operations/) pour une exploration plus en détail de ce sujet.
 

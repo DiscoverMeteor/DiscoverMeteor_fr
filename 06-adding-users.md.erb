@@ -22,7 +22,7 @@ Dans la plupart des frameworks web, ajouter des comptes utilisateurs est une fon
 
 Heureusement, Meteor a tout prévu. Grâce à la façon dont les paquets Meteor peuvent contribuer au code côté serveur (JavaScript) et côté client (JavaScript, HTML et CSS), nous pouvons bénéficier d'un système de compte presque sans effort.
 
-Nous pourrions simplement utiliser l'UI intégrée de Meteor pour les comptes (avec `meteor add accounts-ui`) mais comme nous avons développé toute notre application avec Bootstrap, nous utiliserons le paquet `ian:accounts-ui-bootstrap-3` à la place (ne vous inquiétez pas, la seule différence est le style). En ligne de commande, nous tapons :
+Nous pourrions simplement utiliser l'UI intégrée de Meteor pour les comptes (avec `meteor add accounts-ui`) mais comme nous avons développé toute notre application avec Bootstrap, nous utiliserons le paquet `ian:accounts-ui-bootstrap-3` à la place (ne vous inquiétez pas, la seule différence est le style). En ligne de commande, nous tapons :
 
 ~~~bash
 meteor add ian:accounts-ui-bootstrap-3
@@ -32,7 +32,7 @@ meteor add accounts-password
 
 Ces deux commandes nous donnent accès aux templates spéciaux des comptes, et nous pouvons les inclure dans notre site en utilisant le helper `{{> loginButtons}}`. Une astuce: vous pouvez contrôler de quel côté s'affiche la fenêtre d'authentification en utilisant l'attribut `align` (par exemple `{{> loginButtons  align="right"}}`).
 
-Nous ajouterons les boutons à notre en-tête. Et comme cet en-tête commence à grossir donnons lui un peu de place avec son propre template (nous le mettrons dans `client/templates/includes/`). Nous utilisons également des balises externes et des classes [spécifiées par Bootstrap](http://getbootstrap.com/components/#navbar) pour nous assurer que tout soit beau :
+Nous ajouterons les boutons à notre en-tête. Et comme cet en-tête commence à grossir donnons lui un peu de place avec son propre template (nous le mettrons dans `client/templates/includes/`). Nous utilisons également des balises externes et des classes [spécifiées par Bootstrap](http://getbootstrap.com/components/#navbar) pour nous assurer que tout soit beau :
 
 ~~~html
 <template name="layout">
@@ -77,7 +77,7 @@ Maintenant, quand nous naviguons dans notre application, nous voyons les boutons
 
 On peut utiliser ça pour s'enregistrer, s'authentifier, changer son mot de passe, et tout ce qu'un simple site comportant des comptes utilisateur a besoin.
 
-Pour indiquer au système de compte que nous voulons que les utilisateurs s'authentifient avec un nom d'utilisateur, nous ajoutons simplement un bloc de configuration `Accounts.ui` dans un nouveau fichier `config.js` à l'intérieur de `client/helpers/` :
+Pour indiquer au système de compte que nous voulons que les utilisateurs s'authentifient avec un nom d'utilisateur, nous ajoutons simplement un bloc de configuration `Accounts.ui` dans un nouveau fichier `config.js` à l'intérieur de `client/helpers/` :
 
 ~~~js
 Accounts.ui.config({
@@ -90,9 +90,9 @@ Accounts.ui.config({
 
 ### Création de notre premier utilisateur
 
-Enregistrez un compte : le bouton "Sign In" changera pour afficher votre nom d'utilisateur. Ça confirme que le compte utilisateur a bien été créé pour vous. Mais d'où viennent les données de ce compte ?
+Enregistrez un compte : le bouton "Sign In" changera pour afficher votre nom d'utilisateur. Ça confirme que le compte utilisateur a bien été créé pour vous. Mais d'où viennent les données de ce compte ?
 
-En ajoutant le paquet `accounts`, Meteora créé une nouvelle collection spéciale, laquelle peut être accédée avec `Meteor.users()`. Pour la voir, ouvrez la console de votre navigateur et tapez :
+En ajoutant le paquet `accounts`, Meteora créé une nouvelle collection spéciale, laquelle peut être accédée avec `Meteor.users()`. Pour la voir, ouvrez la console de votre navigateur et tapez :
 
 ~~~js
 ❯ Meteor.users.findOne();
@@ -101,7 +101,7 @@ En ajoutant le paquet `accounts`, Meteora créé une nouvelle collection spécia
 
 La console retournera un objet correspondant à votre objet utilisateur; Si vous regardez de plus près, vous pouvez voir que votre nom d'utilisateur est dedans, avec un `_id` unique qui vous identifie. Notez que vous pouvez également récupérer l'utilisateur actuellement connecté avec `Meteor.user()`.
 
-Maintenant déconnectez-vous et enregistrez-vous avec un compte utilisateur différent. `Meteor.user()` devrait retourner un second utilisateur. Mais attendez, exécutons :
+Maintenant déconnectez-vous et enregistrez-vous avec un compte utilisateur différent. `Meteor.user()` devrait retourner un second utilisateur. Mais attendez, exécutons :
 
 ~~~js
 ❯ Meteor.users.find().count();
@@ -111,7 +111,7 @@ Maintenant déconnectez-vous et enregistrez-vous avec un compte utilisateur diff
 
 La console retourne 1. Ne devrait-il pas y en avoir 2 ? Le premier utilisateur a-t-il été supprimé ? SI vous essayez de vous authentifier avec le premier utilisateur, vous verrez que ce n'est pas le cas.
 
-Assurons nous-en et vérifions dans la zone de stockage des données canonique, la base de données Mongo. On se connectera à Mongo (`meteor mongo` dans votre terminal) et on vérifiera :
+Assurons nous-en et vérifions dans la zone de stockage des données canonique, la base de données Mongo. On se connectera à Mongo (`meteor mongo` dans votre terminal) et on vérifiera :
 
 ~~~bash
 > db.users.count()
@@ -133,7 +133,7 @@ Le paquet comptes publie seulement l'utilisateur courant. Ceci explique pourquoi
 
 La publication publie donc seulement un objet utilisateur par utilisateur authentifié (et aucun si vous n'êtes pas authentifié).
 
-De plus, les documents ne semblent pas avoir les mêmes champs sur le serveur et sur le client. Dans Mongo, un utilisateur a beaucoup de données. Pour les voir, retournez sur votre terminal Mongo et tapez :
+De plus, les documents ne semblent pas avoir les mêmes champs sur le serveur et sur le client. Dans Mongo, un utilisateur a beaucoup de données. Pour les voir, retournez sur votre terminal Mongo et tapez :
 
 ~~~bash
 > db.users.find()
@@ -157,7 +157,7 @@ De plus, les documents ne semblent pas avoir les mêmes champs sur le serveur et
 ~~~
 <%= caption "Console Mongo" %>
 
-Et de l'autre côté, dans le navigateur l'objet utilisateur est bien moins rempli, comme vous pouvez le voir en tapant la commande équivalente :
+Et de l'autre côté, dans le navigateur l'objet utilisateur est bien moins rempli, comme vous pouvez le voir en tapant la commande équivalente :
 
 ~~~js
 ❯ Meteor.users.findOne();

@@ -413,7 +413,7 @@ Il n'y a qu'un seul problème, quand nous retournons à la page d'accueil, il pr
 
 ### Compter les commentaires
 
-La raison va nous apparaître bientôt claire : nous ne chargeons les commentaires que sur la route `postPage`, donc lorsque nous appelons `Comments.find({postId: this._id})` dans le helper `commentsCount`, Meteor ne peut pas trouver les données nécessaires côté client pour nous fournir un résultat.
+La raison va nous apparaître bientôt claire : nous ne chargeons les commentaires que sur la route `postPage`, donc lorsque nous appelons `Comments.find({postId: this._id})` dans le helper `commentsCount`, Meteor ne peut pas trouver les données nécessaires côté client pour nous fournir un résultat.
 
 La meilleure façon de régler cela est de *dénormaliser* le nombre de commentaires sur le post (si vous n'êtes pas sûr de savoir ce que cela veut dire, ne vous inquiétez pas, le prochain aparté s'occupe de vous !). Bien que comme nous allons le voir, notre code s'en retrouve légèrement complexifié, le bénéfice de performance que nous retirons de ne pas avoir à publier _tous_ les commentaires pour afficher le post en vaut le coup.
 

@@ -184,7 +184,7 @@ Template.postEdit.events({
 
 <%= commit "9-2", "Utilisation du rapport d'erreurs." %>
 
-Essayez par vous même : tentez de créer un article et entrez l'adresse `http://meteor.com`. Comme cette adresse est déjà attachée à un article dans l'installation, vous devriez voir :
+Essayez par vous même : tentez de créer un article et entrez l'adresse `http://meteor.com`. Comme cette adresse est déjà attachée à un article dans l'installation, vous devriez voir :
 
 <%= screenshot "9-2", "Déclencher une erreur" %>
 
@@ -223,7 +223,7 @@ Bien que Meteor offre une aide à l'insertion d'animations, nous voulions que ce
 
 <% end %>
 
-Cela fonctionne bien, mais si vous déclenchez plusieurs erreurs (en soumettant le même lien trois fois par exemple) vous remarquerez qu'elles s'empileront les unes au dessus des autres :
+Cela fonctionne bien, mais si vous déclenchez plusieurs erreurs (en soumettant le même lien trois fois par exemple) vous remarquerez qu'elles s'empileront les unes au dessus des autres :
 
 <%= screenshot "9-3", "Débordement de pile." %>
 
@@ -258,7 +258,7 @@ Le callback [`rendered`](http://docs.meteor.com/#template_rendered) est déclenc
 
 Jusqu'ici, nous n'avons pas imposé une quelconque validation de notre formulaire. Au minimum, nous voulons que les utilisateurs fournissent une URL et un titre pour leur nouveau post. Assurons-nous donc qu'ils le font.
 
-Nous allons faire deux choses pour signaler les champs non renseignés : premièrement, nous allons donner une classe spéciale CSS `has-error` au `div` parent de n'importe quel champ problématique du formulaire. Puis, nous allons afficher un message d'erreur utile juste en dessous du champ.
+Nous allons faire deux choses pour signaler les champs non renseignés : premièrement, nous allons donner une classe spéciale CSS `has-error` au `div` parent de n'importe quel champ problématique du formulaire. Puis, nous allons afficher un message d'erreur utile juste en dessous du champ.
 
 Pour commencer, préparons notre template `postSubmit` pour qu'il accepte ces nouveaux helpers :
 
@@ -288,7 +288,7 @@ Pour commencer, préparons notre template `postSubmit` pour qu'il accepte ces no
 
 Notez que nous transmettons des paramètres (respectivement `url` et `title`) à chaque helper. Cela nous permet de réutiliser le même helper chaque fois, en modifiant son comportement selon le paramètre.
 
-Abordons maintenant la partie amusante : rendre ces helpers réellement fonctionnels.
+Abordons maintenant la partie amusante : rendre ces helpers réellement fonctionnels.
 
 Nous utiliserons **Session** pour stocker un objet `postSubmitErrors` contenant tous les messages d'erreurs potentiels. Pendant que l'utilisateur interagit avec le formulaire, cet objet changera, ce qui, à son tour, mettra à jour activement la mise en page et le contenu du formulaire.
 
@@ -432,7 +432,7 @@ Meteor.methods({
 <%= caption "lib/collections/posts.js" %>
 <%= highlight "9~11" %>
 
-Une fois de plus, les utilisateurs ne devraient normalement jamais voir ce message : « Vous devez définir un titre et une URL pour votre post ». Cela ne s'affichera que si quelqu'un veut contourner l'interface utilisateur que nous avons méticuleusement mise en place, et utiliser directement la console à la place.
+Une fois de plus, les utilisateurs ne devraient normalement jamais voir ce message : « Vous devez définir un titre et une URL pour votre post ». Cela ne s'affichera que si quelqu'un veut contourner l'interface utilisateur que nous avons méticuleusement mise en place, et utiliser directement la console à la place.
 
 Pour tester ça, ouvrez la console du navigateur et essayez d'entrer un post sans URL :
 
