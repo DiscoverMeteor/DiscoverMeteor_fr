@@ -170,7 +170,7 @@ Template.postItem.helpers({
 
 <%= commit "8-1", "Ajout des formulaire d'édition." %>
 
-Notre formulaire pour modifier les posts parait correct, pourtant vous ne pourrez pas les modifier tout de suite. Que se passe-t-il ?
+Notre formulaire pour modifier les posts parait correct, pourtant vous ne pourrez pas les modifier tout de suite. Que se passe-t-il ?
 
 ### Mettre en place les permissions
 
@@ -245,7 +245,7 @@ Vous aurez peut-être remarqué que nous ne vérifions nulle part dans notre cod
 
 Pour créer des posts, nous avons utilisé une méthode Meteor `postInsert`, par contre pour les modifier et les supprimer nous appelons `update` et `remove` directement depuis le client en utilisant `allow` et `deny` pour sécuriser les transactions de données.
 
-Quand utiliser l'une ou l'autre méthode ?
+Quand utiliser l'une ou l'autre méthode ?
 
 Lorsque les choses sont relativement simple et que vous pouvez rapidement adapter votre sécurité avec `allow` et `deny`, il est plus simple de faire les opérations directement depuis le client.
 

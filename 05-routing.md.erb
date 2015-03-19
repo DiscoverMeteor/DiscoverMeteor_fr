@@ -120,7 +120,7 @@ Une petite mise en garde : notez que le répertoire `/lib` n'est ni dans `/clie
 
 ### Routes nommées
 
-Éclaircissons un peu l'ambiguïté ici. Nous avons nommé notre route `postList`, mais nous avons également un *template* appelé `postList`. Donc qu'est-ce qu'il va se passer ici?
+Éclaircissons un peu l'ambiguïté ici. Nous avons nommé notre route `postList`, mais nous avons également un *template* appelé `postList`. Donc qu'est-ce qu'il va se passer ici ?
 
 Par défaut, Iron Router va chercher un template avec le même nom que celui de la route. En fait, il va même déduire le nom du *chemin* que vous spécifiez. Bien que cela ne marcherait pas dans ce cas particulier (puisque notre chemin est `/`), Iron Router aurait trouvé le bon template si nous avions utilisé `http://localhost:3000/postsList` comme chemin.
 
@@ -206,7 +206,7 @@ C'est normalement une bonne idée d'attendre les souscriptions, non seulement po
 
 La réativité est une partie essentielle de Meteor, et bien que nous n'y avons pas encore vraiment touché, notre template de chargement nous donne un premier aperçu de ce concept.
 
-Rediriger vers un template de chargement si les données ne sont pas encore chargées est vraiment bien, mais comment le routeur sait quand rediriger l'utilisateur vers la bonne page une fois que les données arrivent?
+Rediriger vers un template de chargement si les données ne sont pas encore chargées est vraiment bien, mais comment le routeur sait quand rediriger l'utilisateur vers la bonne page une fois que les données arrivent ?
 
 Pour l'instant, disons juste que c'est exactement où la réactivité intervient, et restons-en là. Mais ne vous inquiétez pas, vous en apprendrez plus bientôt !
 
@@ -253,7 +253,7 @@ La syntaxe spéciale `:_id` dit au routeur deux choses : premièrement, faire c
 
 Notez que nous utilisons seulement `_id` par convention ici. Le routeur n'a pas de moyen de connaitre si ce que vous lui passez est un `_id`, ou juste une chaîne aléatoire de caractères.
 
-Nous routons maintenant vers le template correct, mais il nous manque encore quelque chose : le routeur connaît l'`_id` de l'article que nous voulons afficher, mais le template n'a toujours pas d'indice. Donc comment peut-on combler ce fossé ?
+Nous routons maintenant vers le template correct, mais il nous manque encore quelque chose : le routeur connaît l'`_id` de l'article que nous voulons afficher, mais le template n'a toujours pas d'indice. Donc comment peut-on combler ce fossé ?
 
 Heureusement, le routeur a une solution intégrée intelligente : il vous laisse spécifier un **contexte de données** (data context) de template. Vous pouvez imaginer le contexte de données comme l'intérieur d'un délicieux gateau fait de templates et de layouts. Tout simplement, c'est ce avec quoi vous remplissez votre template :
 
@@ -333,7 +333,7 @@ Nous avons nommé la route article `postPage`, donc nous pouvons utiliser le hel
 <%= highlight "6" %>
 <%= commit "5-3", "Route vers la page d'un article." %>
 
-Attendez, comment le routeur sait comment récupérer la partie `xyz` dans `/posts/xyz`? Après tout, nous ne lui passons aucun `_id`.
+Attendez, comment le routeur sait comment récupérer la partie `xyz` dans `/posts/xyz` ? Après tout, nous ne lui passons aucun `_id`.
 
 Il s'avère que Iron Router est assez intelligent pour le trouver par lui-même. Nous disons au routeur d'utiliser la route `postPage`, et le routeur sait que cette route requiert un `_id` de ce type (vu que c'est comment nous avons défini notre `path`).
 
@@ -392,7 +392,7 @@ Router.configure({
 
 Pour tester notre nouvelle page d'erreur, vous pouvez essayer d'accéder à une url quelconque comme `http://localhost:3000/rien-par-ici`.
 
-Un instant ; que se passe-t-il si quelqu'un entre une url de la forme `http://localhost:3000/posts/xyz`, où `xyz` *n'*est*pas* un `_id` valide d'article ? C'est toujours une route valide, mais elle ne mène à aucune donnée.
+Un instant ; que se passe-t-il si quelqu'un entre une url de la forme `http://localhost:3000/posts/xyz`, où `xyz` *n'*est*pas* un `_id` valide d'article ? C'est toujours une route valide, mais elle ne mène à aucune donnée.
 
 Heureusement, Iron Router est assez intelligent pour gérer cela, il suffit d'ajouter un hook spécial `dataNotFound` à la fin de `router.js` :
 
@@ -410,7 +410,7 @@ Cela indique à Iron Router d'afficher la page "non trouvé" non seulement pour 
 
 <% note do %>
 
-### Pourquoi "Iron" ?
+### Pourquoi "Iron" ?
 
 Au cas où vous vous demanderiez qu'elle est l'histoire derrière le nom "Iron Router" : d'après Chris Mather, créateur de Iron Router, cela s'explique par le fait que les météores sont composées principalement de fer (iron en anglais).
 

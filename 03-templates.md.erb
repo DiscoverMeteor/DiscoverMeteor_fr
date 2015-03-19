@@ -101,7 +101,7 @@ Armé de cette connaissance, vous pouvez dorénavant comprendre ce qui se passe 
 
 Premièrement, dans le template `postsList`, nous faisons des itérations sur un objet `posts` avec le block helper {{#each}}...{{/each}}. Ensuite, pour chaque itération nous allons inclure le template `postItem`.
 
-D'où vient cet objet `posts` ? Bonne question. C'est un **template helper** ; vous pouvez vous l'imaginer comme un substitut à un contenu dynamique.
+D'où vient cet objet `posts` ? Bonne question. C'est un **template helper** ; vous pouvez vous l'imaginer comme un substitut à un contenu dynamique.
 
 Le template `postItem` lui-même est assez simple. Il utilise trois expression : `{{url}}` et `{{title}}` retournent des propriétés du document, et `{{domain}}` appelle un template helper.
 
@@ -115,7 +115,7 @@ En d'autres termes, pendant que le rôle du template est limité à l'affichage 
 
 <% note do %>
 
-### Des contrôleurs ?
+### Des contrôleurs ?
 
 Il peut sembler tentant de penser aux fichiers contenant tous les helpers d'un template comme une sorte de "contrôleur" (controller). Mais cela peut être ambigu, puisque les "contrôleurs" (du moins du point de vue MVC) ont habituellement un rôle légèrement différent.
 
@@ -190,7 +190,7 @@ Cette fois la valeur du helper `domain` n'est pas un tableau, mais une fonction 
 
 <%= screenshot "3-2", "Afficher les domaines pour chaque lien." %>
 
-Le helper `domain` prend une URL et retourne son domaine via un peu de magie JavaScript. Mais où prend-il l'url dans un premier temps ?
+Le helper `domain` prend une URL et retourne son domaine via un peu de magie JavaScript. Mais où prend-il l'url dans un premier temps ?
 
 Pour répondre à cette question nous avons besoin de revenir à notre template `posts_list.html`. Le block helper `{{#each}}` ne fais pas seulement des itérations sur notre tableau, il **insère également les valeurs dans `this` à l'intérieur du bloc de l'objet itéré**.
 
