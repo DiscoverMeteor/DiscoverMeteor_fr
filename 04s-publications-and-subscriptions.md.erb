@@ -133,7 +133,7 @@ Le but de `autopublish` est de rendre très facile le début de développement d
 
 <%= diagram "autopublish", "Autopublish", "pull-center"%>
 
-Comment ça fonctionne ? Supposez que vous avez une collection appelée `'posts'` sur le serveur. Alors `autopublish` enverra automatiquement chaque article qu'il trouvera dans la collection posts Mongo vers une collection appelées `'posts'` sur le client (en considérant qu'il y en a un).
+Comment ça fonctionne ? Supposez que vous avez une collection appelée `'posts'` sur le serveur. Alors `autopublish` enverra automatiquement chaque article qu'il trouvera dans la collection posts Mongo vers une collection appelées `'posts'` sur le client (en considérant qu'il y en a un).
 
 Donc si vous utilisez `autopublish`, vous n'avez pas besoin de penser aux publications. Les données sont omniprésentes, et les choses sont simples. Bien sûr, il y a des problèmes évidents d'avoir une copie complète de la base de données de l'application en cache sur chaque machine d'utilisateur.
 
@@ -171,7 +171,7 @@ Meteor.publish('somePosts', function(){
 
 Si vous avez lu la [documentation de publication Meteor](http://docs.meteor.com/#publishandsubscribe), vous avez peut-être été dépassé par l'utilisation de `added()` et `ready()` pour appliquer les attributs des enregistrements sur le client, et pour recoller ça avec les applications Meteor que vous avez déjà vu et qui n'utilise pas ces méthodes.
 
-La raison est que Meteor fournit une méthodes vraiment très pratique : `_publishCursor()`. Vous n'avez jamais vu ça utilisé ? Peut-être pas directement, mais si vous retournez un [curseur](/chapter/meteor-vocabulary/)(i.e. `Posts.find({'author':'Tom'})`) dans une fonction de publication, c'est exactement ce qu'utilise Meteor.
+La raison est que Meteor fournit une méthodes vraiment très pratique : `_publishCursor()`. Vous n'avez jamais vu ça utilisé ? Peut-être pas directement, mais si vous retournez un [curseur](/chapter/meteor-vocabulary/)(i.e. `Posts.find({'author':'Tom'})`) dans une fonction de publication, c'est exactement ce qu'utilise Meteor.
 
 Quand Meteor voit que la publication `somePosts` a retourné un curseur, il appelle `_publishCursor()` pour -- vous l'avez deviné -- publier ce curseur automatiquement.
 

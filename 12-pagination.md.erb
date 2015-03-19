@@ -262,21 +262,21 @@ Essayons notre tout nouveau système de pagination. Nous avons maintenant la pos
 
 <% note do %>
 
-### Pourquoi pas des pages ?
+### Pourquoi pas des pages ?
 
-Pourquoi utilisons-nous une approche de "pagination infinie" au lieu de montrer des pages successives avec 10 articles sur chaque, comme ce que Google fait pour ses résultats de recherche ? C'est actuellement dû au paradigme temps-réel embrassé par Meteor.
+Pourquoi utilisons-nous une approche de "pagination infinie" au lieu de montrer des pages successives avec 10 articles sur chaque, comme ce que Google fait pour ses résultats de recherche ? C'est actuellement dû au paradigme temps-réel embrassé par Meteor.
 
-Imaginons que nous paginons notre collection `Posts` en utilisant le pattern de pagination de Google, et que nous sommes à la page 2, qui affiche les articles 10 à 20. Que se passe-t-il si un utilisateur supprime un des 10 précédents articles ?
+Imaginons que nous paginons notre collection `Posts` en utilisant le pattern de pagination de Google, et que nous sommes à la page 2, qui affiche les articles 10 à 20. Que se passe-t-il si un utilisateur supprime un des 10 précédents articles ?
 
 Étant donné que notre application est temps-réel, notre ensemble de données pourrait changer. L'article 10 deviendrait l'article 9, et disparaîtrait de notre vue, pendant que l'article 11 serait maintenant dans le créneau. Le résultat final serait que l'utilisateur verrait soudainement ses articles changer sans raisons apparentes.
 
 Même si nous tolérions cette bizarrerie dans l'expérience utilisateur, la pagination traditionnelle est également difficile à implémenter pour des raisons techniques.
 
-Revenons à notre exemple précédent. Nous publions les articles 10 à 20 de la collection `Posts`, mais comment trouver ces articles sur le client ? Vous ne pouvez pas prendre les articles de 10 à 20, comme il y a seulement dix articles en tout dans l'ensemble de données côté client.
+Revenons à notre exemple précédent. Nous publions les articles 10 à 20 de la collection `Posts`, mais comment trouver ces articles sur le client ? Vous ne pouvez pas prendre les articles de 10 à 20, comme il y a seulement dix articles en tout dans l'ensemble de données côté client.
 
 Une solution serait simplement de publier ces 10 articles sur le serveur, et ensuite faire un `Posts.find()` côté client pour récupérer *tous* les articles publiés.
 
-Ceci fonctionne si vous avez seulement un abonnement. Mais que va-t-il se passer si vous avez plus d'un abonnement aux articles, comme nous le ferons bientôt ?
+Ceci fonctionne si vous avez seulement un abonnement. Mais que va-t-il se passer si vous avez plus d'un abonnement aux articles, comme nous le ferons bientôt ?
 
 Disons qu'un abonnement demande les articles 10 à 20, et un autre les articles 30 à 40. Vous avez maintenant 20 articles chargés côté client au total, avec aucun moyen de savoir lesquels appartiennent à quel abonnement.
 
@@ -337,7 +337,7 @@ Nous avons une pagination qui fonctionne, et notre code est bien fait. Il y a ju
 
 Ce que nous voulons faire est assez simple. Nous allons ajouter un bouton "Charger plus" en bas de notre liste d'articles, qui incrémentera le nombre d'articles affichés par 5 chaque fois qu'on clique dessus. Donc si je suis actuellement sur l'URL `http://localhost:3000/5`, cliquer sur "Charger plus" nous amène à `http://localhost:3000/10`. Si vous êtes arrivé aussi loin dans le livre, nous pensons que vous pouvez supporter un peu d'arithmétique.
 
-Comme précédemment, nous ajouterons notre logique de pagination dans notre route. Vous vous souvenez quand nous avons explicitement nommé notre contexte de données plutôt que juste utiliser un curseur anonyme ? Bien, il n'y a pas de règle qui dit que la fonction `data` peut seulement passer des curseurs, donc nous utiliserons la même technique pour générer l'URL de notre bouton "charger plus".
+Comme précédemment, nous ajouterons notre logique de pagination dans notre route. Vous vous souvenez quand nous avons explicitement nommé notre contexte de données plutôt que juste utiliser un curseur anonyme ? Bien, il n'y a pas de règle qui dit que la fonction `data` peut seulement passer des curseurs, donc nous utiliserons la même technique pour générer l'URL de notre bouton "charger plus".
 
 ~~~js
 //...

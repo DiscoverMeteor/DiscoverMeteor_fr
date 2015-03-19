@@ -26,7 +26,7 @@ Nous stockerons une liste de votants sur chaque article afin de savoir si on doi
 
 Nous publierons ces listes de votants à tous les utilisateurs, ce qui rendra automatiquement ces données accessibles publiquement via la console du navigateur.
 
-C'est le type de problème sur la confidentialité des données qui peut subvenir de la façon dont les collections fonctionnent. Par exemple, voulons-nous que les personnes soient capables de trouver qui a voté pour leurs articles ? Dans notre cas, rendre cette information disponible publiquement n'aura pas réellement de conséquences, mais il est important de reconnaître au minimum le problème.
+C'est le type de problème sur la confidentialité des données qui peut subvenir de la façon dont les collections fonctionnent. Par exemple, voulons-nous que les personnes soient capables de trouver qui a voté pour leurs articles ? Dans notre cas, rendre cette information disponible publiquement n'aura pas réellement de conséquences, mais il est important de reconnaître au minimum le problème.
 
 <% end %>
 
@@ -328,7 +328,7 @@ Il y a deux problèmes avec ça. Premièrement, c'est un peu inefficace d'aller 
 2. Vérifier si l'utilisateur a voté.
 3. Sinon, faire un vote par l'utilisateur.
 
-Que se passe-t-il si le même utilisateur vote plusieurs fois pour l'article entre les étapes 1 et 3 ? Notre code actuel ouvre la porte au utilisateur capables de voter pour le même article deux fois. Heureusement, Mongo nous permet d'être plus intelligent et combine les étapes 1-3 dans une seule commande Mongo :
+Que se passe-t-il si le même utilisateur vote plusieurs fois pour l'article entre les étapes 1 et 3 ? Notre code actuel ouvre la porte au utilisateur capables de voter pour le même article deux fois. Heureusement, Mongo nous permet d'être plus intelligent et combine les étapes 1-3 dans une seule commande Mongo :
 
 ~~~js
 //...
@@ -376,11 +376,11 @@ Disons que vous avez essayé de tricher et envoyé un de vos articles en haut de
 
 (Où `postId` est l'id d'un de vos articles)
 
-Cette tentative impudente de jouer avec le système serait gérée par notre callback `deny()` (dans `collections/posts.js`, vous vous souvenez ?) et immédiatement rejetée.
+Cette tentative impudente de jouer avec le système serait gérée par notre callback `deny()` (dans `collections/posts.js`, vous vous souvenez ?) et immédiatement rejetée.
 
 Mais si vous regardez attentivement, vous pourriez voir la compensation de latence en action. Ça peut être rapide, mais l'article bondira brièvement en tête de la liste avant de revenir à sa position.
 
-Que s'est-il passé ? Dans votre collection `Posts` en local, le `update` a été appliquée sans incident. Ça arrive instantanément, donc l'article a atteint le haut de la liste. Pendant ce temps, sur le serveur, le `update` a été rejeté. Puis un peu plus tard (mesuré en millisecondes si vous exécutez Meteor sur votre propre machine), le serveur a retourné une erreur, en disant à la collection en local de revenir en arrière.
+Que s'est-il passé ? Dans votre collection `Posts` en local, le `update` a été appliquée sans incident. Ça arrive instantanément, donc l'article a atteint le haut de la liste. Pendant ce temps, sur le serveur, le `update` a été rejeté. Puis un peu plus tard (mesuré en millisecondes si vous exécutez Meteor sur votre propre machine), le serveur a retourné une erreur, en disant à la collection en local de revenir en arrière.
 
 Le résultat final : en attendant que le serveur réponde, l'interface utilisateur ne peut pas aider mais fait confiance à la collection en local. Aussitôt que le serveur revient et refuse la modification, les interfaces utilisateur s'adaptent pour refléter ça.
 
@@ -613,4 +613,4 @@ Si une de ces routes correspond avec le chemin courant, `any()` retournera `true
 
 <%= commit "13-6", "Classes active ajoutées à l'en-tête." %>
 
-Maintenant que les utilisateurs peuvent voter sur les articles en temps réel, vous verrez les items monter et descendre la page d'accueil en fonction de leur classement. Mais ne serait-il pas joli s'il y avait un moyen d'affiner tout ça avec quelques animations bien temporisées ?
+Maintenant que les utilisateurs peuvent voter sur les articles en temps réel, vous verrez les items monter et descendre la page d'accueil en fonction de leur classement. Mais ne serait-il pas joli s'il y avait un moyen d'affiner tout ça avec quelques animations bien temporisées ?

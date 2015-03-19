@@ -90,7 +90,7 @@ Accounts.ui.config({
 
 ### Création de notre premier utilisateur
 
-Enregistrez un compte : le bouton "Sign In" changera pour afficher votre nom d'utilisateur. Ça confirme que le compte utilisateur a bien été créé pour vous. Mais d'où viennent les données de ce compte ?
+Enregistrez un compte : le bouton "Sign In" changera pour afficher votre nom d'utilisateur. Ça confirme que le compte utilisateur a bien été créé pour vous. Mais d'où viennent les données de ce compte ?
 
 En ajoutant le paquet `accounts`, Meteora créé une nouvelle collection spéciale, laquelle peut être accédée avec `Meteor.users()`. Pour la voir, ouvrez la console de votre navigateur et tapez :
 
@@ -109,7 +109,7 @@ Maintenant déconnectez-vous et enregistrez-vous avec un compte utilisateur diff
 ~~~
 <%= caption "Console du navigateur" %>
 
-La console retourne 1. Ne devrait-il pas y en avoir 2 ? Le premier utilisateur a-t-il été supprimé ? SI vous essayez de vous authentifier avec le premier utilisateur, vous verrez que ce n'est pas le cas.
+La console retourne 1. Ne devrait-il pas y en avoir 2 ? Le premier utilisateur a-t-il été supprimé ? SI vous essayez de vous authentifier avec le premier utilisateur, vous verrez que ce n'est pas le cas.
 
 Assurons nous-en et vérifions dans la zone de stockage des données canonique, la base de données Mongo. On se connectera à Mongo (`meteor mongo` dans votre terminal) et on vérifiera :
 
@@ -119,13 +119,13 @@ Assurons nous-en et vérifions dans la zone de stockage des données canonique, 
 ~~~
 <%= caption "Console Mongo" %>
 
-Il y a bien deux utilisateurs. Donc pourquoi ne pouvons-nous en voir qu'un dans le navigateur ?
+Il y a bien deux utilisateurs. Donc pourquoi ne pouvons-nous en voir qu'un dans le navigateur ?
 
 ### Une publication mystère !
 
 Si vous repensez au chapitre 4, vous pouvez vous souvenir qu'on a supprimé `autopublish`, nous avons arrêté l'envoi des données des collections du serveur vers chaque version local de collection des clients connectés. Nous avions besoin de créer un couple publication / souscription afin de faire transiter les données.
 
-Mais nous n'avons pas encore établi de publication utilisateur. Donc d'où vient que nous pouvons quand même voir une donnée utilisateur ?
+Mais nous n'avons pas encore établi de publication utilisateur. Donc d'où vient que nous pouvons quand même voir une donnée utilisateur ?
 
 La réponse est que le paquet comptes *auto-publie* les détails de base du compte de l'utilisateur actuellement authentifié. S'il ne le faisait pas, l'utilisateur ne pourrait pas s'authentifier sur le site !
 

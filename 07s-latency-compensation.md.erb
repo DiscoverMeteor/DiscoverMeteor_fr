@@ -178,7 +178,7 @@ Quand vous définissez une collection serveur appelée `'posts'`, vous êtes imp
 
 ### Des méthodes qui appellent des Méthodes
 
-Si vous suivez bien, vous venez peut-être juste de réaliser que notre Méthode `post` appelle une autre Méthode (`posts/insert`) quand nous insérons notre article. Comment ça marche ?
+Si vous suivez bien, vous venez peut-être juste de réaliser que notre Méthode `post` appelle une autre Méthode (`posts/insert`) quand nous insérons notre article. Comment ça marche ?
 
 Quand la simulation (version côté client de la Méthode) est en cours d'exécution, nous effectuons la simulation d'un `insert` (nous insérons donc dans notre collection cliente), mais nous *ne* faisons *pas* le vrai, `insert` côté serveur, nous attendons que la version *côté serveur* de `post` le fasse.
 
