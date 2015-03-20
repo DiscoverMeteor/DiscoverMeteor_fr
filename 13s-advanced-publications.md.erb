@@ -11,19 +11,20 @@ contents: Apprendre plus de patterns avancés pour manipuler les publications.|V
 paragraphs: 36
 ---
 
+
 A partir de maintenant, vous devriez avoir une bonne idée de comment les publications et les abonnements interagissent. Donc passez le cap de l'entrainement et examinez des scénarii un peu plus avancés.
  
 ### Publier une collection de multiples fois
 
 Dans [notre première annexe à propos des publications](/chapter/publications-and-subscriptions/), nous avons vu quelques patterns classiques de publications et d'abonnements, et nous avons appris comment la fonction `_publishCursor` nous a rendu la tâche facile pour les implémenter dans nos propres sites.
  
-Premièrement, rappelons ce que `_publishCursor` fait pour nous exactement : il prend tous les documents qui correspondent à un curseur donné, et les envoie dans la collection côté client *du même nom*. Notez que le nom de la _publication_ n'est en aucun cas impliqué.
+Premièrement, rappelons ce que `_publishCursor` fait pour nous exactement : il prend tous les documents qui correspondent à un curseur donné, et les envoie dans la collection côté client *du même nom*. Notez que le nom de la _publication_ n'est en aucun cas impliqué.
  
 Cela signifie que nous avons _plus d'une publication_ reliant les versions client et serveur d'une collection.
  
 Nous avons déjà rencontré ce pattern dans notre [chapitre sur la pagination](/chapter/pagination/), quand nous avons publié un sous-ensemble paginé de tous les articles en plus de l'article affiché.
  
-Un autre cas similaire est de publier une *vue d'ensemble* d'un large échantillons de documents, aussi bien que les détails complets d'un seul item :
+Un autre cas similaire est de publier une *vue d'ensemble* d'un large échantillons de documents, aussi bien que les détails complets d'un seul item :
  
 <%= diagram "doublecollection", "Publier une collection deux fois", "pull-center" %>
 
@@ -37,11 +38,11 @@ Meteor.publish('postDetail', function(postId) {
 });
 ~~~
 
-Maintenant que le client s'abonne à ces deux publications (en utilisant `autorun` pour s'assurer que le bon `postId` est envoyé à l'abonnement `postDetail`), sa collection `'posts'` est remplie de deux sources : une liste de titres et de noms d'auteur du premier abonnement, et les détails complets d'un article provenant du deuxième abonnement.
+Maintenant que le client s'abonne à ces deux publications, sa collection `'posts'` est remplie de deux sources : une liste de titres et de noms d'auteur du premier abonnement, et les détails complets d'un article provenant du deuxième abonnement.
  
 Vous pouvez réaliser que l'article publié par `postDetail` est également publié par `allPosts` (bien qu'avec seulement un sous-ensemble de ses propriétés). Cependant, Meteor prend soin du chevauchement en rassemblant les champs et en s'assurant qu'il n'y a pas d'article dupliqué.
 
-C'est génial, parce que maintenant quand nous affichons la liste récapitulative des articles, nous avons affaire à des objets de données qui ont juste assez de données pour afficher ce que nous avons besoin. Cependant, quand nous affichons la page pour un seul article, nous avons tout ce que nous avons besoin pour le montrer. Bien sûr, nous devons faire attention sur le client à ne pas s'attendre à ce que tous les champs soient disponibles sur tous les articles dans ce cas -- c'est un piège habituel !
+C'est génial, parce que maintenant quand nous affichons la liste récapitulative des articles, nous avons affaire à des objets de données qui ont juste assez de données pour afficher ce que nous avons besoin. Cependant, quand nous affichons la page pour un seul article, nous avons tout ce que nous avons besoin pour le montrer. Bien sûr, nous devons faire attention sur le client à ne pas s'attendre à ce que tous les champs soient disponibles sur tous les articles dans ce cas -- c'est un piège habituel !
  
 Il convient de noter que vous n'êtes pas limité aux différentes propriétés des documents. Vous pouvez très bien publier les mêmes propriétés dans les deux publications, mais les trier différemment.
  
@@ -58,15 +59,15 @@ Meteor.publish('bestPosts', function(limit) {
 
 ### S'abonner à une publication plusieurs fois
 
-Nous venons juste de voir comment publier une collection plus d'une fois. Il s'avère que vous pouvez accomplir le même résultat avec un autre pattern : créer une seule publication, mais s'y *abonner* plusieurs fois.
+Nous venons juste de voir comment publier une collection plus d'une fois. Il s'avère que vous pouvez accomplir le même résultat avec un autre pattern : créer une seule publication, mais s'y *abonner* plusieurs fois.
  
 Dans Microscope, nous nous abonnons à la publication `posts` plusieurs fois, mais Iron Router configure et détruit chaque abonnnement pour nous. Pourtant il n'y a aucune raison qu'on ne puisse pas nous abonner plusieurs fois *simultanément*.
  
-Par exemple, disons que nous voulons charger en même temps les meilleurs articles et les plus récents en mémoire :
+Par exemple, disons que nous voulons charger en même temps les meilleurs articles et les plus récents en mémoire :
  
 <%= diagram "subscribetwice", "S'abonner deux fois à une publication", "pull-center" %>
 
-Nous mettons en place une publication :
+Nous mettons en place une publication :
  
 ~~~js
 Meteor.publish('posts', function(options) {
@@ -74,17 +75,19 @@ Meteor.publish('posts', function(options) {
 });
 ~~~
 
-Et ensuite nous nous abonnons à cette publication plusieurs fois. En fait c'est plus ou moins exactement ce que nous faisons dans Microscope :
+Et ensuite nous nous abonnons à cette publication plusieurs fois. En fait c'est plus ou moins exactement ce que nous faisons dans Microscope :
  
 ~~~js
 Meteor.subscribe('posts', {submitted: -1, limit: 10});
 Meteor.subscribe('posts', {baseScore: -1, submitted: -1, limit: 10});
 ~~~
 
-Qu'est-ce qu'il se passe exactement ? Chaque navigateur ouvre *deux* abonnements différents, chacun se connecte à la *même* publication sur le serveur.
+Qu'est-ce qu'il se passe exactement ? Chaque navigateur ouvre *deux* abonnements différents, chacun se connecte à la *même* publication sur le serveur.
  
 Chaque abonnement fournit des arguments différents à la publication, mais fondamentalement, chaque fois un ensemble (différent) de documents est recueilli de la collection `posts` et envoyé dans le tuyau vers la collection côté client.
- 
+
+Vous pouvez aussi souscrire deux fois au même abonnement avec *les mêmes arguments !* Difficile d'imaginer beaucoup de situations où c'est utile, mais peut être qu'un jour cette flexibilité le sera ! 
+
 ### De multiples collections dans un seul abonnement
 
 Contrairement aux bases de données traditionnelles comme MySQL qui utilise des *joins*, les bases de données NoSQL comme Mongo sont plutôt dans la *dénormalisation* et l'*embarqué*. Voyons comment ça fonctionne dans le contexte de Meteor.
@@ -99,7 +102,7 @@ Mais il s'avère qu'il y a une astuce impliquant les abonnements qui rende possi
  
 Supposons qu'avec notre première page de liste d'articles, nous voulons nous abonner à une liste des deux top commentaires de chaque article.
  
-Il serait difficile d'accomplir ça avec une publication de commentaires indépendants, spécialement si la liste d'articles était limité d'une certaine façon (disons, les 10 plus récents). Nous devrions écrire une publication qui ressemblerait à ça :
+Il serait difficile d'accomplir ça avec une publication de commentaires indépendants, spécialement si la liste d'articles était limité d'une certaine façon (disons, les 10 plus récents). Nous devrions écrire une publication qui ressemblerait à ça :
  
 <%= diagram "multiplecollections", "Deux collections dans un abonnement", "pull-center" %>
 
@@ -111,7 +114,7 @@ Meteor.publish('topComments', function(topPostIds) {
 
 Ça causerait un problème de performance, comme la publication aurait besoin d'être démontée et re-établie à chaque fois que la liste de `topPostsIds` change.
 
-Il y a un moyen de faire ça. Nous utilisons juste le fait que nous ne pouvons pas seulement avoir plus d'une *publication* par *collection*, mais nous pouvons aussi avoir plus d'une *collection* par *publication* :
+Il y a un moyen de faire ça. Nous utilisons juste le fait que nous ne pouvons pas seulement avoir plus d'une *publication* par *collection*, mais nous pouvons aussi avoir plus d'une *collection* par *publication* :
 
 ~~~js
 Meteor.publish('topPosts', function(limit) {
@@ -120,13 +123,13 @@ Meteor.publish('topPosts', function(limit) {
   // Envoyer les deux top commentaires d'un post unique
   function publishPostComments(postId) {
     var commentsCursor = Comments.find({postId: postId}, {limit: 2});
-    commentHandles[post._id] = 
-      Meteor.Collection._publishCursor(commentsCursor, sub, 'comments');
+    commentHandles[postId] = 
+      Mongo.Collection._publishCursor(commentsCursor, sub, 'comments');
   }
     
   postHandle = Posts.find({}, {limit: limit}).observeChanges({
     added: function(id, post) {
-      publishPostComments(post._id);
+      publishPostComments(postId);
       sub.added('posts', id, post);
     },
     changed: function(id, fields) {
@@ -144,36 +147,36 @@ Meteor.publish('topPosts', function(limit) {
   
   // S'assurer que nous nettoyons tout (notez que `_publishCursor`
   // fait ça pour nous avec les observateurs de commentaire)
-  sub.onStop(function() { postsHandle.stop(); });
+  sub.onStop(function() { postHandle.stop(); });
 });
 ~~~
 
 Notez que nous ne retournons rien dans cette publication, comme nous envoyons nous-mêmes manuellement des messages à `sub` (via `.added()` et consorts). Donc nous n'avons pas besoin de demander à `_publishCursor` de faire ça pour nous en retournant un curseur.
  
-Maintenant, chaque fois que nous publions un article nous publions également automatiquement les deux top commentaires qui y sont attachés. Et tout ça avec un seul appel d'abonnement !
+Maintenant, chaque fois que nous publions un article nous publions également automatiquement les deux top commentaires qui y sont attachés. Et tout ça avec un seul appel d'abonnement !
  
 Bien que Meteor ne rend pas encore cette approche très direct, vous pouvez voir chercher le paquet `publish-with-relations` sur Atmosphere, qui a pour objectif de rendre ce pattern plus facile à utiliser.
  
 ### Relier des collections différentes
 
-Qu'est-ce que notre nouvelle connaissance sur la flexibilité des abonnements pourrait nous apporter ? Bien, si nous n'utilisons pas `_publishCursor`, nous n'avons pas besoin de suivre la contrainte que la collection source sur le serveur a besoin d'avoir le même nom que la collection cible sur le client.
+Qu'est-ce que notre nouvelle connaissance sur la flexibilité des abonnements pourrait nous apporter ? Bien, si nous n'utilisons pas `_publishCursor`, nous n'avons pas besoin de suivre la contrainte que la collection source sur le serveur a besoin d'avoir le même nom que la collection cible sur le client.
  
 <%= diagram "linkedcollections", "Une collection pour deux abonnements", "pull-center" %>
 
 Une raison de pourquoi nous voudrions faire ça est *Single Table Inheritance* (héritage de tableau unique).
  
-Supposons que nous voulions référencer divers types d'objets de nos articles, dont chacun de ces champs communs stockés mais aussi a différé légèrement dnas le contenu. Par exemple, nous pourrions construite un système de blog comme Tumblr où chaque article possède le classique ID, timestamp et title; mais en plus peut également gérer une image, video, lien, ou juste du texte. 
+Supposons que nous voulions référencer divers types d'objets de nos articles, dont chacun de ces champs communs stockés mais aussi a différé légèrement dnas le contenu. Par exemple, nous pourrions construite un système de blog comme Tumblr où chaque article possède le classique ID, timestamp et title ; mais en plus peut également gérer une image, video, lien, ou juste du texte. 
 
 Nous pouvons stocker tous ces objets  dans une seule collection `'resources'`, en utilisant un attribut `type` pour indiquer quelle sorte d'objet ils sont. (`video`, `image`, `link`, etc.).
 
-Et bien que nous avons une seule collection `Resources` sur le serveur, nous pouvons transformer cette unique collection en multiples collections `Videos`, `Images`, etc. sur le client avec ce petit tour de magie :
+Et bien que nous avons une seule collection `Resources` sur le serveur, nous pouvons transformer cette unique collection en multiples collections `Videos`, `Images`, etc. sur le client avec ce petit tour de magie :
 
 ~~~js
   Meteor.publish('videos', function() {
     var sub = this;
     
     var videosCursor = Resources.find({type: 'video'});
-    Meteor.Collection._publishCursor(videosCursor, sub, 'videos');
+    Mongo.Collection._publishCursor(videosCursor, sub, 'videos');
     
     // _publishCursor ne fait pas l'appel pour nous au cas où nous voudrions le faire plusieurs fois.
     sub.ready();
@@ -181,6 +184,7 @@ Et bien que nous avons une seule collection `Resources` sur le serveur, nous pou
 ~~~
 
 Nous disons à `_publishCursor` de publier nos vidéos (juste en retournant) que le curseur ferait, mais plutôt que de publier à la collection `resources` sur le client, à la place nous publions de `'resources'` vers `'videos'`.
- 
-Est-ce une bonne idée de faire ça ? Ce n'est pas à nous de juger. Dans tous les cas, c'est bon de savoir que c'est possible afin d'utiliser Meteor à son maximum !
- 
+
+Une autre idée similaire est d'utiliser publish avec une collection côté client où il n'y a *pas du tout de collection côté serveur !* Par exemple, vous pouvez récupérer les données d'un service tiers et les publier dans une collection côté client.
+
+Grâce à la flexibilité de l'API publish, les possibilités sont infinies.
