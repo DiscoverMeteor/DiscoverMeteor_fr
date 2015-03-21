@@ -12,7 +12,7 @@ paragraphs: 27
 
 Depuis le début, nous avons appris à créer et afficher des données statiques brutes dans un style particulier et on a tout intégré dans un prototype simple.
 
-Nous avons même vu comment notre UI est réactive aux changements de données, et les données insérées ou modifiées apparaissent immédiatement. Par contre, notre site est paralysé par le fait que nous ne pouvons pas insérer de données. En fait, nous n'avons même pas encore d'utilisateurs !
+Nous avons même vu comment notre UI est réactive aux changements de données, et les données insérées ou modifiées apparaissent immédiatement. Par contre, notre site est paralysé par le fait que nous ne pouvons pas insérer de données. En fait, nous n'avons même pas encore d'utilisateurs !
 
 Voyons comment corriger ça.
 
@@ -121,13 +121,13 @@ Assurons nous-en et vérifions dans la zone de stockage des données canonique, 
 
 Il y a bien deux utilisateurs. Donc pourquoi ne pouvons-nous en voir qu'un dans le navigateur ?
 
-### Une publication mystère !
+### Une publication mystère !
 
 Si vous repensez au chapitre 4, vous pouvez vous souvenir qu'on a supprimé `autopublish`, nous avons arrêté l'envoi des données des collections du serveur vers chaque version local de collection des clients connectés. Nous avions besoin de créer un couple publication / souscription afin de faire transiter les données.
 
 Mais nous n'avons pas encore établi de publication utilisateur. Donc d'où vient que nous pouvons quand même voir une donnée utilisateur ?
 
-La réponse est que le paquet comptes *auto-publie* les détails de base du compte de l'utilisateur actuellement authentifié. S'il ne le faisait pas, l'utilisateur ne pourrait pas s'authentifier sur le site !
+La réponse est que le paquet comptes *auto-publie* les détails de base du compte de l'utilisateur actuellement authentifié. S'il ne le faisait pas, l'utilisateur ne pourrait pas s'authentifier sur le site !
 
 Le paquet comptes publie seulement l'utilisateur courant. Ceci explique pourquoi un utilisateur ne peut voir les détails d'un autre compte.
 
