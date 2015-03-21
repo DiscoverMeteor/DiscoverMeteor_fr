@@ -163,7 +163,7 @@ Router.route('/', {name: 'postsList'});
 <%= caption "lib/router.js" %>
 <%= highlight "3" %>
 
-Ce que nous voulons faire ici, c'est que pour *chaque* route du site (nous n'en avons qu'une pour le moment, mais nous en aurons bientôt plus !), nous voulons souscrire à `posts`.
+Ce que nous voulons faire ici, c'est que pour *chaque* route du site (nous n'en avons qu'une pour le moment, mais nous en aurons bientôt plus !), nous voulons souscrire à `posts`.
 
 La principale différence entre ceci et ce que nous avions précédemment (lorsque la souscription était dans `main.js`, qui devrait être dorénavant vide et que vous pouvez supprimer), est que maintenant, Iron Router "sait" quand la route est prête -- c'est-à-dire lorsqu'elle a les données dont il a besoin pour le rendu.
 
@@ -208,7 +208,7 @@ La réativité est une partie essentielle de Meteor, et bien que nous n'y avons 
 
 Rediriger vers un template de chargement si les données ne sont pas encore chargées est vraiment bien, mais comment le routeur sait quand rediriger l'utilisateur vers la bonne page une fois que les données arrivent ?
 
-Pour l'instant, disons juste que c'est exactement où la réactivité intervient, et restons-en là. Mais ne vous inquiétez pas, vous en apprendrez plus bientôt !
+Pour l'instant, disons juste que c'est exactement où la réactivité intervient, et restons-en là. Mais ne vous inquiétez pas, vous en apprendrez plus bientôt !
 
 <% end %>
 
@@ -337,7 +337,7 @@ Attendez, comment le routeur sait comment récupérer la partie `xyz` dans `/pos
 
 Il s'avère que Iron Router est assez intelligent pour le trouver par lui-même. Nous disons au routeur d'utiliser la route `postPage`, et le routeur sait que cette route requiert un `_id` de ce type (vu que c'est comment nous avons défini notre `path`).
 
-Donc le routeur cherchera cet `_id` dans l'endroit disponible le plus logique : le data context du helper `{{pathFor postPage}}`, en d'autre mots `this`. Et il se trouve que notre `this` va correspondre à l'article, lequel (surprise !) possède une propriété `_id`.
+Donc le routeur cherchera cet `_id` dans l'endroit disponible le plus logique : le data context du helper `{{pathFor postPage}}`, en d'autre mots `this`. Et il se trouve que notre `this` va correspondre à l'article, lequel (surprise !) possède une propriété `_id`.
 
 Alternativement, vous pouvez également explicitement dire au routeur où vous aimeriez qu'il cherche la propriété `_id`, en passant un second argument au helper (i.e. `{{pathFor 'postPage' someOtherPost}}`). Un usage pratique de ce modèle serait de récupérer le lien des articles précédents et suivants dans une liste, par exemple.
 

@@ -229,7 +229,7 @@ Cela fonctionne bien, mais si vous déclenchez plusieurs erreurs (en soumettant 
 
 Et cela parce que alors que les éléments `.alert` disparaissent *visuellement*, ils sont en fait toujours présents dans le DOM. Nous devons régler cela.
 
-C'est exactement dans ce genre de situation que Meteor brille. Puisque la collection `Errors' est réactive, tout ce que nous devons faire pour nous débarrasser de ces vieilles erreurs est de les supprimer de la collection!
+C'est exactement dans ce genre de situation que Meteor brille. Puisque la collection `Errors' est réactive, tout ce que nous devons faire pour nous débarrasser de ces vieilles erreurs est de les supprimer de la collection !
 
 Nous utiliserons `Meteor.setTimeout` pour spécifier une fonction callback à être exécutée à la fin du timeout (dans ce cas, 3000 millisecondes).
 
@@ -320,11 +320,11 @@ Template.postSubmit.helpers({
 Vous pouvez tester que nos helpers fonctionnent normalement en ouvrant le navigateur et en tapant la ligne de code suivante :
 
 ~~~js
-Session.set('postSubmitErrors', {title: 'Attention ! Intrusion détectée. Les robots-chiens sont lâchés.'});
+Session.set('postSubmitErrors', {title: 'Attention ! Intrusion détectée. Les robots-chiens sont lâchés.'});
 ~~~
 <%= caption "Browser console" %>
 
-<%= screenshot "9-4", "Code rouge ! Code rouge !" %>
+<%= screenshot "9-4", "Code rouge ! Code rouge !" %>
 
 La prochaine étape est de hooker cet objet de session `postSubmitErrors` au formulaire.
 

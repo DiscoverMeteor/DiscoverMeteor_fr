@@ -11,7 +11,7 @@ contents: Afficher les commentaires existants|Ajouter un formulaire de création
 paragraphs: 34
 ---
 
-Le but d'un site de nouvelles sociales est de créer une communauté d'utilisateurs, et cela sera difficile à atteindre sans fournir aux gens un moyen de communiquer entre eux. Nous allons donc dans ce chapitre ajouter les commentaires !
+Le but d'un site de nouvelles sociales est de créer une communauté d'utilisateurs, et cela sera difficile à atteindre sans fournir aux gens un moyen de communiquer entre eux. Nous allons donc dans ce chapitre ajouter les commentaires !
 
 Nous allons commencer par ajouter une nouvelle collection pour y enregistrer les commentaires et quelques données basiques préenregistrées.
 
@@ -56,7 +56,7 @@ if (Posts.find().count() === 0) {
     userId: sacha._id,
     author: sacha.profile.name,
     submitted: new Date(now - 3 * 3600 * 1000),
-    body: 'Bien sûr Tom !'
+    body: 'Bien sûr Tom !'
   });
 
   Posts.insert({
@@ -409,13 +409,13 @@ Meteor.publish('comments', function(postId) {
 
 Il n'y a qu'un seul problème, quand nous retournons à la page d'accueil, il prétend que tous nos posts n'ont aucun commentaires :
 
-<%= screenshot "10-3", "Nos commentaires ont disparu !" %>
+<%= screenshot "10-3", "Nos commentaires ont disparu !" %>
 
 ### Compter les commentaires
 
 La raison va nous apparaître bientôt claire : nous ne chargeons les commentaires que sur la route `postPage`, donc lorsque nous appelons `Comments.find({postId: this._id})` dans le helper `commentsCount`, Meteor ne peut pas trouver les données nécessaires côté client pour nous fournir un résultat.
 
-La meilleure façon de régler cela est de *dénormaliser* le nombre de commentaires sur le post (si vous n'êtes pas sûr de savoir ce que cela veut dire, ne vous inquiétez pas, le prochain aparté s'occupe de vous !). Bien que comme nous allons le voir, notre code s'en retrouve légèrement complexifié, le bénéfice de performance que nous retirons de ne pas avoir à publier _tous_ les commentaires pour afficher le post en vaut le coup.
+La meilleure façon de régler cela est de *dénormaliser* le nombre de commentaires sur le post (si vous n'êtes pas sûr de savoir ce que cela veut dire, ne vous inquiétez pas, le prochain aparté s'occupe de vous !). Bien que comme nous allons le voir, notre code s'en retrouve légèrement complexifié, le bénéfice de performance que nous retirons de ne pas avoir à publier _tous_ les commentaires pour afficher le post en vaut le coup.
 
 Nous allons terminer ça en ajoutant une propriété `commentsCount` à la structure de données du `post`. Nous allons commencer par mettre à jour nos données préenregistrées de posts (et faire `meteor reset` pour les recharger -- n'oubliez pas de recréer votre compte utilisateur après) :
 
@@ -456,7 +456,7 @@ if (Posts.find().count() === 0) {
     userId: sacha._id,
     author: sacha.profile.name,
     submitted: new Date(now - 3 * 3600 * 1000),
-    body: 'You sure can Tom!'
+    body: 'Bien sûr Tom !'
   });
 
   Posts.insert({

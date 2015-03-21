@@ -136,7 +136,7 @@ Créer des posts est très bien, mais nous ne voulons pas laisser n'importe quel
 
 Heureusement la sécurité des données est incluse dans les collections Meteor. Elles est désactivée par défaut lorsque vous créez un nouveau projet. Cela vous permet de commencer facilement à créer votre application tout en laissant les trucs ennuyeux pour plus tard.
 
-Notre appli n'a plus besoin de ces petites roues, alors enlevons-les ! Supprimons le paquet `insecure` :
+Notre appli n'a plus besoin de ces petites roues, alors enlevons-les ! Supprimons le paquet `insecure` :
 
 ~~~bash
 meteor remove insecure
@@ -227,7 +227,7 @@ Nous créons aussi le template pour la page 'accès refusé', `accessDenied` :
 <template name="accessDenied">
 	<div class="access-denied page jumbotron">
 		<h2>Accès refusé</h2>
-		<p>Vous ne pouvez pas accéder à cette page ! Veuillez vous connecter.</p>
+		<p>Vous ne pouvez pas accéder à cette page ! Veuillez vous connecter.</p>
 	</div>
 </template>
 ~~~
@@ -482,6 +482,6 @@ Template.postsList.helpers({
 
 <%= commit "7-8", "Tri des posts par date de création." %>
 
-Ça a demandé un peu de travail, mais nous avons maintenant une interface utilisateur qui permet d'ajouter du contenu de façon sécurisée à notre appli !
+Ça a demandé un peu de travail, mais nous avons maintenant une interface utilisateur qui permet d'ajouter du contenu de façon sécurisée à notre appli !
 
 Mais toute application qui permet à ses utilisateurs de créer du contenu doit aussi leur donner la possibilité de le modifier ou de le supprimer. Ce sera le sujet du prochain chapitre.

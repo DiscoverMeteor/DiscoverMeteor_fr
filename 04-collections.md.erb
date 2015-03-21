@@ -6,7 +6,7 @@ number: 4
 points: 5
 photoUrl: http://www.flickr.com/photos/73449134@N04/8270793784/
 photoAuthor: Mike Lewinski
-contents: Découvrir une fonctionnalité coeur de Meteor, les collections temps réel.|Comprendre comment la synchronisation des données Meteor fonctionne.|Intégrer les collections dans nos templates.|Transformer notre premier prototype en application temps réel fonctionnelle !
+contents: Découvrir une fonctionnalité coeur de Meteor, les collections temps réel.|Comprendre comment la synchronisation des données Meteor fonctionne.|Intégrer les collections dans nos templates.|Transformer notre premier prototype en application temps réel fonctionnelle !
 paragraphs: 72
 ---
 
@@ -181,7 +181,7 @@ Sans surprise, l'article a été créé dans la collection local. Maintenant vé
 ~~~
 <%= caption "Le Shell Mongo" %>
 
-Comme vous pouvez le voir, l'article a été créé dans la base de données Mongo, sans qu'on ait besoin d'écrire une seule ligne de code d'envoi au serveur (bien, strictement parlant, nous avons écrit une _seule_ ligne de code : `new Mongo.Collection('posts')`). Mais ce n'est pas tout!
+Comme vous pouvez le voir, l'article a été créé dans la base de données Mongo, sans qu'on ait besoin d'écrire une seule ligne de code d'envoi au serveur (bien, strictement parlant, nous avons écrit une _seule_ ligne de code : `new Mongo.Collection('posts')`). Mais ce n'est pas tout !
 
 Ouvrez la fenêtre du second navigateur et entrez ceci dans la console :
 
@@ -191,7 +191,7 @@ Ouvrez la fenêtre du second navigateur et entrez ceci dans la console :
 ~~~
 <%= caption "Console du second navigateur" %>
 
-L'article est ici aussi! Quand bien même nous n'avons jamais rafraîchit ou même interagit avec le second navigateur, et nous avons certainement pas écrit de code pour envoyer les mises à jour. C'est arrivé par magie -- et instantanément aussi, bien que ça devienne plus évident plus tard.
+L'article est ici aussi ! Quand bien même nous n'avons jamais rafraîchit ou même interagit avec le second navigateur, et nous avons certainement pas écrit de code pour envoyer les mises à jour. C'est arrivé par magie -- et instantanément aussi, bien que ça devienne plus évident plus tard.
 
 Ce qui est arrivé est que la collection côté serveur a été informé par la collection côté client d'un nouvel article, et a pris en charge la tâche d'insérer l'article dans la base de données Mongo et de renvoyer l'information à toutes les autres collections `post` connectées.
 
@@ -327,7 +327,7 @@ Ouvrez un nouveau terminal, et tapez :
 meteor remove autopublish
 ~~~
 
-L'effet est instantané. Si vous regardez dans votre navigateur maintenant, vous verrez que tous vos posts ont disparus! C'est parce que nous nous reposions sur `autopublish` pour s'assurer que la collection posts côté client était un mirroir de tous les articles dans la base de donnée.
+L'effet est instantané. Si vous regardez dans votre navigateur maintenant, vous verrez que tous vos posts ont disparus ! C'est parce que nous nous reposions sur `autopublish` pour s'assurer que la collection posts côté client était un mirroir de tous les articles dans la base de donnée.
 
 Eventuellement nous allons avoir besoin de nous assurer que nous transférons seulement les articles que l'utilisateur a besoin de voir (en prenant en compte les choses comme la pagination). Mais pour l'instant, nous allons juste configurer `Posts` pour qu'il soit publié dans sa totalité.
 
@@ -349,7 +349,7 @@ Meteor.subscribe('posts');
 
 <%= commit "4-4", "Suppression de `autopublish` et mise en place d'une publication basique." %>
 
-Si nous vérifions le navigateur, nos articles sont de retour. Phew!
+Si nous vérifions le navigateur, nos articles sont de retour. Pfiou !
 
 ### Conclusion
 
