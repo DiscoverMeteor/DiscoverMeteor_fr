@@ -392,7 +392,7 @@ Router.configure({
 
 Pour tester notre nouvelle page d'erreur, vous pouvez essayer d'accéder à une url quelconque comme `http://localhost:3000/rien-par-ici`.
 
-Un instant ; que se passe-t-il si quelqu'un entre une url de la forme `http://localhost:3000/posts/xyz`, où `xyz` *n'*est*pas* un `_id` valide d'article ? C'est toujours une route valide, mais elle ne mène à aucune donnée.
+Un instant ; que se passe-t-il si quelqu'un entre une url de la forme `http://localhost:3000/posts/xyz`, où `xyz` *n'*est*pas* un `_id` valide d'article ? C'est toujours une route valide, mais elle ne mène à aucune donnée.
 
 Heureusement, Iron Router est assez intelligent pour gérer cela, il suffit d'ajouter un hook spécial `dataNotFound` à la fin de `router.js` :
 

@@ -101,7 +101,7 @@ Armé de cette connaissance, vous pouvez dorénavant comprendre ce qui se passe 
 
 Premièrement, dans le template `postsList`, nous faisons des itérations sur un objet `posts` avec le block helper {{#each}}...{{/each}}. Ensuite, pour chaque itération nous allons inclure le template `postItem`.
 
-D'où vient cet objet `posts` ? Bonne question. C'est un **template helper** ; vous pouvez vous l'imaginer comme un substitut à un contenu dynamique.
+D'où vient cet objet `posts` ? Bonne question. C'est un **template helper** ; vous pouvez vous l'imaginer comme un substitut à un contenu dynamique.
 
 Le template `postItem` lui-même est assez simple. Il utilise trois expression : `{{url}}` et `{{title}}` retournent des propriétés du document, et `{{domain}}` appelle un template helper.
 

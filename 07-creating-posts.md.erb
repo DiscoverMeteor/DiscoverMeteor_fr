@@ -170,7 +170,7 @@ Nous appelons `Posts.allow`, qui dit à Meteor que "ceci est un ensemble de circ
 
 Le `userId` de l'utilisateur procédant à la modification est passé lors des appels à `allow` et `deny` (ou renvoie `null` si l'utilisateur n'est pas authentifié), ce qui est presque toujours utile. Et comme les comptes utilisateurs sont liés au noyau de Meteor, nous pouvons compter sur `userId` pour être toujours fiable.
 
-Nous avons réussi à nous assurer que l'on doit être authentifié pour créer un post. Essayez de vous déconnecter et de créer un post ; vous devriez voir ceci dans votre console :
+Nous avons réussi à nous assurer que l'on doit être authentifié pour créer un post. Essayez de vous déconnecter et de créer un post ; vous devriez voir ceci dans votre console :
 
 <%= screenshot "7-2", "Échec de l'insertion : Accès refusé " %>
 
