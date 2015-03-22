@@ -386,7 +386,7 @@ D'un autre côté, `this.posts` réfère au curseur courant, donc `this.posts.co
 
 Donc ce que nous disons ici est que si nous demandons `n` articles et nous récupérons `n`, nous continuerons d'afficher le bouton "charger plus". Mais si nous demandons `n` et que nous récupérons moins de `n`, ça voudra dire que nous avons atteint la limite et que nous voulons arrêter d'afficher ce bouton.
 
-Ceci étant dit, notre système échoue dans un cas ; quand le nombre d'items dans notre base de données est *exactement* `n`. Si cela arrive, le client demandera `n` articles et récupérera `n` articles et continuera à afficher le bouton "charger plus", inconscient qu'il n'y a plus d'items restants.
+Ceci étant dit, notre système échoue dans un cas ; quand le nombre d'items dans notre base de données est *exactement* `n`. Si cela arrive, le client demandera `n` articles et récupérera `n` articles et continuera à afficher le bouton "charger plus", inconscient qu'il n'y a plus d'items restants.
 
 C'est triste, il n'y a pas de contournements simples à ce problème, donc pour l'instant nous devrons nous contenter de cette implémentation moins-que-parfaite.
 
