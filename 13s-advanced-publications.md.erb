@@ -12,7 +12,7 @@ paragraphs: 36
 ---
 
 
-A partir de maintenant, vous devriez avoir une bonne idée de comment les publications et les abonnements interagissent. Donc passez le cap de l'entrainement et examinez des scénarii un peu plus avancés.
+À partir de maintenant, vous devriez avoir une bonne idée de comment les publications et les abonnements interagissent. Donc passez le cap de l’entraînement et examinez des scénarios un peu plus avancés.
  
 ### Publier une collection de multiples fois
 
@@ -61,7 +61,7 @@ Meteor.publish('bestPosts', function(limit) {
 
 Nous venons juste de voir comment publier une collection plus d'une fois. Il s'avère que vous pouvez accomplir le même résultat avec un autre pattern : créer une seule publication, mais s'y *abonner* plusieurs fois.
  
-Dans Microscope, nous nous abonnons à la publication `posts` plusieurs fois, mais Iron Router configure et détruit chaque abonnnement pour nous. Pourtant il n'y a aucune raison qu'on ne puisse pas nous abonner plusieurs fois *simultanément*.
+Dans Microscope, nous nous abonnons à la publication `posts` plusieurs fois, mais Iron Router configure et détruit chaque abonnement pour nous. Pourtant il n'y a aucune raison qu'on ne puisse pas nous abonner plusieurs fois *simultanément*.
  
 Par exemple, disons que nous voulons charger en même temps les meilleurs articles et les plus récents en mémoire :
  
@@ -112,7 +112,7 @@ Meteor.publish('topComments', function(topPostIds) {
 });
 ~~~
 
-Ça causerait un problème de performance, comme la publication aurait besoin d'être démontée et re-établie à chaque fois que la liste de `topPostsIds` change.
+Ça causerait un problème de performance, comme la publication aurait besoin d'être démontée et ré-établie à chaque fois que la liste de `topPostsIds` change.
 
 Il y a un moyen de faire ça. Nous utilisons juste le fait que nous ne pouvons pas seulement avoir plus d'une *publication* par *collection*, mais nous pouvons aussi avoir plus d'une *collection* par *publication* :
 
@@ -165,7 +165,7 @@ Qu'est-ce que notre nouvelle connaissance sur la flexibilité des abonnements po
 
 Une raison de pourquoi nous voudrions faire ça est *Single Table Inheritance* (héritage de tableau unique).
  
-Supposons que nous voulions référencer divers types d'objets de nos articles, dont chacun de ces champs communs stockés mais aussi a différé légèrement dnas le contenu. Par exemple, nous pourrions construite un système de blog comme Tumblr où chaque article possède le classique ID, timestamp et title ; mais en plus peut également gérer une image, video, lien, ou juste du texte. 
+Supposons que nous voulions référencer divers types d'objets de nos articles, dont chacun de ces champs communs stockés mais aussi a différé légèrement dnas le contenu. Par exemple, nous pourrions construite un système de blog comme Tumblr où chaque article possède le classique ID, timestamp et title ; mais en plus peut également gérer une image, vidéo, lien, ou juste du texte. 
 
 Nous pouvons stocker tous ces objets  dans une seule collection `'resources'`, en utilisant un attribut `type` pour indiquer quelle sorte d'objet ils sont. (`video`, `image`, `link`, etc.).
 
