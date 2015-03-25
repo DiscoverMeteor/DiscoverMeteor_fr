@@ -63,7 +63,7 @@ if (Posts.find().count() === 0) {
     userId: tom._id,
     author: tom.profile.name,
     submitted: new Date(now - 5 * 3600 * 1000),
-    body: 'Interesting project Sacha, can I get involved?'
+    body: "C'est un projet intéressant Sacha, est-ce-que je peux y participer ?"
   });
   
   Comments.insert({
@@ -342,7 +342,7 @@ Meteor.methods({
     var user = Meteor.user();
     // ensure the user is logged in
     if (!user)
-      throw new Meteor.Error('invalid', "You need to login to upvote");
+      throw new Meteor.Error('invalid', "Vous devez vous connecter pour pouvoir voter");
     
     Posts.update({
       _id: postId, 
