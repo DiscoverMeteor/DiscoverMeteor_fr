@@ -91,7 +91,7 @@ Le fichier `layout.html` nouvellement créé contiendra maintenant le layout ext
 
 Vous noterez que nous avons remplacé l'inclusion du template `postsList` avec un appel du helper `yield`.
 
-Après ce changement, l'onglet de notre navigateur n'affiche plus rien et une erreur apparaît dans la console du navigateur. C'est parce que nous n'avons pas encore dit au routeur que faire avec l'URL `/`, donc il renvoie un template vide.
+Après ce changement, l'onglet de notre navigateur affiche la page d'aide par défaut d'Iron Router. C'est parce que nous n'avons pas encore dit au routeur que faire avec l'URL `/`, donc il renvoie un template vide.
 
 Pour démarrer, nous pouvons retrouver notre ancien comportement en assignant l'URL racine `/` au template `postList`. Nous allons créer un nouveau fichier `router.js` à l'intérieur du répertoire `/lib` dans la racine du projet :
 
