@@ -12,11 +12,13 @@ paragraphs: 49
 
 La première impression est importante, l'installation de Meteor devrait se faire sans difficulté. Vous serez en selle en moins de cinq minutes dans la plupart des cas.
 
-Pour commencer, installons Meteor ; ouvrez un terminal, saisissez et exécutez ce qui suit sur la ligne de commande :
+Pour commencer, si vous êtes sur Mac OS ou Linux vous pouvez installer Meteor en ouvrant un terminal et en saisissant :
 
 ~~~bash
 curl https://install.meteor.com | sh
 ~~~
+
+Si vous êtes sur Windows, référez-vous aux [instructions d'installation](https://www.meteor.com/install) du site de Meteor.
 
 Cette commande installera l'exécutable `meteor` sur votre système, et vous permettra de l'utiliser immédiatement.
 
@@ -86,7 +88,9 @@ Il n'y a aucune différence par rapport à la méthode usuelle c'est-à-dire l'i
 
 Pendant qu'on y est, nous allons aussi installer [Underscore](http://underscorejs.org/). Underscore est une bibliothèque utilitaire pour JavaScript vraiment très pratique pour manipuler des données.
 
-Comme l'indique la syntaxe suivante, le paquet `underscore` fait partie des paquets "officiels" de Meteor. C'est pour cette raison qu'il ne possède pas d'auteur.
+Le paquet `bootstrap` est maintenu par l'utilisateur `twbs`, ce qui nous donne son nom complet, `twbs:bootstrap`.
+
+En revanche, le paquet `underscore` fait partie des paquets «officiel» de Meteor qui sont fournis par le framework, c'est pourquoi il ne possède pas d'auteur :
 
 ~~~bash
 meteor add twbs:bootstrap
