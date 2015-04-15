@@ -47,26 +47,24 @@ Une fois cette route définie, nous pouvons maintenant ajouter un lien à notre 
 ~~~html
 <template name="header">
 	<nav class="navbar navbar-default" role="navigation">
-	  <div class="container-fluid">
-		  <div class="navbar-header">
-			  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
-				  <span class="sr-only">Toggle navigation</span>
-				  <span class="icon-bar"></span>
-				  <span class="icon-bar"></span>
-				  <span class="icon-bar"></span>
-				</button>
-			  <a class="navbar-brand" href="{{pathFor 'postsList'}}">Microscope</a>
-			</div>
-		  <div class="collapse navbar-collapse" id="navigation">
-		    <ul class="nav navbar-nav">
-				  <li><a href="{{pathFor 'postSubmit'}}">Créer un post</a></li>
-				</ul>
-			  <ul class="nav navbar-nav navbar-right">
-				  {{> loginButtons}}
-				</ul>
-			</div>
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
+				<span class="sr-only">Toggle navigation</span>
+			  <span class="icon-bar"></span>
+			  <span class="icon-bar"></span>
+			  <span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="{{pathFor 'postsList'}}">Microscope</a>
 		</div>
-  </nav>
+		<div class="collapse navbar-collapse" id="navigation">
+			<ul class="nav navbar-nav">
+				<li><a href="{{pathFor 'postSubmit'}}">Créer un post</a></li>
+				</ul>
+			<ul class="nav navbar-nav navbar-right">
+				{{> loginButtons}}
+			</ul>
+		</div>
+	</nav>
 </template>
 ~~~
 <%= caption "client/templates/includes/header.html" %>
@@ -341,7 +339,7 @@ Les callbacks des méthodes meteor ont toujours deux arguments, `error` et `resu
 
 ### Test de sécurité
 
-Nous allons profiter de cette opportunité pour sécuriser notre méthode un peu plus en utilisant le paquet [`audit-argument-checks`](http://docs.meteor.com/#auditargumentchecks).
+Nous allons profiter de cette opportunité pour sécuriser notre méthode un peu plus en utilisant le paquet [`audit-argument-checks`](http://docs.meteor.com/#/full/auditargumentchecks).
 
 Ce paquet vous permet de tester n'importe quel objet JavaScript selon un schéma prédéfini. Dans notre cas, nous l'utiliserons pour tester que l'utilisateur qui utilise la méthode est bien authentifié (en nous assurant que `Meteor.userId()` est une chaîne (`String`), et que l'objet `postAttributes` passé en tant qu'argument à la méthode contient les chaînes `title` et `url`, pour ne pas nous retrouver à entrer des morceaux aléatoires de données dans notre base de données.
 
