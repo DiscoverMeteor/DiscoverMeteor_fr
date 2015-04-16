@@ -323,7 +323,7 @@ Router.route('/:postsLimit?', {
 
 Allons y pas à pas. Premièrement, nous créons notre contrôleur en étendant `RouteController`. Puis Nous mettons la propriété `template` juste comme nous l'avons fait avant, et ensuite une nouvelle propriété `increment`.
 
-Puis nous définissions une nouvelle fonction `limit` qui retournera la limite courante, et une fonction `findOptions` qui retournera un objet options. Cela pourrait ressembler à une étape supplémentaire, mais nous en ferons usage plus tard.
+Puis nous définissions une nouvelle fonction `postslimit` qui retournera la limite courante, et une fonction `findOptions` qui retournera un objet options. Cela pourrait ressembler à une étape supplémentaire, mais nous en ferons usage plus tard.
 
 Après, nous définissions des fonctions `waitOn` et `data` juste comme avant, excepté que maintenant elles vont utiliser notre nouvelle fonction `findOptions`.
 
@@ -374,7 +374,7 @@ PostsListController = RouteController.extend({
 
 Regardons plus en détail la magie du routeur. Vous vous souvenez que la route `postsList` (qui hérite du contrôleur `PostsListController` sur lequel nous travaillons) prend un paramètre `postsLimit`.
 
-Donc quand nous alimentons `this.route.path()` avec `{postsLimit: this.limit() + this.increment}`, nous disons à la route `postsList` de construire son propre chemin en utilisant cet objet JavaScript comme contexte de données.
+Donc quand nous alimentons `this.route.path()` avec `{postsLimit: this.postslimit() + this.increment}`, nous disons à la route `postsList` de construire son propre chemin en utilisant cet objet JavaScript comme contexte de données.
 
 En d'autres mots, c'est exactement la même chose qu'utiliser le helper Spacebars `{{pathFor 'postsList'}}`, excepté que nous remplaçons le `this` implicite par notre contexte de données personnalisé.
 
