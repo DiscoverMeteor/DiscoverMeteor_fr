@@ -266,9 +266,9 @@ En ensuite créer le template du formulaire de commentaire :
 Pour publier nos commentaires, nous appelons une Méthode `comment` dans `comment_submit.js` qui opère d'une manière similaire à ce que nous avons fait pour les publications de posts :
 
 ~~~js
-Template.commentSubmit.created = function() {
-  Session.set('commentSubmitErrors', {});
-}
+Template.postEdit.onCreated(function() {
+  Session.set('postEditErrors', {});
+});
 
 Template.commentSubmit.helpers({
   errorMessage: function(field) {
