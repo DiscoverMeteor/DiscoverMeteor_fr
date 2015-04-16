@@ -291,7 +291,7 @@ Template.registerHelper('pluralize', function(n, thing) {
 ~~~
 <%= caption "client/helpers/spacebars.js" %>
 
-Les helpers que nous avons créés avant ont été relié au manager et template auxquels ils s'appliquent. Mais en utilisant `UI.registerHelper`, nous avons créé un helper *global* qui peut être utilisé à l'intérieur d'un template :
+Les helpers que nous avons créés avant ont été relié au manager et template auxquels ils s'appliquent. Mais en utilisant `Template.registerHelper`, nous avons créé un helper *global* qui peut être utilisé à l'intérieur d'un template :
 
 ~~~html
 <template name="postItem">
