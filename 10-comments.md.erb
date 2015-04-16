@@ -499,7 +499,7 @@ var postId = Posts.insert(post);
 
 //...
 ~~~
-<%= caption "collections/posts.js" %>
+<%= caption "lib/collections/posts.js" %>
 <%= highlight "6,7" %>
 
 Ensuite nous mettons à jour le `commentsCount` qui s'y rapporte lorsque nous créons un nouveau commentaire en utilisant l'opérateur Mongo `$inc` (qui incrémente un champ numérique de un) :
@@ -520,7 +520,7 @@ return Comments.insert(comment);
 
 //...
 ~~~
-<%= caption "collections/comments.js "%>
+<%= caption "lib/collections/comments.js "%>
 <%= highlight "9,10" %>
 
 Finalement, nous pouvons simplement supprimer le helper `commentsCount` de `client/templates/posts/post_item.js`, puisque le champ est maintenant directement disponible sur le post.
