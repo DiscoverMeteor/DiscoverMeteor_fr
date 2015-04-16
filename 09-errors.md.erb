@@ -240,19 +240,19 @@ Template.errors.helpers({
   }
 });
 
-Template.error.rendered = function() {
+Template.error.onRendered(function() {
   var error = this.data;
   Meteor.setTimeout(function () {
     Errors.remove(error._id);
   }, 3000);
-};
+});
 ~~~
 <%= caption "client/templates/includes/errors.js" %>
 <%= highlight "7~12" %>
 
 <%= commit "9-3", "Effacer les erreurs après 3 secondes." %>
 
-Le callback [`rendered`](http://docs.meteor.com/#template_rendered) est déclenché une fois notre template interprété dans le navigateur. À l'intérieur du callback, `this` se réfère à l'instance courante du template, et `this.data` nous permet d'accéder aux données de l'objet en cours d'interprétation (une erreur dans notre cas).
+Le callback [`onRendered`](http://docs.meteor.com/#/full/template_onRendered) est déclenché une fois notre template interprété dans le navigateur. À l'intérieur du callback, `this` se réfère à l'instance courante du template, et `this.data` nous permet d'accéder aux données de l'objet en cours d'interprétation (une erreur dans notre cas).
 
 ### Mettre en place une validation
 
@@ -299,9 +299,9 @@ Nous définirons ensuite nos deux helpers de template. Ils regardent tous les de
 Alors que `errorMessage` renvoie simplement lui-même le message, `errorClass` vérifie la *présence* d'un message et renvoie `has-error` s'il en existe un.
 
 ~~~js
-Template.postSubmit.created = function() {
+Template.postSubmit.onCreated(function() {
   Session.set('postSubmitErrors', {});
-}
+});
 
 Template.postSubmit.helpers({
   errorMessage: function(field) {
@@ -477,9 +477,9 @@ Pour arrondir les angles, nous allons aussi appliquer la même validation pour n
 Puis les helpers du template :
 
 ~~~js
-Template.postEdit.created = function() {
+Template.postEdit.onCreated(function() {
   Session.set('postEditErrors', {});
-}
+});
 
 Template.postEdit.helpers({
   errorMessage: function(field) {
