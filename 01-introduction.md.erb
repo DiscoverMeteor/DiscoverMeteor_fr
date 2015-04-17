@@ -28,27 +28,27 @@ Meteor est une plate-forme basée sur Node.js pour créer des applications web t
 
 Puisque Meteor est basé sur Node.js, il utilise JavaScript à la fois côté client et côté serveur. Autre chose, Meteor permet aussi de partager du code entre les deux environnements.
 
-Tout cela nous donne une plateforme pouvant être très puissante et très simple en fournissant une couche d'abstraction à de nombreux problèmes et pièges rencontrés lors du développement d'applications web.
+Tout cela nous donne une plate-forme pouvant être très puissante et très simple en fournissant une couche d'abstraction à de nombreux problèmes et pièges rencontrés lors du développement d'applications web.
 
 ### Pourquoi Meteor ?
 
-Bon alors pourquoi passer votre temps à apprendre Meteor plutôt qu'une autre plateforme ? Sans compter les nombreuses fonctionnalités de Meteor, la raison est claire : Meteor est facile à apprendre.
+Bon alors pourquoi passer votre temps à apprendre Meteor plutôt qu'une autre plate-forme ? Sans compter les nombreuses fonctionnalités de Meteor, la raison est claire : Meteor est facile à apprendre.
 
-Comparé aux autres plate-formes, Meteor permet l'implémentation et le déploiement d'une application web temps-réel en l'espace de seulement quelques heures. Et si vous avez un peu d'expérience avec le développement front-end, vous êtes déjà familier avec le JavaScript et vous n'aurez pas à apprendre un nouveau langage.
+Comparé aux autres plate-formes, Meteor permet l'implémentation et le déploiement d'une application web temps réel en l'espace de seulement quelques heures. Et si vous avez un peu d'expérience avec le développement front-end, vous êtes déjà familier avec le JavaScript et vous n'aurez pas à apprendre un nouveau langage.
 
-Meteor est peut-être la plate-forme idéale qui répond à tous vos besoins, mais peut-être pas. Puisque qu'il ne faut qu'une soirée ou un week-end pour démarrer, pourquoi ne pas essayer ?
+Meteor est peut-être la plate-forme idéale qui répond à tous vos besoins, mais peut-être pas. Puisqu'il ne faut qu'une soirée ou un week-end pour démarrer, pourquoi ne pas essayer ?
 
 ### Pourquoi ce livre ?
 
-Sur les deux dernières années, nous avons travaillé sur de nombreux projets Meteor. Nous avons fait des applications webs et mobiles, open-sources et commerciales.
+Sur les deux dernières années, nous avons travaillé sur de nombreux projets Meteor. Nous avons fait des applications webs et mobiles, open source et commerciales.
 
-Nous avons beaucoup appris, mais trouver les réponses à nos questions n'était pas toujours très simple. Il nous a fallu assembler les pièces du puzzle à partir de sources multiples, et souvent même inventer nos propres solutions. Avec ce livre, nous souhaitions partager toutes ces leçons et créer un guide simple et détaillé qui vous aiderait à toutes les étapes de la construction d'une application Meteor.
+Nous avons beaucoup appris, mais trouver les réponses à nos questions n'était pas toujours très simple. Il nous a fallu assembler les pièces du puzzle à partir de sources multiples, et souvent même inventer nos propres solutions. Avec ce livre, nous souhaitions partager toutes ces leçons et créer un guide simple et détaillé qui vous aiderait à travers toutes les étapes de la construction d'une application Meteor.
 
-L'application que nous allons construire est une version simplifié des sites sociaux de news tels que [Hacker News](http://news.ycombinator.com) ou [Reddit](http://reddit.com). Nous l'avons appelé Microscope (par analogie avec son grand frère, [Telescope](http://telesc.pe) un autre projet Meteor open-source). Pendant que nous le construirons, nous vous apprendrons tout les éléments nécessaire au développement d'une application Meteor comme la gestion des utilisateurs, les collections Meteor, le routing et beaucoup plus.
+L'application que nous allons construire est une version simplifiée des sites sociaux de nouvelles tels que [Hacker News](http://news.ycombinator.com) ou [Reddit](http://reddit.com). Nous l'avons appelé Microscope (par analogie avec son grand frère, [Telescope](http://telesc.pe) un autre projet Meteor open source). Pendant que nous le construirons, nous vous apprendrons tout les éléments nécessaires au développement d'une application Meteor comme la gestion des utilisateurs, les collections Meteor, le routing et beaucoup plus.
 
 ### À qui ce livre est-il destiné ?
 
-Un de nos objectifs, en écrivant ce livre, est de garder les choses simples et accessibles. Ainsi, vous devriez être capable de suivre le cours sans expérience préalable de Meteor, Node.js, des frameworks MVC, ou encore de la programmation côté serveur en général.
+Un de nos objectifs en écrivant ce livre est de garder les choses simples et accessibles. Ainsi, vous devriez être capable de suivre le cours sans expérience préalable de Meteor, Node.js, des frameworks MVC, ou encore de la programmation côté serveur en général.
 
 En revanche, on attend un connaissance élémentaire de la syntaxe et des concepts du JavaScript. Mais si vous avez déjà expérimenté un peu de code jQuery ou joué avec la console développeur du navigateur, vous ne devriez pas avoir de problème.
 
@@ -60,17 +60,17 @@ Au cas où vous vous demandez qui nous sommes et pourquoi vous pouvez nous faire
 
 <%= image "tom-photo.jpg", "portrait" %>
 
-**Tom Coleman** fait partie de [Percolate Studio](http://percolatestudio.com/), un studio de développement web ciblant la qualité et l'expérience utilisateur. Il travaille également sur [Atmosphere](http://atmosphere.meteor.com), un service de paquet pour vos applications Meteor. Enfin, c'est aussi l'un des cerveaux derrière de nombreux projets Meteor open-source (par exemple [Iron Router](https://github.com/EventedMind/iron-router)).
+**Tom Coleman** fait partie de [Percolate Studio](http://percolatestudio.com/), un studio de développement web ciblant la qualité et l'expérience utilisateur. Il travaille également sur [Atmosphere](http://atmosphere.meteor.com), un service de paquet pour vos applications Meteor. Enfin, c'est aussi l'un des cerveaux derrière de nombreux projets Meteor open source (par exemple [Iron Router](https://github.com/EventedMind/iron-router)).
 
 <%= image "sacha-photo.jpg", "portrait" %>
 
-**Sacha Greif** a travaillé avec des startups comme [Hipmunk](http://hipmunk.com/) et [RubyMotion](http://rubymotion.com/) en tant que designeur produit et designeur web. Il est le créateur de [Telescope](http://telesc.pe/) et de [Sidebar](http://sidebar.io/) (basé sur Telescope), et il est aussi le fondateur de [Folyo](http://folyo.me/).
+**Sacha Greif** a travaillé avec des startups comme [Hipmunk](http://hipmunk.com/) et [RubyMotion](http://rubymotion.com/) en tant que concepteur produit et concepteur web. Il est le créateur de [Telescope](http://telesc.pe/) et de [Sidebar](http://sidebar.io/) (basé sur Telescope), et il est aussi le fondateur de [Folyo](http://folyo.me/).
 
 ### Chapitres & Apartés
 
-Nous voulions que ce livre soit utile aussi bien pour l’utilisateur novice de Meteor que pour le programmeur avancé, ainsi nous avons séparés les chapitres en deux catégories : les chapitres normaux (numérotés de 1 à 14) et les apartés (numéros .5).
+Nous voulions que ce livre soit utile aussi bien pour l’utilisateur novice de Meteor que pour le programmeur avancé, ainsi nous avons séparé les chapitres en deux catégories : les chapitres normaux (numérotés de 1 à 14) et les apartés (numéros .5).
 
-Les chapitres normaux constituent la ligne conductrice pour construire l’application, et nous essayerons de la rendre opérationnelle dès que possible en expliquant les étapes les plus importantes sans vous encombrer avec les détails.
+Les chapitres normaux constituent la ligne conductrice pour construire l’application, et nous essayerons de la rendre opérationnelle dès que possible en expliquant les étapes les plus importantes sans vous encombrer de détails.
 
 D’un autre côté, les apartés iront plus loin dans les subtilités de Meteor, et vous aideront à mieux comprendre ce qui se passe réellement dans les coulisses.
 
@@ -78,7 +78,7 @@ Ainsi, si vous êtes débutant, vous pouvez passer les apartés pour votre premi
 
 ### Commits & Instances en ligne
 
-Il n’y a rien de pire que d’être en train de suivre un livre de programmation et de tout à coup se rendre compte que notre code n’est plus synchronisé avec les exemples et que plus rien ne fonctionne comme cela devrait.
+Il n’y a rien de pire que de suivre un livre de programmation et de tout à coup se rendre compte que le code n’est plus synchronisé avec les exemples et que plus rien ne fonctionne comme prévu.
 
 Pour éviter cela, nous avons créé un [dépôt sur GitHub pour Microscope](https://github.com/DiscoverMeteor/Microscope), et nous proposerons également des liens directs vers les commits de Git à chaque modification de code. De plus, chaque commit est lié à une instance en ligne de l’application, ainsi vous pourrez le comparer avec votre copie locale. Ici un exemple de ce que vous pourriez voir :
 
