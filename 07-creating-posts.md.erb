@@ -59,7 +59,7 @@ Une fois cette route définie, nous pouvons maintenant ajouter un lien à notre 
 		<div class="collapse navbar-collapse" id="navigation">
 			<ul class="nav navbar-nav">
 				<li><a href="{{pathFor 'postSubmit'}}">Créer un post</a></li>
-				</ul>
+			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				{{> loginButtons}}
 			</ul>
@@ -132,7 +132,7 @@ Ainsi, l'utilisateur envoie le formulaire, un nouveau post est créé, et l'util
 
 Créer des posts est très bien, mais nous ne voulons pas laisser n'importe quel visiteur le faire : ils doivent être authentifiés pour pouvoir poster. Bien sûr, nous pouvons commencer en cachant la page d'ajout de post pour les utilisateurs non authentifiés. Cependant un utilisateur pourrait créer un post depuis la console du navigateur sans être authentifié, et nous ne pouvons pas nous le permettre.
 
-Heureusement la sécurité des données est incluse dans les collections Meteor. Elles est désactivée par défaut lorsque vous créez un nouveau projet. Cela vous permet de commencer facilement à créer votre application tout en laissant les trucs ennuyeux pour plus tard.
+Heureusement la sécurité des données est incluse dans les collections Meteor. Elle est désactivée par défaut lorsque vous créez un nouveau projet. Cela vous permet de commencer facilement à créer votre application tout en laissant les trucs ennuyeux pour plus tard.
 
 Notre appli n'a plus besoin de ces petites roues, alors enlevons-les ! Supprimons le paquet `insecure` :
 
