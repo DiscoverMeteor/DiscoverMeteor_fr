@@ -181,13 +181,13 @@ Voici ce que `_publishCursor()` fait :
 - Il prend tous les documents correspondants du curseur et envoie celui-ci dans une collection côté client *du même nom*. (Il utilise `.added()` pour faire ça).
 - A chaque moment qu'un document est ajouté, supprimé ou modifié, il envoie ces changements à la collection côté-client. (Il utilise `.observe()` sur le curseur et `.added()`, `.changed()` et `removed()` pour faire ça).
 
-Dans l'exemple au-dessus, nous sommes pouvons nous assurer que l'utilisateur a seulement les articles qui l'interessent (ceux écrit par Tom) disponible dans leur cache côté client.
+Dans l'exemple au-dessus, nous sommes pouvons nous assurer que l'utilisateur a seulement les articles qui l'interessent (ceux écrit par Tom) disponibles dans leur cache côté client.
 
 <% end %>
 
 ### Publier des propriétés partielles
 
-Nous avons vu comment publiquer seulement certains articles, mais vous pouvons continuer à affiner ! Voyons comment publier seulement certaines *propriétés* spécifiques.
+Nous avons vu comment publiquer seulement certains articles, mais nous pouvons continuer à affiner ! Voyons comment publier seulement certaines *propriétés* spécifiques.
 
 Juste comme avant, nous allons utiliser `find()` pour retourner un curseur, mais cette fois nous allons exclure certains champs :
 
