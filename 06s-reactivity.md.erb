@@ -17,7 +17,7 @@ Les Collections transforment radicalement la façon dont votre application trait
 
 Prenez un moment pour y penser : dans les coulisses, Meteor est capable de changer *toute* partie de votre interface utilisateur chaque fois qu'une collection sous-jacente est mise à jour.
 
-La *meilleure* façon de parvenir à celà serait d'utiliser `.observe()`, une fonction de curseur qui déclenche des callbacks lorsque des documents correspondant à ce curseur changent. Nous pourrions alors faire des changements dans le DOM (le rendu HTML de notre page Web) à travers ces callbacks. Le code résultant ressemblerait à quelque chose comme ceci :
+La *meilleure* façon de parvenir à cela serait d'utiliser `.observe()`, une fonction de curseur qui déclenche des callbacks lorsque des documents correspondant à ce curseur changent. Nous pourrions alors faire des changements dans le DOM (le rendu HTML de notre page Web) à travers ces callbacks. Le code résultant ressemblerait à quelque chose comme ceci :
 
 ~~~js
 Posts.find().observe({
@@ -80,11 +80,11 @@ En arrière-plan, Meteor déclenche des callbacks `observe()` pour nous, et red�
 
 ### Surveillance de dépendance dans Meteor: Calculs (Computations)
 
-Alors que Meteor est un framework temps réel, réactif, *tout* le code à l'intérieur d'une application Meteor n'est pas réactif. Si c'était le cas, votre application entière se rechargerait à chaque fois qu'il y a un changement. A la place, la réactivité est limitée à des zones spécifiques de votre code, et nous appellerons ces zones **calculs**.
+Alors que Meteor est un framework temps réel, réactif, *tout* le code à l'intérieur d'une application Meteor n'est pas réactif. Si c'était le cas, votre application entière se rechargerait à chaque fois qu'il y a un changement. À la place, la réactivité est limitée à des zones spécifiques de votre code, et nous appellerons ces zones **calculs**.
 
 En d'autres termes, un calcul est un bloc de code qui est exécuté à chaque fois qu'une des sources de données réactives dont il dépend change. Si vous avez une source de données réactive (par exemple, une variable de Session) et que vous aimeriez réagir de manière réactive, vous aurez besoin de mettre en place un calcul.
 
-Notez qu'habituellement vous n'avez pas besoin de faire ceci parce que Meteor donne déjà à chaque template et helper qu'il affiche son propre calcul (ce qui signifie que vous pouvez être sûr que vos templates seront réactif à afficher leurs données sources).
+Notez qu'habituellement vous n'avez pas besoin de faire ceci parce que Meteor donne déjà à chaque template et helper qu'il affiche son propre calcul (ce qui signifie que vous pouvez être sûr que vos templates seront réactifs à afficher leurs données sources).
 
 Chaque source de données réactive surveille tous les calculs qui l'utilisent pour qu'elle puisse les laisser savoir quand sa propre valeur change. Pour ce faire, il appelle la fonction `invalidate()` sur le calcul.
 
