@@ -18,7 +18,7 @@ Voyons comment corriger ça.
 
 ### Comptes: création d'utilisateurs faciles
 
-Dans la plupart des frameworks web, ajouter des comptes utilisateurs est une fonctionnalité classique. Bien sur, vous devez faire ça dans presque tous les projets, mais ce n'est jamais aussi simple que ça le devrait. De plus, dès que vous devez interagir avec OAuth ou un systèmes d'authentification tiers, les choses ont tendance a se compliquer.
+Dans la plupart des frameworks web, ajouter des comptes utilisateurs est une fonctionnalité classique. Bien sur, vous devez faire ça dans presque tous les projets, mais ce n'est jamais aussi simple que ça le devrait. De plus, dès que vous devez interagir avec OAuth ou un systèmes d'authentification tiers, les choses ont tendance à se compliquer.
 
 Heureusement, Meteor a tout prévu. Grâce à la façon dont les paquets Meteor peuvent contribuer au code côté serveur (JavaScript) et côté client (JavaScript, HTML et CSS), nous pouvons bénéficier d'un système de compte presque sans effort.
 
@@ -90,14 +90,14 @@ Accounts.ui.config({
 
 Enregistrez un compte : le bouton "Sign In" changera pour afficher votre nom d'utilisateur. Ça confirme que le compte utilisateur a bien été créé pour vous. Mais d'où viennent les données de ce compte ?
 
-En ajoutant le paquet `accounts`, Meteora créé une nouvelle collection spéciale, laquelle peut être accédée avec `Meteor.users()`. Pour la voir, ouvrez la console de votre navigateur et tapez :
+En ajoutant le paquet `accounts`, Meteor a créé une nouvelle collection spéciale, laquelle peut être accédée avec `Meteor.users()`. Pour la voir, ouvrez la console de votre navigateur et tapez :
 
 ~~~js
 ❯ Meteor.users.findOne();
 ~~~
 <%= caption "Console du navigateur" %>
 
-La console retournera un objet correspondant à votre objet utilisateur; Si vous regardez de plus près, vous pouvez voir que votre nom d'utilisateur est dedans, avec un `_id` unique qui vous identifie. Notez que vous pouvez également récupérer l'utilisateur actuellement connecté avec `Meteor.user()`.
+La console retournera un objet correspondant à votre objet utilisateur. Si vous regardez de plus près, vous pouvez voir que votre nom d'utilisateur est dedans, avec un `_id` unique qui vous identifie. Notez que vous pouvez également récupérer l'utilisateur actuellement connecté avec `Meteor.user()`.
 
 Maintenant déconnectez-vous et enregistrez-vous avec un compte utilisateur différent. `Meteor.user()` devrait retourner un second utilisateur. Mais attendez, exécutons :
 
