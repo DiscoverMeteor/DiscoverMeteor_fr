@@ -181,7 +181,7 @@ Voici ce que `_publishCursor()` fait :
 - Il prend tous les documents correspondants du curseur et envoie celui-ci dans une collection côté client *du même nom*. (Il utilise `.added()` pour faire ça).
 - A chaque moment qu'un document est ajouté, supprimé ou modifié, il envoie ces changements à la collection côté-client. (Il utilise `.observe()` sur le curseur et `.added()`, `.changed()` et `removed()` pour faire ça).
 
-Dans l'exemple au-dessus, nous sommes pouvons nous assurer que l'utilisateur a seulement les articles qui l'interessent (ceux écrit par Tom) disponible dans leur cache côté client.
+Dans l'exemple au-dessus, nous pouvons nous assurer que l'utilisateur a seulement les articles qui l'interessent (ceux écrit par Tom) disponible dans leur cache côté client.
 
 <% end %>
 
