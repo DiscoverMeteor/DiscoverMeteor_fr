@@ -93,7 +93,7 @@ Template.meteorError.rendered = function() {
 ~~~
 <%= caption "packages/tmeasday:errors/errors_list.js" %>
 
-### Tester le paquer avec Microscope
+### Tester le paquet avec Microscope
 
 Nous allons tester maintenant les choses localement avec Microscope pour nous assurer que notre code modifié fonctionne. Pour relier le paquet dans notre projet, nous exécutons `meteor add tmeasday:errors`. Ensuite, nous avons besoin de supprimer les fichiers existants qui ont été rendu redondants par le nouveau paquet :
 
@@ -118,6 +118,10 @@ Meteor.call('postInsert', post, function(error, result) {
     // affiche l'erreur à l'utilisateur
     Errors.throw(error.reason);
 
+  // affiche ce résultat mais route quand même
+  if (result.postExists)
+    Errors.throw('Ce lien à déjà été utilisé');
+
 ~~~
 <%= caption "client/templates/posts/post_submit.js" %>
 
@@ -125,11 +129,7 @@ Meteor.call('postInsert', post, function(error, result) {
 Posts.update(currentPostId, {$set: postProperties}, function(error) {
   if (error) {
     // Afficher l'erreur à l'utilisateur
-    Errors.throw(error.reason);
-    
-    // affiche ce résultat mais route quand même
-    if (result.postExists)
-      Errors.throw('Ce lien à déjà été utilisé');   
+    Errors.throw(error.reason);   
 ~~~
 <%= caption "client/templates/posts/post_edit.js" %>
 <%= highlight "4,8" %>
