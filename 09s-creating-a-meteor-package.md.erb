@@ -114,6 +114,10 @@ Meteor.call('postInsert', post, function(error, result) {
     // affiche l'erreur à l'utilisateur
     Errors.throw(error.reason);
 
+  // affiche ce résultat mais route quand même
+  if (result.postExists)
+    Errors.throw('Ce lien à déjà été utilisé');
+
 ~~~
 <%= caption "client/templates/posts/post_submit.js" %>
 
@@ -121,11 +125,7 @@ Meteor.call('postInsert', post, function(error, result) {
 Posts.update(currentPostId, {$set: postProperties}, function(error) {
   if (error) {
     // Afficher l'erreur à l'utilisateur
-    Errors.throw(error.reason);
-    
-    // affiche ce résultat mais route quand même
-    if (result.postExists)
-      Errors.throw('Ce lien à déjà été utilisé');   
+    Errors.throw(error.reason);   
 ~~~
 <%= caption "client/templates/posts/post_edit.js" %>
 <%= highlight "4,8" %>
