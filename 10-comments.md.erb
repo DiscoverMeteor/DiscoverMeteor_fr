@@ -121,7 +121,7 @@ C'est très bien d'ajouter des commentaires à la base de données, mais nous vo
 <template name="postPage">
   <div class="post-page page">
     {{> postItem}}
-  
+
   <ul class="comments">
     {{#each comments}}
       {{> commentItem}}
@@ -227,7 +227,7 @@ Nous allons commencer par ajouter un bouton de publication en bas de chaque post
 <template name="postPage">
   <div class="post-page page">
     {{> postItem}}
-    
+
     <ul class="comments">
       {{#each comments}}
         {{> commentItem}}
@@ -266,8 +266,8 @@ En ensuite créer le template du formulaire de commentaire :
 Pour publier nos commentaires, nous appelons une Méthode `comment` dans `comment_submit.js` qui opère d'une manière similaire à ce que nous avons fait pour les publications de posts :
 
 ~~~js
-Template.postEdit.onCreated(function() {
-  Session.set('postEditErrors', {});
+Template.commentSubmit.onCreated(function() {
+  Session.set('commentSubmitErrors', {});
 });
 
 Template.commentSubmit.helpers({
@@ -413,14 +413,14 @@ Il n'y a qu'un seul problème, quand nous retournons à la page d'accueil, il pr
 
 ### Compter les commentaires
 
-La raison va nous apparaître bientôt claire : nous ne chargeons les commentaires que sur la route `postPage`, donc lorsque nous appelons `Comments.find({postId: this._id})` dans le helper `commentsCount`, Meteor ne peut pas trouver les données nécessaires côté client pour nous fournir un résultat.
+La raison va nous apparaître bientôt claire : nous ne chargeons les commentaires que sur la route `postPage`, donc lorsque nous appelons `Comments.find({postId: this._id})` dans le helper `commentsCount`, Meteor ne peut pas trouver les données nécessaires côté client pour nous fournir un résultat.
 
 La meilleure façon de régler cela est de *dénormaliser* le nombre de commentaires sur le post (si vous n'êtes pas sûr de savoir ce que cela veut dire, ne vous inquiétez pas, le prochain aparté s'occupe de vous !). Bien que comme nous allons le voir, notre code s'en retrouve légèrement complexifié, le bénéfice de performance que nous retirons de ne pas avoir à publier _tous_ les commentaires pour afficher le post en vaut le coup.
 
 Nous allons terminer ça en ajoutant une propriété `commentsCount` à la structure de données du `post`. Nous allons commencer par mettre à jour nos données préenregistrées de posts (et faire `meteor reset` pour les recharger -- n'oubliez pas de recréer votre compte utilisateur après) :
 
 ~~~js
-// Fixture data
+// Données préenregistrées
 if (Posts.find().count() === 0) {
   var now = new Date().getTime();
 
