@@ -165,7 +165,7 @@ Qu'est-ce que notre nouvelle connaissance sur la flexibilité des abonnements po
 
 Une raison de pourquoi nous voudrions faire ça est *Single Table Inheritance* (héritage de tableau unique).
  
-Supposons que nous voulions référencer divers types d'objets de nos articles, dont chacun de ces champs communs stockés mais aussi a différé légèrement dans le contenu. Par exemple, nous pourrions construite un système de blog comme Tumblr où chaque article possède le classique ID, timestamp et title ; mais en plus peut également gérer une image, vidéo, lien, ou juste du texte. 
+Supposons que nous voulions référencer divers types d'objets de nos articles, dont chacun de ces champs communs stockés mais aussi a différé légèrement dans le contenu. Par exemple, nous pourrions construire un système de blog comme Tumblr où chaque article possède le classique ID, timestamp et title ; mais en plus peut également gérer une image, vidéo, lien, ou juste du texte. 
 
 Nous pouvons stocker tous ces objets  dans une seule collection `'resources'`, en utilisant un attribut `type` pour indiquer quelle sorte d'objet ils sont. (`video`, `image`, `link`, etc.).
 

@@ -13,13 +13,13 @@ paragraphs: 52
 
 Publications et souscriptions sont un des concepts les plus importants et fondamentaux dans Meteor, mais peut être difficile à se représenter quand on débute.
 
-Cela a conduit à beaucoup d'incompréhensions, telles que meteor n'est pas sécurisé, ou que les applications Meteor ne peuvent pas gérer une large quantité de données.
+Cela a conduit à beaucoup d'incompréhensions, telles que Meteor n'est pas sécurisé, ou que les applications Meteor ne peuvent pas gérer une large quantité de données.
 
 Une grande part de la raison pour laquelle les gens trouvent ces concepts un peu perturbants est la "magie" que Meteor fait pour nous. Bien que cette magie est d'une aide considérable, elle peut obscurcir ce qui se passe vraiment en arrière-plan (comme la magie a tendance à le faire). Détaillons un peu les couches de magie pour essayer de comprendre ce qu'il se passe.
 
 ### Les vieux jours
 
-Mais dans un premier temps, regardons en arrière dans les vieux jours de 2011 quand Meteor n'était pas encore là. Disons que vous développez une simple application rails. Quand un utilisateur atteint votre site, le client (i.e. votre navigateur) envoie une requête à votre application, qui est en cours sur votre serveur.
+Mais dans un premier temps, regardons en arrière dans les vieux jours de 2011 quand Meteor n'était pas encore là. Disons que vous développez une simple application Rails. Quand un utilisateur atteint votre site, le client (i.e. votre navigateur) envoie une requête à votre application, qui est en cours sur votre serveur.
 
 Le premier travail de l'application est de trouver quelles données l'utilisateur a besoin de voir. Ça pourrait être à la page 12 de vos résultats, les informations de profil de Marie, les 20 derniers tweets de Bob, etc. Vous pouvez imaginer un marchand de livres recherchant dans des allées le livre que vous avez demandé.
 
@@ -171,7 +171,7 @@ Meteor.publish('somePosts', function(){
 
 Si vous avez lu la [documentation de publication Meteor](http://docs.meteor.com/#publishandsubscribe), vous avez peut-être été dépassé par l'utilisation de `added()` et `ready()` pour appliquer les attributs des enregistrements sur le client, et pour recoller ça avec les applications Meteor que vous avez déjà vu et qui n'utilise pas ces méthodes.
 
-La raison est que Meteor fournit une méthodes vraiment très pratique : `_publishCursor()`. Vous n'avez jamais vu ça utilisé ? Peut-être pas directement, mais si vous retournez un [curseur](/chapter/meteor-vocabulary/)(i.e. `Posts.find({'author':'Tom'})`) dans une fonction de publication, c'est exactement ce qu'utilise Meteor.
+La raison est que Meteor fournit une méthode vraiment très pratique : `_publishCursor()`. Vous n'avez jamais vu ça utilisé ? Peut-être pas directement, mais si vous retournez un [curseur](/chapter/meteor-vocabulary/)(i.e. `Posts.find({'author':'Tom'})`) dans une fonction de publication, c'est exactement ce qu'utilise Meteor.
 
 Quand Meteor voit que la publication `somePosts` a retourné un curseur, il appelle `_publishCursor()` pour -- vous l'avez deviné -- publier ce curseur automatiquement.
 
@@ -187,7 +187,7 @@ Dans l'exemple au-dessus, nous pouvons nous assurer que l'utilisateur a seulemen
 
 ### Publier des propriétés partielles
 
-Nous avons vu comment publiquer seulement certains articles, mais nous pouvons continuer à affiner ! Voyons comment publier seulement certaines *propriétés* spécifiques.
+Nous avons vu comment publier seulement certains articles, mais nous pouvons continuer à affiner ! Voyons comment publier seulement certaines *propriétés* spécifiques.
 
 Juste comme avant, nous allons utiliser `find()` pour retourner un curseur, mais cette fois nous allons exclure certains champs :
 
