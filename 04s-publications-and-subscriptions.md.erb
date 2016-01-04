@@ -141,7 +141,7 @@ Pour cette raison, autopublish est seulement approprié quand vous démarrez, et
 
 ### Publier des collections complètes
 
-Une fois que vous avez supprimé `autopublish`, vous allez rapidement vous rendre compte que toutes vos données ont disparues du client. Une façon simple de revenir et simplement de copier ce que autopublish fait, et de publier une collection dans sa totalité. Par exemple :
+Une fois que vous avez supprimé `autopublish`, vous allez rapidement vous rendre compte que toutes vos données ont disparues du client. Une façon simple de les faire revenir est simplement de copier ce que autopublish fait, et de publier une collection dans sa totalité. Par exemple :
 
 ~~~js
 Meteor.publish('allPosts', function(){
@@ -169,7 +169,7 @@ Meteor.publish('somePosts', function(){
 
 ### En coulisses
 
-Si vous avez lu la [documentation de publication Meteor](http://docs.meteor.com/#publishandsubscribe), vous avez peut-être été dépassé par l'utilisation de `added()` et `ready()` pour appliquer les attributs des enregistrements sur le client, et pour recoller ça avec les applications Meteor que vous avez déjà vu et qui n'utilise pas ces méthodes.
+Si vous avez lu la [documentation de publication Meteor](http://docs.meteor.com/#publishandsubscribe), vous avez peut-être été dépassé par l'utilisation de `added()` et `ready()` pour appliquer les attributs des enregistrements sur le client, et pour recoller ça avec les applications Meteor que vous avez déjà vues et qui n'utilisent pas ces méthodes.
 
 La raison est que Meteor fournit une méthode vraiment très pratique : `_publishCursor()`. Vous n'avez jamais vu ça utilisé ? Peut-être pas directement, mais si vous retournez un [curseur](/chapter/meteor-vocabulary/)(i.e. `Posts.find({'author':'Tom'})`) dans une fonction de publication, c'est exactement ce qu'utilise Meteor.
 
@@ -181,7 +181,7 @@ Voici ce que `_publishCursor()` fait :
 - Il prend tous les documents correspondants du curseur et envoie celui-ci dans une collection côté client *du même nom*. (Il utilise `.added()` pour faire ça).
 - A chaque moment qu'un document est ajouté, supprimé ou modifié, il envoie ces changements à la collection côté-client. (Il utilise `.observe()` sur le curseur et `.added()`, `.changed()` et `removed()` pour faire ça).
 
-Dans l'exemple au-dessus, nous pouvons nous assurer que l'utilisateur a seulement les articles qui l'interessent (ceux écrit par Tom) disponibles dans leur cache côté client.
+Dans l'exemple au-dessus, nous pouvons nous assurer que l'utilisateur a seulement les articles qui l'intéressent (ceux écrit par Tom) disponibles dans leur cache côté client.
 
 <% end %>
 
