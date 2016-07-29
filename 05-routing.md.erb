@@ -76,15 +76,15 @@ Le fichier `layout.html` nouvellement créé contiendra maintenant le layout ext
 ~~~html
 <template name="layout">
   <div class="container">
-  	<header class="navbar navbar-default" role="navigation">
-  		<div class="navbar-header">
-  			<a class="navbar-brand" href="/">Microscope</a>
-  		</div>
-  	</header>
-  	<div id="main">
-  		{{> yield}}
-		</div>
-	</div>
+    <header class="navbar navbar-default" role="navigation">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">Microscope</a>
+      </div>
+    </header>
+    <div id="main">
+      {{> yield}}
+    </div>
+  </div>
 </template>
 ~~~
 <%= caption "client/templates/application/layout.html" %>
