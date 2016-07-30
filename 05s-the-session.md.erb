@@ -25,6 +25,15 @@ Mais dans de nombreux cas, vous allez avoir besoin de stocker des états éphém
 
 La session est une zone de stockage de données réactive. C'est global dans le sens d'un objet singleton global : il y a une session, et c'est accessible partout. Les variables globales sont habituellement vues comme des mauvaises choses, mais dans ce cas la session peut être utilisée comme un bus de communications central entre les différentes parties de l'application.
 
+### Installer le paquet session
+
+Préalablement à l'utilisation des sessions dans votre application il est nécessaire d'installer le paquet "session" avec la commande suivante :
+
+~~~bash
+meteor add session
+~~~
+<%= caption "Terminal" %>
+
 ### Changer la Session
 
 La Session est disponible partout sur le client en tant que l'objet `Session`. Pour insérer une valeur de sessions, vous pouvez appeler :
