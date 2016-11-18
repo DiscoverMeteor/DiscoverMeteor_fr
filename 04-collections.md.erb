@@ -96,7 +96,7 @@ Notez que dans chaque cas, vous n'êtes pas supposé écrire le caractère de l'
 
 ### Collections côté Serveur
 
-Revenons sur le serveur ; la collection agit comme une API dans votre base de donnée Mongo. Dans votre code côté serveur, ça vous permet d'écrire des commandes Mongo telles que `Posts.insert()` ou `Posts.update()`, et et elles feront les changements dans la collection `posts` stockées dans Mongo.
+Revenons sur le serveur ; la collection agit comme une API dans votre base de donnée Mongo. Dans votre code côté serveur, ça vous permet d'écrire des commandes Mongo telles que `Posts.insert()` ou `Posts.update()`, et elles feront les changements dans la collection `posts` stockées dans Mongo.
 
 Pour regarder dans la base de donnée Mongo, ouvrez un second terminal (`meteor` est toujours en cours d'exécution sur votre premier), et allez dans le répertoire de votre application. Ensuite, exécutez la commande `meteor mongo` pour initier un shell Mongo, dans lequel vous pouvez taper des commandes Mongo standards (et comme habituellement, vous pouvez quitter avec le raccourci clavier `ctrl+c`). Par exemple, insérons un nouvel article :
 
